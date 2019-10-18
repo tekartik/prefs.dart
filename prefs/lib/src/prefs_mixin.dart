@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:tekartik_prefs/prefs.dart';
-import 'package:tekartik_common_utils/json_utils.dart';
 import 'package:tekartik_common_utils/bool_utils.dart';
+import 'package:tekartik_common_utils/json_utils.dart';
+import 'package:tekartik_prefs/prefs.dart';
 
 const String signatureKey = '_signature';
 const String prefsVersionKey = '_version';
@@ -186,6 +186,11 @@ abstract class PrefsMixin implements Prefs {
     }
   }
 
+  @override
+  bool containsKey(String key) {
+    return keys.contains(key);
+  }
+
   void checkName(String name) {
     if (name == null || name.isEmpty) {
       throw ArgumentError.notNull('prefs key name cannot be null or empty');
@@ -211,5 +216,10 @@ abstract class PrefsMixin implements Prefs {
     }
 
     _checkValue(value);
+  }
+
+  @override
+  void remove(String name) {
+    setValue(name, null);
   }
 }

@@ -103,14 +103,24 @@ void runTests(PrefsFactory factory) {
       try {
         prefs.setInt('test', 1);
         expect(prefs.keys, ['test']);
+        expect(prefs.containsKey('test'), isTrue);
         prefs.setInt('test', null);
         expect(prefs.keys, []);
+        expect(prefs.containsKey('test'), isFalse);
         prefs.setInt('test', 1);
         expect(prefs.keys, ['test']);
         if (factory.hasStorage) {
           await prefs?.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.keys, ['test']);
+          expect(prefs.containsKey('test'), isTrue);
+
+          prefs.remove('test');
+
+          await prefs?.close();
+          prefs = await factory.openPreferences(name);
+          expect(prefs.keys, []);
+          expect(prefs.containsKey('test'), isFalse);
         }
       } finally {
         await prefs?.close();
