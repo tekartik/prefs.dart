@@ -19,7 +19,8 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/chrome_travis.dart
       ref: dart2
-    process_run: '>=0.10.1'
+    version: '>=0.1.0'
+  process_run: '>=0.10.1'
   # include all from git so that it makes a dependency check
   tekartik_prefs_sembast:
     git:

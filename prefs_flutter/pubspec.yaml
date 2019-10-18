@@ -14,6 +14,7 @@ dependencies:
     git:
       url: git://github.com/tekartik/prefs.dart
       path: prefs
+      ref: dart2
     version: '>=0.1.0'
   shared_preferences:
 
@@ -30,6 +31,7 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/prefs.dart
       path: prefs_test
+      ref: dart2
   process_run:
 
 # For information on the generic Dart part of this file, see the

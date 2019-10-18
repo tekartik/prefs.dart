@@ -11,7 +11,8 @@ dependencies:
   tekartik_prefs:
     git:
       url: git://github.com/tekartik/prefs.dart
-      path: db
+      path: prefs
+      ref: dart2
     version: '>=0.1.0'
   sembast: '>=2.0.0'
   path:
@@ -26,6 +27,7 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/prefs.dart
       path: db_test
+      ref: dart2
   process_run: '>=0.10.2'
 
 dependency_overrides:

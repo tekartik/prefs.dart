@@ -12,6 +12,7 @@ dependencies:
     git:
       url: git://github.com/tekartik/prefs.dart
       path: prefs
+      ref: dart2
     version: '>=0.1.0'
   dev_test: '>=0.13.0+1'
 
