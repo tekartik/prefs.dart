@@ -12,7 +12,7 @@ void main() {
   group('prefs_impl', () {
     test('basic_prefs', () async {
       window.localStorage.remove('basic/test');
-      String name = 'basic';
+      final name = 'basic';
       var prefs = await factory.openPreferences(name);
 
       try {
@@ -23,8 +23,8 @@ void main() {
           await prefs?.close();
 
           // check prefs
-          expect(window.localStorage['basic/test'], "1");
-          window.localStorage['basic/test'] = "2";
+          expect(window.localStorage['basic/test'], '1');
+          window.localStorage['basic/test'] = '2';
           prefs = await factory.openPreferences(name);
           expect(prefs.getInt('test'), 2);
         }
@@ -46,8 +46,8 @@ void main() {
           await prefs?.close();
 
           // check prefs
-          expect(window.localStorage['test'], "1");
-          window.localStorage['test'] = "2";
+          expect(window.localStorage['test'], '1');
+          window.localStorage['test'] = '2';
           prefs = await factory.openPreferences(name);
           expect(prefs.getInt('test'), 2);
         }

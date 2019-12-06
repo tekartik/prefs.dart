@@ -33,7 +33,7 @@ int parseInt(dynamic source) {
   if (source is num) {
     return source.toInt();
   } else if (source is String) {
-    int value = int.tryParse(source);
+    final value = int.tryParse(source);
     if (value != null) {
       return value;
     }
@@ -43,7 +43,7 @@ int parseInt(dynamic source) {
       return 0;
     }
     // Handle double value
-    num numValue = num.tryParse(source);
+    final numValue = num.tryParse(source);
     if (numValue != null) {
       return numValue.toInt();
     }
