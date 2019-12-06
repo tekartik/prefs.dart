@@ -36,11 +36,9 @@ class PrefsFactoryMemory extends Object
       Future Function(Prefs pref, int oldVersion, int newVersion)
           onVersionChanged}) async {
     return await lock.synchronized(() async {
-      var prefs = _allPrefs[name];
-      if (prefs == null) {
-        prefs = _allPrefs[name] = PrefsMemory(name);
-      }
-      int oldVersion = prefs.version;
+      var prefs = _allPrefs[name] ??= PrefsMemory(name);
+
+      final oldVersion = prefs.version;
       if (version != null && version != oldVersion) {
         if (onVersionChanged != null) {
           await onVersionChanged(prefs, oldVersion, version);

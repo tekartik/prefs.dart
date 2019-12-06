@@ -22,7 +22,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
 
   @override
   Future save() async {
-    if (this.changes.isNotEmpty) {
+    if (changes.isNotEmpty) {
       var changes = Map<String, dynamic>.from(this.changes);
       importChanges();
 
@@ -79,11 +79,9 @@ class PrefsFactoryBrowser extends Object
       Future Function(Prefs pref, int oldVersion, int newVersion)
           onVersionChanged}) async {
     return await lock.synchronized(() async {
-      var prefs = _allPrefs[name];
-      if (prefs == null) {
-        prefs = _allPrefs[name] = PrefsBrowser(this, name);
-      }
-      int oldVersion = prefs.version;
+      var prefs = _allPrefs[name] ??= PrefsBrowser(this, name);
+
+      final oldVersion = prefs.version;
       if (version != null && version != oldVersion) {
         if (onVersionChanged != null) {
           await onVersionChanged(prefs, oldVersion, version);
@@ -98,7 +96,7 @@ class PrefsFactoryBrowser extends Object
   Future deletePreferences(String name) async {
     _allPrefs.remove(name);
     var list = List<String>.from(storage.keys);
-    for (String key in list) {
+    for (final key in list) {
       if (key.startsWith('${name}/')) {
         storage.remove(key);
       }

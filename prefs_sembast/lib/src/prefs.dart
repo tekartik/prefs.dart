@@ -18,7 +18,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
 
   PrefsSembast(this.prefsFactorySembast, this.name);
 
-  String get dbPath => this.prefsFactorySembast.getDbPath(name);
+  String get dbPath => prefsFactorySembast.getDbPath(name);
 
   @override
   Future close() async {
@@ -29,8 +29,8 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
 
   @override
   Future save() async {
-    if (this.changes.isNotEmpty) {
-      Map<String, dynamic> changes = Map.from(this.changes);
+    if (changes.isNotEmpty) {
+      final changes = Map<String, dynamic>.from(this.changes);
       // devPrint(changes);
       importChanges();
 
@@ -68,8 +68,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
         await store.delete(txn);
         await signatureRecord.put(txn, signatureValue);
       } else {
-        this.version =
-            parseInt(await store.record(prefsVersionKey).get(txn)) ?? 0;
+        version = parseInt(await store.record(prefsVersionKey).get(txn)) ?? 0;
       }
 
       // load all
@@ -112,7 +111,7 @@ class PrefsFactorySembast extends Object
         await prefs.open();
       }
 
-      int oldVersion = prefs.version;
+      final oldVersion = prefs.version;
       if (version != null && version != oldVersion) {
         if (onVersionChanged != null) {
           await onVersionChanged(prefs, oldVersion, version);

@@ -87,5 +87,6 @@ abstract class PrefsFactory {
 
   Future<Prefs> openPreferences(String name,
       {int version,
-      Future onVersionChanged(Prefs pref, int oldVersion, int newVersion)});
+      Future Function(Prefs pref, int oldVersion, int newVersion)
+          onVersionChanged});
 }
