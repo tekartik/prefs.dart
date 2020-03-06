@@ -36,7 +36,7 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
 
   @override
   Future save() async {
-    if (this.changes.isNotEmpty) {
+    if (changes.isNotEmpty) {
       var changes = Map<String, dynamic>.from(this.changes);
       importChanges();
 
@@ -88,7 +88,7 @@ class PrefsFactoryFlutter extends Object
     await lock.synchronized(() async {
       sharedPreferences ??= await SharedPreferences.getInstance();
       var futures = <Future>[];
-      for (String key in sharedPreferences.getKeys()) {
+      for (var key in sharedPreferences.getKeys()) {
         if (key.startsWith('$name/')) {
           futures.add(sharedPreferences.remove(key));
         }
@@ -114,7 +114,7 @@ class PrefsFactoryFlutter extends Object
         _allPrefs[name] = prefs;
       }
 
-      int oldVersion = prefs.version;
+      var oldVersion = prefs.version;
       if (version != null && version != oldVersion) {
         if (onVersionChanged != null) {
           await onVersionChanged(prefs, oldVersion, version);

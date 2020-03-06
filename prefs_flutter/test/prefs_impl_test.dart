@@ -12,7 +12,7 @@ void main() {
     });
     test('basic_prefs', () async {
       unawaited(sharedPreferences.remove('basic/test'));
-      String name = 'basic';
+      var name = 'basic';
       var prefs = await factory.openPreferences(name);
 
       try {

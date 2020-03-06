@@ -67,6 +67,7 @@ flutter:
 
 
 dependency_overrides:
+  pedantic: '>=1.9.0'
   tekartik_prefs:
     path: ../prefs
   tekartik_prefs_test:

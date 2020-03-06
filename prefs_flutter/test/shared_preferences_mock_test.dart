@@ -12,7 +12,7 @@ void main() {
   group('mock', () {
     SharedPreferences preferences;
 
-    const Map<String, dynamic> kTestValues = <String, dynamic>{
+    const kTestValues = <String, dynamic>{
       'String': 'hello world',
       'bool': true,
       'int': 42,
@@ -54,7 +54,7 @@ void main() {
     });
   });
   group('$SharedPreferences', () {
-    const Map<String, dynamic> kTestValues = <String, dynamic>{
+    const kTestValues = <String, dynamic>{
       'flutter.String': 'hello world',
       'flutter.bool': true,
       'flutter.int': 42,
@@ -62,7 +62,7 @@ void main() {
       'flutter.List': <String>['foo', 'bar'],
     };
 
-    const Map<String, dynamic> kTestValues2 = <String, dynamic>{
+    const kTestValues2 = <String, dynamic>{
       'flutter.String': 'goodbye world',
       'flutter.bool': false,
       'flutter.int': 1337,
@@ -70,7 +70,7 @@ void main() {
       'flutter.List': <String>['baz', 'quox'],
     };
 
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
     SharedPreferences preferences;
 
     setUp(() async {
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('removing', () async {
-      const String key = 'testKey';
+      const key = 'testKey';
 
       preferences
         ..setString(key, null) // ignore: unawaited_futures
