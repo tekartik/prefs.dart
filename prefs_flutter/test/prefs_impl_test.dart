@@ -1,9 +1,11 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs_flutter/prefs_mock.dart';
-import 'package:test/test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   var factory = PrefsFactoryFlutterMock();
   SharedPreferences sharedPreferences;
   group('prefs_impl', () {
