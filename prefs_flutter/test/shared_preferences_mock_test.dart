@@ -4,11 +4,11 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs_flutter/prefs_mock.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('mock', () {
     SharedPreferences preferences;
 
@@ -21,7 +21,7 @@ void main() {
     };
 
     setUp(() async {
-      unawaited(initSharedPreferencesMock());
+      await initSharedPreferencesMock();
       preferences = await SharedPreferences.getInstance();
     });
     test('empty', () async {
@@ -184,7 +184,8 @@ void main() {
     test('mocking', () async {
       expect(await channel.invokeMethod('getAll'), kTestValues);
       SharedPreferences.setMockInitialValues(kTestValues2);
-      expect(await channel.invokeMethod('getAll'), kTestValues2);
+      expect((await SharedPreferences.getInstance()).getDouble('double'),
+          kTestValues2['flutter.double']);
     });
   });
 }
