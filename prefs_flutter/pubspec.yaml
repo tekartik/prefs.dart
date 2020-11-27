@@ -3,9 +3,10 @@ description: Prefs implementation for flutter (on Shared Preferences)
 version: 0.1.0
 author:
 homepage:
+publish_to: none
 
 environment:
-  sdk: ">=2.5.0 <3.0.0"
+  sdk: '>=2.10.0-0 <3.0.0'
 
 dependencies:
   flutter:
@@ -67,7 +68,6 @@ flutter:
 
 
 dependency_overrides:
-  pedantic: '>=1.9.0'
   tekartik_prefs:
     path: ../prefs
   tekartik_prefs_test:
