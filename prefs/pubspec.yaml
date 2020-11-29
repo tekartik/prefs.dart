@@ -1,11 +1,12 @@
 name: tekartik_prefs
 description: Common prefs interface
 version: 0.1.0
+publish_to: none
 # homepage: https://www.example.com
 # author: alexr <email@example.com>
 
 environment:
-  sdk: '>=2.5.0 <3.0.0'
+  sdk: '>=2.10.0-0 <3.0.0'
 
 dependencies:
   tekartik_common_utils:
@@ -23,4 +24,3 @@ dev_dependencies:
   tekartik_prefs_test:
     path: ../prefs_test
   process_run: '>=0.10.1'
-

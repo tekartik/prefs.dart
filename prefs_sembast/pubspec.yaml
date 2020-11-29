@@ -3,9 +3,10 @@ description: Prefs on sembast.
 version: 0.1.0
 author:
 homepage:
+publish_to: none
 
 environment:
-  sdk: ">=2.5.0 <3.0.0"
+  sdk: '>=2.10.0-0 <3.0.0'
 
 dependencies:
   tekartik_prefs:
@@ -35,4 +36,3 @@ dependency_overrides:
     path: ../prefs
   tekartik_prefs_test:
     path: ../prefs_test
-
