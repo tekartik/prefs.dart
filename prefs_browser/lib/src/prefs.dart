@@ -14,11 +14,9 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   @override
   int version = 0;
 
-  PrefsBrowser(this.prefsFactoryBrowser, String name)
-      : name = (name?.isEmpty != true) ? name : null;
+  PrefsBrowser(this.prefsFactoryBrowser, this.name);
 
-  String getKey(String name) =>
-      this.name != null ? '${this.name}/${name}' : name;
+  String getKey(String name) => '${this.name}/${name}';
 
   @override
   Future save() async {
@@ -34,7 +32,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
         } else if (value is num || value is bool || value is String) {
           storage[key] = value.toString();
         } else {
-          storage[key] = encodeJson(value);
+          storage[key] = encodeJson(value)!;
         }
       });
     }
@@ -75,8 +73,8 @@ class PrefsFactoryBrowser extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)
+      {int? version,
+      Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged}) async {
     return await lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= PrefsBrowser(this, name);
@@ -107,7 +105,7 @@ class PrefsFactoryBrowser extends Object
   bool get hasStorage => true;
 }
 
-PrefsFactoryBrowser _prefsFactoryBrowser;
+PrefsFactoryBrowser? _prefsFactoryBrowser;
 
 PrefsFactory get prefsFactoryBrowser =>
     _prefsFactoryBrowser ??= PrefsFactoryBrowser();
