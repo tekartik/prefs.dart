@@ -25,7 +25,7 @@ void runTests(PrefsFactory factory) {
 
         expect(prefs.keys, ['test']);
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
 
@@ -34,13 +34,13 @@ void runTests(PrefsFactory factory) {
 
       var prefs = await deleteAndOpen(name);
       prefs.setInt('test', 1);
-      await prefs?.close();
+      await prefs.close();
 
       try {
         prefs = await deleteAndOpen(name);
         expect(prefs.getInt('test'), isNull);
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
     test('version', () async {
@@ -88,12 +88,12 @@ void runTests(PrefsFactory factory) {
       try {
         if (factory.hasStorage) {
           prefs.setInt('test', 1);
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.getInt('test'), 1);
         }
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
 
@@ -110,20 +110,20 @@ void runTests(PrefsFactory factory) {
         prefs.setInt('test', 1);
         expect(prefs.keys, ['test']);
         if (factory.hasStorage) {
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.keys, ['test']);
           expect(prefs.containsKey('test'), isTrue);
 
           prefs.remove('test');
 
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.keys, []);
           expect(prefs.containsKey('test'), isFalse);
         }
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
 
@@ -168,7 +168,7 @@ void runTests(PrefsFactory factory) {
         expect(prefs.getMap('testComplex'), map);
 
         if (factory.hasStorage) {
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.getBool('testBool'), true);
           expect(prefs.getInt('testInt'), -2);
@@ -182,14 +182,14 @@ void runTests(PrefsFactory factory) {
           prefs.setInt('testInt', -1);
           expect(prefs.getInt('testInt'), -1);
 
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.getBool('testBool'), true);
           expect(prefs.getInt('testInt'), -1);
           expect(prefs.getMap('testComplex'), map);
         }
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
 
@@ -250,12 +250,12 @@ void runTests(PrefsFactory factory) {
         _check();
 
         if (factory.hasStorage) {
-          await prefs?.close();
+          await prefs.close();
           prefs = await factory.openPreferences(name);
           _check();
         }
       } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
 
@@ -272,34 +272,16 @@ void runTests(PrefsFactory factory) {
         prefs2.setInt('test', 2);
 
         if (factory.hasStorage) {
-          await prefs1?.close();
-          await prefs2?.close();
+          await prefs1.close();
+          await prefs2.close();
           prefs1 = await factory.openPreferences(name1);
           prefs2 = await factory.openPreferences(name2);
           expect(prefs1.getInt('test'), 1);
           expect(prefs2.getInt('test'), 2);
         }
       } finally {
-        await prefs1?.close();
-        await prefs2?.close();
-      }
-    });
-
-    test('null_prefs', () async {
-      String name = null;
-      var prefs = await deleteAndOpen(name);
-
-      try {
-        prefs.setInt('test', 1);
-        expect(prefs.getInt('test'), 1);
-
-        if (factory.hasStorage) {
-          await prefs?.close();
-          prefs = await factory.openPreferences(name);
-          expect(prefs.getInt('test'), 1);
-        }
-      } finally {
-        await prefs?.close();
+        await prefs1.close();
+        await prefs2.close();
       }
     });
   });

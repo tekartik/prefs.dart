@@ -64,7 +64,7 @@ double? _parseDouble(dynamic source) {
 
 abstract class PrefsFactoryMixin {
   String fixName(String name) {
-    if (name == null || name.isEmpty) {
+    if (name.isEmpty) {
       return 'default.prefs';
     }
     return name;
@@ -192,8 +192,8 @@ abstract class PrefsMixin implements Prefs {
   }
 
   void checkName(String name) {
-    if (name == null || name.isEmpty) {
-      throw ArgumentError.notNull('prefs key name cannot be null or empty');
+    if (name.isEmpty) {
+      throw ArgumentError.notNull('prefs key name cannot be empty');
     }
     if (name.startsWith('_')) {
       throw ArgumentError('prefs key name cannot start with _');
