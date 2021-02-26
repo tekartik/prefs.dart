@@ -68,6 +68,8 @@ class SharedPreferencesMock {
 
 Future<SharedPreferences> initSharedPreferencesMock(
     [Map<String, Object?>? data]) async {
+  // ignore: invalid_use_of_visible_for_testing_member
+  SharedPreferences.setMockInitialValues(<String, Object>{});
   sharedPreferencesMock = SharedPreferencesMock();
   var preferences = await SharedPreferences.getInstance();
   await preferences.clear();

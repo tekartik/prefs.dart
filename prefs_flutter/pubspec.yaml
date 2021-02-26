@@ -72,3 +72,6 @@ dependency_overrides:
     path: ../prefs
   tekartik_prefs_test:
     path: ../prefs_test
+  # temp nnbd
+  shared_preferences:
+  string_scanner:

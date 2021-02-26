@@ -174,13 +174,5 @@ void main() {
       expect(preferences.getStringList('List'), null);
       expect(log, <Matcher>[isMethodCall('clear', arguments: null)]);
     }, skip: 'Channel mock no longer supported');
-
-    test('mocking', () async {
-      expect(await channel.invokeMethod('getAll'), kTestValues);
-      SharedPreferences.setMockInitialValues(
-          kTestValues2 as Map<String, Object>);
-      expect((await SharedPreferences.getInstance()).getDouble('double'),
-          kTestValues2['flutter.double']);
-    });
   });
 }
