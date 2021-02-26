@@ -8,9 +8,9 @@ dart:
 addons:
   chrome: stable
 before_script:
+  - cd repo_support
   - pub run tekartik_travis_ci_flutter:install
   - source $(pub run tekartik_travis_ci_flutter:env)
 script:
-  - cd repo_support
   - dart pub get
   - dart run tool/travis.dart
