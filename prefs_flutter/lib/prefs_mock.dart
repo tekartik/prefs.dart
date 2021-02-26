@@ -27,10 +27,10 @@ class SharedPreferencesMock {
     init();
   }
 
-  final Map<String, dynamic> data = {};
+  final Map<String?, Object?> data = {};
 
   Future _set(MethodCall methodCall) async {
-    var key = methodCall.arguments['key'] as String;
+    var key = methodCall.arguments['key'] as String?;
     dynamic value = methodCall.arguments['value'];
     data[key] = value;
     return true;
@@ -67,7 +67,7 @@ class SharedPreferencesMock {
 }
 
 Future<SharedPreferences> initSharedPreferencesMock(
-    [Map<String, dynamic> data]) async {
+    [Map<String, Object?>? data]) async {
   sharedPreferencesMock = SharedPreferencesMock();
   var preferences = await SharedPreferences.getInstance();
   await preferences.clear();
@@ -94,4 +94,4 @@ Future<SharedPreferences> initSharedPreferencesMock(
   return preferences;
 }
 
-SharedPreferencesMock sharedPreferencesMock;
+late SharedPreferencesMock sharedPreferencesMock;

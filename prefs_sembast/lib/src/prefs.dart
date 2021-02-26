@@ -13,8 +13,8 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
   final String name;
   @override
   int version = 0;
-  sembast.Database database;
-  final store = sembast.StoreRef<String, dynamic>.main();
+  late sembast.Database database;
+  final store = sembast.StoreRef<String, Object?>.main();
 
   PrefsSembast(this.prefsFactorySembast, this.name);
 
@@ -30,7 +30,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
   @override
   Future save() async {
     if (changes.isNotEmpty) {
-      final changes = Map<String, dynamic>.from(this.changes);
+      final changes = Map<String, Object?>.from(this.changes);
       // devPrint(changes);
       importChanges();
 
@@ -95,8 +95,8 @@ class PrefsFactorySembast extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)
+      {int? version,
+      Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged}) async {
     name = fixName(name);
 

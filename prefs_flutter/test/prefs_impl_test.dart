@@ -7,7 +7,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var factory = PrefsFactoryFlutterMock();
-  SharedPreferences sharedPreferences;
+  late SharedPreferences sharedPreferences;
   group('prefs_impl', () {
     setUpAll(() async {
       sharedPreferences = await SharedPreferences.getInstance();
@@ -22,7 +22,7 @@ void main() {
         expect(prefs.getInt('test'), 1);
 
         if (factory.hasStorage) {
-          await prefs?.close();
+          await prefs.close();
 
           // check prefs
           expect(sharedPreferences.getInt('basic/test'), 1);
@@ -31,30 +31,7 @@ void main() {
           expect(prefs.getInt('test'), 2);
         }
       } finally {
-        await prefs?.close();
-      }
-    });
-
-    test('null_prefs', () async {
-      unawaited(sharedPreferences.remove('test'));
-      String name;
-      var prefs = await factory.openPreferences(name);
-
-      try {
-        prefs.setInt('test', 1);
-        expect(prefs.getInt('test'), 1);
-
-        if (factory.hasStorage) {
-          await prefs?.close();
-
-          // check prefs
-          expect(sharedPreferences.getInt('test'), 1);
-          unawaited(sharedPreferences.setInt('test', 2));
-          prefs = await factory.openPreferences(name);
-          expect(prefs.getInt('test'), 2);
-        }
-      } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
   });

@@ -81,10 +81,14 @@ abstract class Prefs {
   Future close();
 }
 
+/// Prefs factory.
 abstract class PrefsFactory {
   bool get hasStorage; // true if not memory
+
+  /// Delete a prefs.
   Future deletePreferences(String name);
 
+  /// Open a prefs.
   Future<Prefs> openPreferences(String name,
       {int? version,
       Future Function(Prefs pref, int oldVersion, int newVersion)?

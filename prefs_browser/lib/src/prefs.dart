@@ -21,7 +21,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   @override
   Future save() async {
     if (changes.isNotEmpty) {
-      var changes = Map<String, dynamic>.from(this.changes);
+      var changes = Map<String, Object?>.from(this.changes);
       importChanges();
 
       changes.forEach((String name, value) {
