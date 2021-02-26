@@ -10,57 +10,57 @@ abstract class Prefs {
 
   /// Reads a value from persistent storage, throwing an exception if it's not a
   /// bool.
-  bool getBool(String name);
+  bool? getBool(String name);
 
-  String getString(String name);
+  String? getString(String name);
 
   /// Reads a value from persistent storage, throwing an exception if it's not
   /// an int.
-  int getInt(String name);
+  int? getInt(String name);
 
   /// Reads a value from persistent storage, throwing an exception if it's not a
   /// double.
-  double getDouble(String name);
+  double? getDouble(String name);
 
   /// Reads a value from persistent storage, throwing an exception if it's not a
   /// map.
-  Map<String, dynamic> getMap(String name);
+  Map<String, Object?>? getMap(String name);
 
   /// Reads a value from persistent storage, throwing an exception if it's not a
   /// list.
-  List<dynamic> getList(String name);
+  List<Object?>? getList(String name);
 
   /// Saves a string [value] to persistent storage in the background.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setString(String name, String value);
+  void setString(String name, String? value);
 
   /// Saves an integer [value] to persistent storage in the background.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setInt(String name, int value);
+  void setInt(String name, int? value);
 
   /// Saves a map [value] to persistent storage in the background.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setMap(String name, Map value);
+  void setMap(String name, Map? value);
 
   /// Saves a boolean [value] to persistent storage in the background.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setBool(String name, bool value);
+  void setBool(String name, bool? value);
 
   /// Saves a double [value] to persistent storage in the background.
   ///
   /// Android doesn't support storing doubles, so it will be stored as a float.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setDouble(String name, double value);
+  void setDouble(String name, double? value);
 
   /// Saves a list of object [value] to persistent storage in the background.
   ///
   /// If [value] is null, this is equivalent to calling [remove()] on the [key].
-  void setList(String name, List<dynamic> value);
+  void setList(String name, List<Object?>? value);
 
   /// Removes an entry from persistent storage.
   void remove(String name);
@@ -86,7 +86,7 @@ abstract class PrefsFactory {
   Future deletePreferences(String name);
 
   Future<Prefs> openPreferences(String name,
-      {int version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)
+      {int? version,
+      Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged});
 }

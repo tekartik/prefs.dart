@@ -8,28 +8,28 @@ const String signatureKey = '_signature';
 const String prefsVersionKey = '_version';
 const String signatureValue = 'tekartik_prefs';
 
-Map<String, dynamic> _parseJsonObject(dynamic source) {
+Map<String, Object?>? _parseJsonObject(dynamic source) {
   if (source is Map) {
-    return source?.cast<String, dynamic>();
+    return source.cast<String, Object?>();
   } else if (source is String) {
-    return parseJsonObject(source)?.cast<String, dynamic>();
+    return parseJsonObject(source)?.cast<String, Object?>();
   }
   return null;
 }
 
-List<dynamic> _parseJsonArray(dynamic source) {
+List<Object?>? _parseJsonArray(dynamic source) {
   if (source is List) {
-    return source?.cast<dynamic>();
+    return source.cast<Object?>();
   } else if (source is String) {
     dynamic decoded = parseJson(source);
     if (decoded is List) {
-      return decoded?.cast<dynamic>();
+      return decoded.cast<Object?>();
     }
   }
   return null;
 }
 
-int parseInt(dynamic source) {
+int? parseInt(dynamic source) {
   if (source is num) {
     return source.toInt();
   } else if (source is String) {
@@ -53,7 +53,7 @@ int parseInt(dynamic source) {
   return null;
 }
 
-double _parseDouble(dynamic source) {
+double? _parseDouble(dynamic source) {
   if (source is num) {
     return source.toDouble();
   } else if (source is String) {
@@ -72,8 +72,8 @@ abstract class PrefsFactoryMixin {
 }
 
 abstract class PrefsMixin implements Prefs {
-  final data = <String, dynamic>{};
-  final changes = <String, dynamic>{};
+  final data = <String, Object?>{};
+  final changes = <String, Object?>{};
 
   dynamic getSourceValue(String name) => null;
 
@@ -106,19 +106,19 @@ abstract class PrefsMixin implements Prefs {
   }
 
   @override
-  bool getBool(String name) => parseBool(getValue(name));
+  bool? getBool(String name) => parseBool(getValue(name));
 
   @override
-  int getInt(String name) => parseInt(getValue(name));
+  int? getInt(String name) => parseInt(getValue(name));
 
   @override
-  Map<String, dynamic> getMap(String name) => _parseJsonObject(getValue(name));
+  Map<String, Object?>? getMap(String name) => _parseJsonObject(getValue(name));
 
   @override
-  List<dynamic> getList(String name) => _parseJsonArray(getValue(name));
+  List<Object?>? getList(String name) => _parseJsonArray(getValue(name));
 
   @override
-  String getString(String name) {
+  String? getString(String name) {
     // for list and map, convert to json
     dynamic value = getValue(name);
     if (value is Iterable) {
@@ -130,25 +130,25 @@ abstract class PrefsMixin implements Prefs {
   }
 
   @override
-  void setInt(String name, int value) => setValue(name, value);
+  void setInt(String name, int? value) => setValue(name, value);
 
   @override
-  void setMap(String name, Map value) => setValue(name, value);
+  void setMap(String name, Map? value) => setValue(name, value);
 
   @override
-  void setString(String name, String value) => setValue(name, value);
+  void setString(String name, String? value) => setValue(name, value);
 
   @override
-  double getDouble(String name) => _parseDouble(getValue(name));
+  double? getDouble(String name) => _parseDouble(getValue(name));
 
   @override
-  void setBool(String name, bool value) => setValue(name, value);
+  void setBool(String name, bool? value) => setValue(name, value);
 
   @override
-  void setDouble(String name, double value) => setValue(name, value);
+  void setDouble(String name, double? value) => setValue(name, value);
 
   @override
-  void setList(String name, List<dynamic> value) => setValue(name, value);
+  void setList(String name, List<Object?>? value) => setValue(name, value);
 
   @override
   Set<String> get keys {
