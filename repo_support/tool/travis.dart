@@ -9,12 +9,24 @@ Future main() async {
     'prefs_browser',
     'prefs_sembast',
     'prefs_test',
+  ]) {
+    shell = shell.pushd(join('..', dir));
+    await shell.run('''
+    
+    dart pub get
+    dart tool/travis.dart
+    
+''');
+    shell = shell.popd();
+  }
+
+  for (var dir in [
     'prefs_flutter',
   ]) {
     shell = shell.pushd(join('..', dir));
     await shell.run('''
     
-    pub get
+    flutter pub get
     dart tool/travis.dart
     
 ''');
