@@ -25,7 +25,7 @@ Future main() async {
     for (var dir in [
       'prefs_flutter',
     ]) {
-      shell = shell.pushd(dir);
+      shell = shell.pushd(join('..', dir));
       await shell.run('''
   
   flutter packages get
