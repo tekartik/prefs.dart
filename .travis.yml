@@ -5,10 +5,12 @@ dart:
   - stable
   - beta
   - dev
+addons:
+  chrome: stable
 before_script:
   - pub run tekartik_travis_ci_flutter:install
   - source $(pub run tekartik_travis_ci_flutter:env)
-  - pub run chrome_travis:init
-  - source $(pub run chrome_travis:env_rc)
 script:
-  - dart tool/travis.dart
+  - cd repo_support
+  - dart pub get
+  - dart run tool/travis.dart
