@@ -211,7 +211,7 @@ abstract class PrefsMixin implements Prefs {
         value.forEach((dynamic k, dynamic v) => _checkValue(v));
       } else {
         throw ArgumentError(
-            '$value type ${value.runtimeType} in ${testedValue} not supported');
+            '$value type ${value.runtimeType} in $testedValue not supported');
       }
     }
 
