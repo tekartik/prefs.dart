@@ -16,7 +16,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
 
   PrefsBrowser(this.prefsFactoryBrowser, this.name);
 
-  String getKey(String name) => '${this.name}/${name}';
+  String getKey(String name) => '${this.name}/$name';
 
   @override
   Future save() async {
@@ -56,7 +56,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   Set<String> get keys {
     var keys = <String>{};
     for (var key in storage.keys) {
-      if (key.startsWith('${name}/')) {
+      if (key.startsWith('$name/')) {
         keys.add(key.substring(name.length + 1));
       }
     }
@@ -95,7 +95,7 @@ class PrefsFactoryBrowser extends Object
     _allPrefs.remove(name);
     var list = List<String>.from(storage.keys);
     for (final key in list) {
-      if (key.startsWith('${name}/')) {
+      if (key.startsWith('$name/')) {
         storage.remove(key);
       }
     }
