@@ -14,3 +14,6 @@ before_script:
   - source $(pub run tekartik_travis_ci_flutter:env)
 script:
   - dart run tool/travis.dart
+matrix:
+  allow_failures:
+    - dart: dev

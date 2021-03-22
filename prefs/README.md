@@ -7,6 +7,6 @@
     git:
       url: git://github.com/tekartik/prefs.dart
       path: prefs
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
 ```

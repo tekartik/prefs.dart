@@ -10,9 +10,9 @@ import 'package:tekartik_prefs_flutter/prefs_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('mock', () {
-    SharedPreferences preferences;
+    late SharedPreferences preferences;
 
-    const kTestValues = <String, dynamic>{
+    const kTestValues = <String, Object?>{
       'String': 'hello world',
       'bool': true,
       'int': 42,
@@ -54,7 +54,7 @@ void main() {
     });
   });
   group('$SharedPreferences', () {
-    const kTestValues = <String, dynamic>{
+    const kTestValues = <String, Object?>{
       'flutter.String': 'hello world',
       'flutter.bool': true,
       'flutter.int': 42,
@@ -62,7 +62,7 @@ void main() {
       'flutter.List': <String>['foo', 'bar'],
     };
 
-    const kTestValues2 = <String, dynamic>{
+    const kTestValues2 = <String, Object?>{
       'flutter.String': 'goodbye world',
       'flutter.bool': false,
       'flutter.int': 1337,
@@ -71,7 +71,7 @@ void main() {
     };
 
     final log = <MethodCall>[];
-    SharedPreferences preferences;
+    late SharedPreferences preferences;
 
     setUp(() async {
       channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -117,23 +117,23 @@ void main() {
       expect(
         log,
         <Matcher>[
-          isMethodCall('setString', arguments: <String, dynamic>{
+          isMethodCall('setString', arguments: <String, Object?>{
             'key': 'flutter.String',
             'value': kTestValues2['flutter.String']
           }),
-          isMethodCall('setBool', arguments: <String, dynamic>{
+          isMethodCall('setBool', arguments: <String, Object?>{
             'key': 'flutter.bool',
             'value': kTestValues2['flutter.bool']
           }),
-          isMethodCall('setInt', arguments: <String, dynamic>{
+          isMethodCall('setInt', arguments: <String, Object?>{
             'key': 'flutter.int',
             'value': kTestValues2['flutter.int']
           }),
-          isMethodCall('setDouble', arguments: <String, dynamic>{
+          isMethodCall('setDouble', arguments: <String, Object?>{
             'key': 'flutter.double',
             'value': kTestValues2['flutter.double']
           }),
-          isMethodCall('setStringList', arguments: <String, dynamic>{
+          isMethodCall('setStringList', arguments: <String, Object?>{
             'key': 'flutter.List',
             'value': kTestValues2['flutter.List']
           }),
@@ -152,12 +152,6 @@ void main() {
     test('removing', () async {
       const key = 'testKey';
 
-      preferences
-        ..setString(key, null) // ignore: unawaited_futures
-        ..setBool(key, null) // ignore: unawaited_futures
-        ..setInt(key, null) // ignore: unawaited_futures
-        ..setDouble(key, null) // ignore: unawaited_futures
-        ..setStringList(key, null); // ignore: unawaited_futures
       await preferences.remove(key);
       expect(
           log,
@@ -165,7 +159,7 @@ void main() {
             6,
             isMethodCall(
               'remove',
-              arguments: <String, dynamic>{'key': 'flutter.$key'},
+              arguments: <String, Object?>{'key': 'flutter.$key'},
             ),
             growable: true,
           ));
@@ -180,12 +174,5 @@ void main() {
       expect(preferences.getStringList('List'), null);
       expect(log, <Matcher>[isMethodCall('clear', arguments: null)]);
     }, skip: 'Channel mock no longer supported');
-
-    test('mocking', () async {
-      expect(await channel.invokeMethod('getAll'), kTestValues);
-      SharedPreferences.setMockInitialValues(kTestValues2);
-      expect((await SharedPreferences.getInstance()).getDouble('double'),
-          kTestValues2['flutter.double']);
-    });
   });
 }

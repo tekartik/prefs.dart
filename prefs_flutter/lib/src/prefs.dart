@@ -8,15 +8,14 @@ import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_
 
 class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   final PrefsFactoryFlutter factory;
-  SharedPreferences get sharedPreferences => factory.sharedPreferences;
+  SharedPreferences? get sharedPreferences => factory.sharedPreferences;
   @override
   final String name;
 
   @override
   int version = 0;
 
-  PrefsFlutter(this.factory, String name)
-      : name = (name?.isEmpty != true) ? name : null;
+  PrefsFlutter(this.factory, this.name);
 
   @override
   Future close() async {
@@ -24,12 +23,12 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
     _allPrefs.remove(name);
   }
 
-  String getKey(String name) => this.name != null ? '${this.name}/$name' : name;
+  String getKey(String name) => '${this.name}/$name';
 
   @override
   dynamic getSourceValue(String name) {
     var key = getKey(name);
-    var value = sharedPreferences.get(key);
+    var value = sharedPreferences!.get(key);
     // devPrint('loading $name: $value ${value?.runtimeType}');
     return value;
   }
@@ -37,7 +36,7 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   @override
   Future save() async {
     if (changes.isNotEmpty) {
-      var changes = Map<String, dynamic>.from(this.changes);
+      var changes = Map<String, Object?>.from(this.changes);
       importChanges();
 
       var futures = <Future>[];
@@ -45,17 +44,17 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
         // devPrint('saving $name: $value');
         var key = getKey(name);
         if (value == null) {
-          futures.add(sharedPreferences.remove(key));
+          futures.add(sharedPreferences!.remove(key));
         } else if (value is int) {
-          futures.add(sharedPreferences.setInt(key, value));
+          futures.add(sharedPreferences!.setInt(key, value));
         } else if (value is bool) {
-          futures.add(sharedPreferences.setBool(key, value));
+          futures.add(sharedPreferences!.setBool(key, value));
         } else if (value is String) {
-          futures.add(sharedPreferences.setString(key, value));
+          futures.add(sharedPreferences!.setString(key, value));
         } else if (value is double) {
-          futures.add(sharedPreferences.setDouble(key, value));
+          futures.add(sharedPreferences!.setDouble(key, value));
         } else {
-          futures.add(sharedPreferences.setString(key, encodeJson(value)));
+          futures.add(sharedPreferences!.setString(key, encodeJson(value)!));
         }
       });
       await Future.wait(futures);
@@ -65,7 +64,7 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   @override
   Set<String> get keys {
     var keys = <String>{};
-    for (var key in sharedPreferences.getKeys()) {
+    for (var key in sharedPreferences!.getKeys()) {
       if (key.startsWith('$name/')) {
         keys.add(key.substring(name.length + 1));
       }
@@ -74,12 +73,12 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   }
 }
 
-final _allPrefs = <String, PrefsFlutter>{};
+final _allPrefs = <String?, PrefsFlutter>{};
 
 class PrefsFactoryFlutter extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
-  SharedPreferences sharedPreferences;
+  SharedPreferences? sharedPreferences;
   final lock = Lock();
 
   @override
@@ -88,9 +87,9 @@ class PrefsFactoryFlutter extends Object
     await lock.synchronized(() async {
       sharedPreferences ??= await SharedPreferences.getInstance();
       var futures = <Future>[];
-      for (var key in sharedPreferences.getKeys()) {
+      for (var key in sharedPreferences!.getKeys()) {
         if (key.startsWith('$name/')) {
-          futures.add(sharedPreferences.remove(key));
+          futures.add(sharedPreferences!.remove(key));
         }
       }
       await Future.wait(futures);
@@ -102,8 +101,8 @@ class PrefsFactoryFlutter extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)
+      {int? version,
+      Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged}) async {
     var prefs = await lock.synchronized(() async {
       sharedPreferences ??= await SharedPreferences.getInstance();
@@ -127,7 +126,7 @@ class PrefsFactoryFlutter extends Object
   }
 }
 
-PrefsFactoryFlutter _prefsFactoryFlutter;
+PrefsFactoryFlutter? _prefsFactoryFlutter;
 PrefsFactory get prefsFactoryFlutter =>
     _prefsFactoryFlutter ??= PrefsFactoryFlutter();
 
@@ -152,7 +151,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
   @override
   Future save() async {
     if (this.changes.isNotEmpty) {
-      Map<String, dynamic> changes = Map.from(this.changes);
+      Map<String, Object?> changes = Map.from(this.changes);
       // devPrint(changes);
       importChanges();
 

@@ -6,16 +6,16 @@ homepage:
 publish_to: none
 
 environment:
-  sdk: '>=2.10.0-0 <3.0.0'
+  sdk: '>=2.12.0-259.16.beta <3.0.0'
 
 dependencies:
   tekartik_prefs:
     git:
       url: git://github.com/tekartik/prefs.dart
       path: prefs
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
-  sembast: '>=2.0.0'
+  sembast: '>=3.0.0'
   path:
 
 
@@ -27,8 +27,8 @@ dev_dependencies:
   tekartik_prefs_test:
     git:
       url: git://github.com/tekartik/prefs.dart
-      path: db_test
-      ref: dart2
+      path: prefs_test
+      ref: null_safety
   process_run: '>=0.10.2'
 
 dependency_overrides:

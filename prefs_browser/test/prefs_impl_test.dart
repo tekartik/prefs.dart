@@ -20,7 +20,7 @@ void main() {
         expect(prefs.getInt('test'), 1);
 
         if (factory.hasStorage) {
-          await prefs?.close();
+          await prefs.close();
 
           // check prefs
           expect(window.localStorage['basic/test'], '1');
@@ -29,30 +29,7 @@ void main() {
           expect(prefs.getInt('test'), 2);
         }
       } finally {
-        await prefs?.close();
-      }
-    });
-
-    test('null_prefs', () async {
-      window.localStorage.remove('test');
-      String name;
-      var prefs = await factory.openPreferences(name);
-
-      try {
-        prefs.setInt('test', 1);
-        expect(prefs.getInt('test'), 1);
-
-        if (factory.hasStorage) {
-          await prefs?.close();
-
-          // check prefs
-          expect(window.localStorage['test'], '1');
-          window.localStorage['test'] = '2';
-          prefs = await factory.openPreferences(name);
-          expect(prefs.getInt('test'), 2);
-        }
-      } finally {
-        await prefs?.close();
+        await prefs.close();
       }
     });
   });
