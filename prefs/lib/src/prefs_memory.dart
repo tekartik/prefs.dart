@@ -15,7 +15,7 @@ class PrefsMemory extends Object with PrefsMixin implements Prefs {
 
   @override
   Future close() async {
-    _allPrefs.remove(name);
+    // Do nothing
   }
 
   // by default it is null
@@ -23,11 +23,11 @@ class PrefsMemory extends Object with PrefsMixin implements Prefs {
   dynamic getSourceValue(String name) => null;
 }
 
-final Map<String, PrefsMemory> _allPrefs = <String, PrefsMemory>{};
-
 class PrefsFactoryMemory extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
+  final Map<String, PrefsMemory> _allPrefs = <String, PrefsMemory>{};
+
   final lock = Lock();
 
   @override
@@ -60,5 +60,9 @@ class PrefsFactoryMemory extends Object
 
 PrefsFactoryMemory? _prefsFactoryMemory;
 
+/// Global in memory prefs
 PrefsFactory get prefsFactoryMemory =>
     _prefsFactoryMemory ??= PrefsFactoryMemory();
+
+/// New empty memory prefs factory in memory
+PrefsFactory newPrefsFactoryMemory() => PrefsFactoryMemory();

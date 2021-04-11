@@ -1,6 +1,6 @@
 import 'dart:async';
 
-export 'src/prefs_memory.dart' show prefsFactoryMemory;
+export 'src/prefs_memory.dart' show prefsFactoryMemory, newPrefsFactoryMemory;
 
 /// Common Prefs interface.
 abstract class Prefs {
