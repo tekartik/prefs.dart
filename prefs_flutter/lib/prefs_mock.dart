@@ -29,10 +29,18 @@ class SharedPreferencesMock {
 
   final Map<String?, Object?> data = {};
 
-  Future _set(MethodCall methodCall) async {
-    var key = methodCall.arguments['key'] as String?;
-    dynamic value = methodCall.arguments['value'];
+  bool _set(MethodCall methodCall) {
+    var argumentsMap = methodCall.arguments as Map;
+    var key = argumentsMap['key'] as String?;
+    dynamic value = argumentsMap['value'];
     data[key] = value;
+    return true;
+  }
+
+  bool _remove(MethodCall methodCall) {
+    var argumentsMap = methodCall.arguments as Map;
+    var key = argumentsMap['key'] as String?;
+    data.remove(key);
     return true;
   }
 
@@ -53,9 +61,7 @@ class SharedPreferencesMock {
       data.clear();
       return true;
     } else if (methodCall.method == 'remove') {
-      var key = methodCall.arguments['key'];
-      data.remove(key);
-      return true;
+      return _remove(methodCall);
     } else {
       throw 'invalid $methodCall';
     }
