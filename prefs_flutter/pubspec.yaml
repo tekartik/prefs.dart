@@ -1,7 +1,6 @@
 name: tekartik_prefs_flutter
 description: Prefs implementation for flutter (on Shared Preferences)
 version: 0.1.0
-author:
 homepage:
 publish_to: none
 
