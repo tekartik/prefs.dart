@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:tekartik_prefs_flutter/src/prefs.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tekartik_prefs_flutter/src/prefs.dart';
 
 class PrefsFactoryFlutterMock extends PrefsFactoryFlutter {
   static bool _inited = false;
@@ -68,7 +68,7 @@ class SharedPreferencesMock {
   }
 
   void init() {
-    channel.setMockMethodCallHandler(_handler);
+    channel.setMethodCallHandler(_handler);
   }
 }
 
