@@ -1,7 +1,6 @@
 name: tekartik_prefs_flutter
 description: Prefs implementation for flutter (on Shared Preferences)
 version: 0.1.0
-author:
 homepage:
 publish_to: none
 
@@ -28,7 +27,12 @@ dev_dependencies:
       path: prefs_test
       ref: null_safety
   process_run:
-
+  tekartik_app_lints_flutter:
+    git:
+      url: git://github.com/tekartik/app_flutter_utils.dart
+      ref: null_safety
+      path: app_lints
+    version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
@@ -72,6 +76,3 @@ dependency_overrides:
     path: ../prefs
   tekartik_prefs_test:
     path: ../prefs_test
-  # temp nnbd
-  shared_preferences:
-  string_scanner:

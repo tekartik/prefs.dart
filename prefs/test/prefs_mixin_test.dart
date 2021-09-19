@@ -1,5 +1,5 @@
-import 'package:tekartik_prefs/src/prefs_mixin.dart';
 import 'package:tekartik_common_utils/bool_utils.dart';
+import 'package:tekartik_prefs/src/prefs_mixin.dart';
 import 'package:test/test.dart';
 
 void main() {

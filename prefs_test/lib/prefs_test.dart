@@ -46,7 +46,7 @@ void runTests(PrefsFactory factory) {
     test('version', () async {
       var name = 'version.prefs';
       await factory.deletePreferences(name);
-      bool onVersionChangedCalled = false;
+      var onVersionChangedCalled = false;
       Future onVersionChanged1(
           Prefs prefs, int oldVersion, int newVersion) async {
         expect(oldVersion, 0);
@@ -197,7 +197,7 @@ void runTests(PrefsFactory factory) {
       var name = 'type_conversion.prefs';
       var prefs = await deleteAndOpen(name);
       try {
-        _check() {
+        void _check() {
           expect(prefs.getBool('testBool'), true);
           expect(prefs.getString('testBool'), 'true');
           expect(prefs.getInt('testBool'), 1, reason: 'int testBool');

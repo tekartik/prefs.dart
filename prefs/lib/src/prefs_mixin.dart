@@ -206,7 +206,9 @@ abstract class PrefsMixin implements Prefs {
       if (value == null || value is String || value is num || value is bool) {
         // ok
       } else if (value is List) {
-        value.forEach((dynamic v) => _checkValue(v));
+        for (var v in value) {
+          _checkValue(v);
+        }
       } else if (value is Map) {
         value.forEach((dynamic k, dynamic v) => _checkValue(v));
       } else {
