@@ -10,9 +10,9 @@ environment:
 dependencies:
   tekartik_prefs:
     git:
-      url: git://github.com/tekartik/prefs.dart
+      url: https://github.com/tekartik/prefs.dart
       path: prefs
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
   sembast: '>=3.0.0'
   path:
@@ -25,9 +25,9 @@ dev_dependencies:
   test:
   tekartik_prefs_test:
     git:
-      url: git://github.com/tekartik/prefs.dart
+      url: https://github.com/tekartik/prefs.dart
       path: prefs_test
-      ref: null_safety
+      ref: dart2_3
   process_run: '>=0.10.2'
 
 dependency_overrides:

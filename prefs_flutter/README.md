@@ -5,9 +5,9 @@
 ```yaml
   tekartik_prefs_flutter:
     git:
-      url: git://github.com/tekartik/prefs.dart
+      url: https://github.com/tekartik/prefs.dart
       path: prefs_flutter
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
 ```
 
