@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart' as sembast;
-import 'package:synchronized/synchronized.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart' hide parseInt;
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
