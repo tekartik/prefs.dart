@@ -12,9 +12,9 @@ dependencies:
     sdk: flutter
   tekartik_prefs:
     git:
-      url: git://github.com/tekartik/prefs.dart
+      url: https://github.com/tekartik/prefs.dart
       path: prefs
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
   shared_preferences:
 
@@ -23,14 +23,14 @@ dev_dependencies:
     sdk: flutter
   tekartik_prefs_test:
     git:
-      url: git://github.com/tekartik/prefs.dart
+      url: https://github.com/tekartik/prefs.dart
       path: prefs_test
-      ref: null_safety
+      ref: dart2_3
   process_run:
   tekartik_app_lints_flutter:
     git:
-      url: git://github.com/tekartik/app_flutter_utils.dart
-      ref: null_safety
+      url: https://github.com/tekartik/app_flutter_utils.dart
+      ref: dart2_3
       path: app_lints
     version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the
