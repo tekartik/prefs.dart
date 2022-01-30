@@ -16,7 +16,7 @@ dependencies:
       path: prefs
       ref: dart2_3
     version: '>=0.1.0'
-  shared_preferences:
+  shared_preferences: '>=2.0.0'
 
 dev_dependencies:
   flutter_test:
@@ -27,11 +27,11 @@ dev_dependencies:
       path: prefs_test
       ref: dart2_3
   process_run:
-  tekartik_app_lints_flutter:
+  tekartik_lints_flutter:
     git:
-      url: https://github.com/tekartik/app_flutter_utils.dart
+      url: https://github.com/tekartik/common_flutter.dart
       ref: dart2_3
-      path: app_lints
+      path: packages/lints_flutter
     version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
