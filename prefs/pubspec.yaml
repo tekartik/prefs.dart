@@ -12,7 +12,7 @@ dependencies:
       url: https://github.com/tekartik/common_utils.dart
       ref: dart2_3
     version: '>=0.7.2'
-
+  synchronized:
 dev_dependencies:
   dev_test: '>=0.13.0+1'
   test: '>=1.16.4'
