@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:synchronized/synchronized.dart';
-import 'package:tekartik_common_utils/json_utils.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
 
+import 'import.dart'; // ignore: implementation_imports
+
 class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   final PrefsFactoryFlutter factory;
+
   SharedPreferences? get sharedPreferences => factory.sharedPreferences;
   @override
   final String name;
@@ -127,6 +129,7 @@ class PrefsFactoryFlutter extends Object
 }
 
 PrefsFactoryFlutter? _prefsFactoryFlutter;
+
 PrefsFactory get prefsFactoryFlutter =>
     _prefsFactoryFlutter ??= PrefsFactoryFlutter();
 
