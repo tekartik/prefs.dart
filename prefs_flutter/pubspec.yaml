@@ -17,8 +17,9 @@ dependencies:
       ref: dart2_3
     version: '>=0.1.0'
   shared_preferences: '>=2.0.0'
-
+  synchronized:
 dev_dependencies:
+  dev_test:
   flutter_test:
     sdk: flutter
   tekartik_prefs_test:
