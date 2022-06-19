@@ -153,14 +153,14 @@ abstract class PrefsMixin implements Prefs {
   @override
   Set<String> get keys {
     var keys = <String>{};
-    void _add(String name, dynamic value) {
+    void add(String name, dynamic value) {
       if (value != null && name != prefsVersionKey && name != signatureKey) {
         keys.add(name);
       }
     }
 
-    data.forEach(_add);
-    changes.forEach(_add);
+    data.forEach(add);
+    changes.forEach(add);
     return keys;
   }
 
@@ -202,22 +202,22 @@ abstract class PrefsMixin implements Prefs {
 
   void checkValue(dynamic value) {
     dynamic testedValue = value;
-    void _checkValue(dynamic value) {
+    void checkValue(dynamic value) {
       if (value == null || value is String || value is num || value is bool) {
         // ok
       } else if (value is List) {
         for (var v in value) {
-          _checkValue(v);
+          checkValue(v);
         }
       } else if (value is Map) {
-        value.forEach((dynamic k, dynamic v) => _checkValue(v));
+        value.forEach((dynamic k, dynamic v) => checkValue(v));
       } else {
         throw ArgumentError(
             '$value type ${value.runtimeType} in $testedValue not supported');
       }
     }
 
-    _checkValue(value);
+    checkValue(value);
   }
 
   @override
