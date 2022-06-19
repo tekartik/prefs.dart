@@ -197,7 +197,7 @@ void runTests(PrefsFactory factory) {
       var name = 'type_conversion.prefs';
       var prefs = await deleteAndOpen(name);
       try {
-        void _check() {
+        void check() {
           expect(prefs.getBool('testBool'), true);
           expect(prefs.getString('testBool'), 'true');
           expect(prefs.getInt('testBool'), 1, reason: 'int testBool');
@@ -247,12 +247,12 @@ void runTests(PrefsFactory factory) {
 
         prefs.setMap('testMap', {'test': 1});
         prefs.setList('testList', ['test']);
-        _check();
+        check();
 
         if (factory.hasStorage) {
           await prefs.close();
           prefs = await factory.openPreferences(name);
-          _check();
+          check();
         }
       } finally {
         await prefs.close();
