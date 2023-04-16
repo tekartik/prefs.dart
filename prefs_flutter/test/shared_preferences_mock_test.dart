@@ -73,8 +73,11 @@ void main() {
     final log = <MethodCall>[];
     late SharedPreferences preferences;
 
+    /// Supports for access being non-nullable in Dart 3.
+    T? makeNullable<T>(T? value) => value;
     setUp(() async {
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      makeNullable(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'getAll') {
