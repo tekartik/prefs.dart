@@ -74,7 +74,8 @@ void main() {
     late SharedPreferences preferences;
 
     setUp(() async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'getAll') {
           return kTestValues;
