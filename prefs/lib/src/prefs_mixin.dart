@@ -62,7 +62,7 @@ double? _parseDouble(dynamic source) {
   return null;
 }
 
-abstract class PrefsFactoryMixin {
+abstract mixin class PrefsFactoryMixin {
   String fixName(String name) {
     if (name.isEmpty) {
       return 'default.prefs';
@@ -71,7 +71,7 @@ abstract class PrefsFactoryMixin {
   }
 }
 
-abstract class PrefsMixin implements Prefs {
+abstract mixin class PrefsMixin implements Prefs {
   final data = <String, Object?>{};
   final changes = <String, Object?>{};
 

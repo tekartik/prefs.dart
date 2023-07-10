@@ -5,7 +5,7 @@ homepage:
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -14,7 +14,7 @@ dependencies:
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   shared_preferences: '>=2.0.0'
   synchronized:
@@ -26,12 +26,12 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_test
-      ref: dart2_3
+      ref: dart3a
   process_run:
   tekartik_lints_flutter:
     git:
       url: https://github.com/tekartik/common_flutter.dart
-      ref: dart2_3
+      ref: dart3a
       path: packages/lints_flutter
     version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the
