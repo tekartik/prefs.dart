@@ -7,7 +7,7 @@
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_flutter
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
 ```
 
