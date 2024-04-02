@@ -1,10 +1,17 @@
-import 'dart:html';
-
+//import 'dart:html';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
+import 'package:web/web.dart' show window, Storage;
 
 Storage get storage => window.localStorage;
+Iterable<String> get _nativeStorageKeys {
+  var keys = <String>[];
+  for (var i = 0; i < storage.length; i++) {
+    keys.add(storage.key(i)!);
+  }
+  return keys;
+}
 
 class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   final PrefsFactoryBrowser prefsFactoryBrowser;
@@ -27,11 +34,11 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
         // devPrint('saving $name: $value');
         var key = getKey(name);
         if (value == null) {
-          storage.remove(key);
+          storage.removeItem(key);
         } else if (value is num || value is bool || value is String) {
-          storage[key] = value.toString();
+          storage.setItem(key, value.toString());
         } else {
-          storage[key] = encodeJson(value)!;
+          storage.setItem(key, encodeJson(value)!);
         }
       });
     }
@@ -46,7 +53,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   @override
   dynamic getSourceValue(String name) {
     var key = getKey(name);
-    var value = storage[key];
+    var value = storage.getItem(key);
     // devPrint('loading $name: $value ${value?.runtimeType}');
     return value;
   }
@@ -54,7 +61,7 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   @override
   Set<String> get keys {
     var keys = <String>{};
-    for (var key in storage.keys) {
+    for (var key in _nativeStorageKeys) {
       if (key.startsWith('$name/')) {
         keys.add(key.substring(name.length + 1));
       }
@@ -92,10 +99,10 @@ class PrefsFactoryBrowser extends Object
   @override
   Future deletePreferences(String name) async {
     _allPrefs.remove(name);
-    var list = List<String>.from(storage.keys);
+    var list = List<String>.from(_nativeStorageKeys);
     for (final key in list) {
       if (key.startsWith('$name/')) {
-        storage.remove(key);
+        storage.removeItem(key);
       }
     }
   }
