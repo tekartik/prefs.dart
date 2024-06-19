@@ -1,4 +1,3 @@
-//import 'dart:html';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
