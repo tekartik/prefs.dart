@@ -1,17 +1,16 @@
 @TestOn('browser')
 library tekartik_db_browser.test.prefs_impl_test;
 
-import 'dart:html';
-
 import 'package:tekartik_prefs_browser/prefs.dart';
 import 'package:test/test.dart';
+import 'package:web/web.dart';
 
 void main() {
   var factory = prefsFactoryBrowser;
 
   group('prefs_impl', () {
     test('basic_prefs', () async {
-      window.localStorage.remove('basic/test');
+      window.localStorage.removeItem('basic/test');
       final name = 'basic';
       var prefs = await factory.openPreferences(name);
 
