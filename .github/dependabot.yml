@@ -3,37 +3,32 @@
 version: 2
 
 enable-beta-ecosystems: true
+
 updates:
   - package-ecosystem: "pub"
     directory: "prefs"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "prefs_browser"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "prefs_flutter"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "prefs_sembast"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "prefs_test"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "repo_support"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
