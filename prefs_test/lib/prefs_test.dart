@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:test/test.dart';
+export 'package:tekartik_prefs/prefs.dart';
 
 void main() {
   runTests(prefsFactoryMemory);

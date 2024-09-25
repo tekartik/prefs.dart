@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs_flutter/src/prefs.dart';
+export 'package:tekartik_prefs/prefs.dart';
 
 class PrefsFactoryFlutterMock extends PrefsFactoryFlutter {
   static bool _inited = false;
