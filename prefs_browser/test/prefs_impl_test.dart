@@ -1,5 +1,5 @@
 @TestOn('browser')
-library tekartik_db_browser.test.prefs_impl_test;
+library;
 
 import 'package:tekartik_prefs_browser/prefs.dart';
 import 'package:test/test.dart';

@@ -1,5 +1,5 @@
 @TestOn('vm')
-library tekartik_db_browser.test.all_test;
+library;
 
 import 'package:path/path.dart';
 import 'package:sembast/sembast_io.dart';
