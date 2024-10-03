@@ -1,4 +1,4 @@
-library tekartik_db_browser.test.all_test;
+library;
 
 import 'package:sembast/sembast_memory.dart';
 import 'package:tekartik_prefs_sembast/prefs.dart';
