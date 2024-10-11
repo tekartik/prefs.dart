@@ -1,17 +1,23 @@
 import 'dart:async';
 
+import 'src/prefs_mixin.dart';
+
 export 'src/prefs_memory.dart' show prefsFactoryMemory, newPrefsFactoryMemory;
+export 'src/prefs_mixin.dart' show PrefsOnVersionChangedFunction;
 
 /// Common Prefs interface.
 abstract class Prefs {
+  /// The name of the prefs.
   String get name;
 
+  /// The version of the prefs.
   int get version;
 
   /// Reads a value from persistent storage, throwing an exception if it's not a
   /// bool.
   bool? getBool(String name);
 
+  /// Reads a string value from persistent storage.
   String? getString(String name);
 
   /// Reads a value from persistent storage, throwing an exception if it's not
@@ -83,14 +89,13 @@ abstract class Prefs {
 
 /// Prefs factory.
 abstract class PrefsFactory {
-  bool get hasStorage; // true if not memory
+  /// true if not memory
+  bool get hasStorage;
 
   /// Delete a prefs.
   Future deletePreferences(String name);
 
   /// Open a prefs.
   Future<Prefs> openPreferences(String name,
-      {int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged});
+      {int? version, PrefsOnVersionChangedFunction? onVersionChanged});
 }

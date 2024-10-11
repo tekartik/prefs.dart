@@ -1,6 +1,6 @@
 # tekartik recommended lints (extension over google lints and pedantic)
-include: package:tekartik_lints/strict.yaml
+include: package:tekartik_lints/package.yaml
 
 linter:
   rules:
-    depend_on_referenced_packages: false
+    # depend_on_referenced_packages: false

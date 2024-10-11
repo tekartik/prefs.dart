@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:synchronized/synchronized.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
 
-import 'import.dart'; // ignore: implementation_imports
+// ignore: implementation_imports
 
 class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   final PrefsFactoryFlutter factory;
@@ -40,7 +38,10 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
     if (changes.isNotEmpty) {
       var changes = Map<String, Object?>.from(this.changes);
       importChanges();
-
+      if (pendingClear) {
+        pendingClear = false;
+        await sharedPreferences!.clear();
+      }
       var futures = <Future>[];
       changes.forEach((String name, value) {
         // devPrint('saving $name: $value');
@@ -103,7 +104,7 @@ class PrefsFactoryFlutter extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int? version,
+      {final int? version,
       Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged}) async {
     var prefs = await lock.synchronized(() async {
@@ -115,13 +116,8 @@ class PrefsFactoryFlutter extends Object
         _allPrefs[name] = prefs;
       }
 
-      var oldVersion = prefs.version;
-      if (version != null && version != oldVersion) {
-        if (onVersionChanged != null) {
-          await onVersionChanged(prefs, oldVersion, version);
-        }
-        prefs.version = version;
-      }
+      await prefs.handleMigration(
+          version: version, onVersionChanged: onVersionChanged);
       return prefs;
     });
     return prefs;

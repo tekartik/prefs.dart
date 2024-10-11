@@ -4,6 +4,7 @@ import 'package:synchronized/synchronized.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart';
 
+/// In memory prefs
 class PrefsMemory extends Object with PrefsMixin implements Prefs {
   @override
   final String name;
@@ -11,6 +12,7 @@ class PrefsMemory extends Object with PrefsMixin implements Prefs {
   @override
   int version = 0;
 
+  /// Create a memory prefs with a name
   PrefsMemory(this.name);
 
   @override
@@ -23,28 +25,24 @@ class PrefsMemory extends Object with PrefsMixin implements Prefs {
   dynamic getSourceValue(String name) => null;
 }
 
+/// In memory prefs factory
 class PrefsFactoryMemory extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
   final Map<String, PrefsMemory> _allPrefs = <String, PrefsMemory>{};
 
-  final lock = Lock();
+  final _lock = Lock();
 
   @override
   Future<Prefs> openPreferences(String name,
       {int? version,
       Future Function(Prefs pref, int oldVersion, int newVersion)?
           onVersionChanged}) async {
-    return await lock.synchronized(() async {
+    return await _lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= PrefsMemory(name);
 
-      final oldVersion = prefs.version;
-      if (version != null && version != oldVersion) {
-        if (onVersionChanged != null) {
-          await onVersionChanged(prefs, oldVersion, version);
-        }
-        prefs.version = version;
-      }
+      await prefs.handleMigration(
+          version: version, onVersionChanged: onVersionChanged);
       return prefs;
     });
   }
