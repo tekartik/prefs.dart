@@ -83,8 +83,7 @@ class PrefsFactoryBrowser extends Object
   @override
   Future<Prefs> openPreferences(String name,
       {final int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged}) async {
+      PrefsOnVersionChangedFunction? onVersionChanged}) async {
     return await lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= PrefsBrowser(this, name);
 

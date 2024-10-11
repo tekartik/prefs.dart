@@ -282,5 +282,5 @@ abstract mixin class PrefsMixin implements Prefs {
 }
 
 /// Prefs on version changed function
-typedef PrefsOnVersionChangedFunction = Future<Object?> Function(
+typedef PrefsOnVersionChangedFunction = FutureOr<void> Function(
     Prefs pref, int oldVersion, int newVersion);

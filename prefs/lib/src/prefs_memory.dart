@@ -35,9 +35,7 @@ class PrefsFactoryMemory extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged}) async {
+      {int? version, PrefsOnVersionChangedFunction? onVersionChanged}) async {
     return await _lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= PrefsMemory(name);
 

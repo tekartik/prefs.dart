@@ -105,8 +105,7 @@ class PrefsFactoryFlutter extends Object
   @override
   Future<Prefs> openPreferences(String name,
       {final int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged}) async {
+      PrefsOnVersionChangedFunction? onVersionChanged}) async {
     var prefs = await lock.synchronized(() async {
       sharedPreferences ??= await SharedPreferences.getInstance();
       var prefs = _allPrefs[name];

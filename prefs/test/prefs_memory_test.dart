@@ -17,5 +17,13 @@ void main() {
       prefs = await newPrefsFactoryMemory().openPreferences('test1');
       expect(prefs.getBool('test'), isNull);
     });
+    test('onVersionChanged', () async {
+      var prefs = await newPrefsFactoryMemory().openPreferences('test1',
+          version: 1, onVersionChanged: (prefs, oldVersion, newVersion) async {
+        expect(oldVersion, 0);
+        expect(newVersion, 1);
+      });
+      await prefs.close();
+    });
   });
 }
