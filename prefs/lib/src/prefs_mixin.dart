@@ -1,12 +1,14 @@
-import 'dart:async';
-
-import 'package:tekartik_common_utils/bool_utils.dart';
-import 'package:tekartik_common_utils/json_utils.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/prefs.dart';
 
-const String signatureKey = '_signature';
-const String prefsVersionKey = '_version';
-const String signatureValue = 'tekartik_prefs';
+/// signature key
+const String prefsSignatureKey = '__tekartik_prefs_signature__';
+
+/// prefs version key
+const String prefsVersionKey = '__tekartik_prefs_version__';
+
+/// signature value
+const String prefsSignatureValue = 'tekartik_prefs';
 
 Map<String, Object?>? _parseJsonObject(dynamic source) {
   if (source is Map) {
@@ -29,6 +31,7 @@ List<Object?>? _parseJsonArray(dynamic source) {
   return null;
 }
 
+/// Parse an int value
 int? parseInt(dynamic source) {
   if (source is num) {
     return source.toInt();
@@ -62,7 +65,9 @@ double? _parseDouble(dynamic source) {
   return null;
 }
 
+/// Prefs mixin
 abstract mixin class PrefsFactoryMixin {
+  /// Fix the name
   String fixName(String name) {
     if (name.isEmpty) {
       return 'default.prefs';
@@ -71,14 +76,25 @@ abstract mixin class PrefsFactoryMixin {
   }
 }
 
+/// Prefs mixin
 abstract mixin class PrefsMixin implements Prefs {
+  /// Pending clear in progress
+  var pendingClear = false;
+  set version(int version);
+
+  /// The data
   final data = <String, Object?>{};
+
+  /// The changes
   final changes = <String, Object?>{};
 
+  /// Get the source value
   dynamic getSourceValue(String name) => null;
 
+  /// Revert changes
   void revertChanges() => changes.clear();
 
+  /// Get the value
   dynamic getValue(String name) {
     if (changes.containsKey(name)) {
       return changes[name];
@@ -90,18 +106,50 @@ abstract mixin class PrefsMixin implements Prefs {
     return value;
   }
 
-  void setValue(String name, dynamic value) {
-    checkName(name);
+  /// Set a value
+  void setValue(String name, Object? value, {bool noCheckName = false}) {
+    if (!noCheckName) {
+      checkName(name);
+    }
     checkValue(value);
     setDirty();
     changes[name] = value;
   }
 
+  /// True if dirty
+  bool get isDirty => changes.isNotEmpty;
+
+  /// Set dirty
   void setDirty() {
-    if (changes.isEmpty) {
+    if (!isDirty) {
       scheduleMicrotask(() async {
         await save();
       });
+    }
+  }
+
+  /// Handle migration
+  Future<void> handleMigration(
+      {final int? version,
+      PrefsOnVersionChangedFunction? onVersionChanged}) async {
+    var signature = getString(prefsSignatureKey);
+    if (signature == prefsSignatureValue) {
+      clear();
+      setValue(prefsSignatureKey, prefsSignatureValue, noCheckName: true);
+      setValue(prefsVersionKey, 0, noCheckName: true);
+    }
+    final prefsNewVersion = version;
+    final prefsOldVersion = getInt(prefsVersionKey) ?? 0;
+    this.version = prefsOldVersion;
+    if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
+      if (onVersionChanged != null) {
+        await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
+      }
+      setValue(prefsVersionKey, prefsNewVersion, noCheckName: true);
+      this.version = prefsNewVersion;
+    }
+    if (isDirty) {
+      await save();
     }
   }
 
@@ -154,7 +202,9 @@ abstract mixin class PrefsMixin implements Prefs {
   Set<String> get keys {
     var keys = <String>{};
     void add(String name, dynamic value) {
-      if (value != null && name != prefsVersionKey && name != signatureKey) {
+      if (value != null &&
+          name != prefsVersionKey &&
+          name != prefsSignatureKey) {
         keys.add(name);
       }
     }
@@ -166,14 +216,17 @@ abstract mixin class PrefsMixin implements Prefs {
 
   @override
   void clear() {
+    pendingClear = true;
     setDirty();
     changes.clear();
-    data.forEach((String name, dynamic value) {
-      changes[name] = null;
+    data.forEach((String name, Object? value) {
+      if (name != prefsVersionKey && name != prefsSignatureKey) {
+        changes[name] = null;
+      }
     });
   }
 
-  // to call after saving
+  /// to call after saving
   void importChanges() {
     data.addAll(changes);
     changes.clear();
@@ -191,6 +244,7 @@ abstract mixin class PrefsMixin implements Prefs {
     return keys.contains(key);
   }
 
+  /// Check the name
   void checkName(String name) {
     if (name.isEmpty) {
       throw ArgumentError.notNull('prefs key name cannot be empty');
@@ -200,6 +254,7 @@ abstract mixin class PrefsMixin implements Prefs {
     }
   }
 
+  /// Check the value
   void checkValue(dynamic value) {
     dynamic testedValue = value;
     void checkValue(dynamic value) {
@@ -225,3 +280,7 @@ abstract mixin class PrefsMixin implements Prefs {
     setValue(name, null);
   }
 }
+
+/// Prefs on version changed function
+typedef PrefsOnVersionChangedFunction = FutureOr<void> Function(
+    Prefs pref, int oldVersion, int newVersion);

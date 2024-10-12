@@ -14,6 +14,7 @@ Iterable<String> get _nativeStorageKeys {
 
 class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   final PrefsFactoryBrowser prefsFactoryBrowser;
+
   @override
   final String name;
   @override
@@ -28,7 +29,10 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
     if (changes.isNotEmpty) {
       var changes = Map<String, Object?>.from(this.changes);
       importChanges();
-
+      if (pendingClear) {
+        pendingClear = false;
+        storage.clear();
+      }
       changes.forEach((String name, value) {
         // devPrint('saving $name: $value');
         var key = getKey(name);
@@ -78,19 +82,14 @@ class PrefsFactoryBrowser extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged}) async {
+      {final int? version,
+      PrefsOnVersionChangedFunction? onVersionChanged}) async {
     return await lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= PrefsBrowser(this, name);
 
-      final oldVersion = prefs.version;
-      if (version != null && version != oldVersion) {
-        if (onVersionChanged != null) {
-          await onVersionChanged(prefs, oldVersion, version);
-        }
-        prefs.version = version;
-      }
+      await prefs.handleMigration(
+          version: version, onVersionChanged: onVersionChanged);
+
       return prefs;
     });
   }

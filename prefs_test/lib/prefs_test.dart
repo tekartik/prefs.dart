@@ -44,6 +44,47 @@ void runTests(PrefsFactory factory) {
         await prefs.close();
       }
     });
+    test('change prefs during version change', () async {
+      var name = 'version.prefs';
+      await factory.deletePreferences(name);
+
+      Future onVersionChanged1(
+          Prefs prefs, int oldVersion, int newVersion) async {
+        prefs.setInt('value', 1);
+      }
+
+      var prefs = await factory.openPreferences(name,
+          version: 1, onVersionChanged: onVersionChanged1);
+      expect(prefs.version, 1);
+      expect(prefs.getInt('value'), 1);
+      await prefs.close();
+
+      Future onVersionChanged2(
+          Prefs prefs, int oldVersion, int newVersion) async {
+        expect(prefs.getInt('value'), 1);
+        prefs.setInt('value', 2);
+      }
+
+      prefs = await factory.openPreferences(name,
+          version: 2, onVersionChanged: onVersionChanged2);
+      expect(prefs.version, 2);
+      expect(prefs.getInt('value'), 2);
+      await prefs.close();
+
+      // clear during version change
+      Future onVersionChanged3(
+          Prefs prefs, int oldVersion, int newVersion) async {
+        prefs.clear();
+        prefs.setInt('value2', 3);
+      }
+
+      prefs = await factory.openPreferences(name,
+          version: 3, onVersionChanged: onVersionChanged3);
+      expect(prefs.version, 3);
+      expect(prefs.getInt('value'), isNull);
+      expect(prefs.getInt('value2'), 3);
+      await prefs.close();
+    });
     test('version', () async {
       var name = 'version.prefs';
       await factory.deletePreferences(name);
@@ -56,17 +97,17 @@ void runTests(PrefsFactory factory) {
         onVersionChangedCalled = true;
       }
 
-      var prefs = await factory.openPreferences('version.prefs',
+      var prefs = await factory.openPreferences(name,
           version: 1, onVersionChanged: onVersionChanged1);
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, true);
       onVersionChangedCalled = false;
-
-      prefs = await factory.openPreferences('version.prefs',
+      await prefs.close();
+      prefs = await factory.openPreferences(name,
           version: 1, onVersionChanged: onVersionChanged1);
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, false);
-
+      await prefs.close();
       Future onVersionChanged2(
           Prefs prefs, int oldVersion, int newVersion) async {
         expect(oldVersion, 1);
@@ -75,7 +116,7 @@ void runTests(PrefsFactory factory) {
         onVersionChangedCalled = true;
       }
 
-      prefs = await factory.openPreferences('version.prefs',
+      prefs = await factory.openPreferences(name,
           version: 2, onVersionChanged: onVersionChanged2);
       expect(prefs.version, 2);
       expect(onVersionChangedCalled, true);

@@ -12,7 +12,9 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
   int version = 0;
   late sembast.Database database;
   final store = sembast.StoreRef<String, Object?>.main();
-
+  late final metaStore = sembast.StoreRef<String, Object?>('meta');
+  late final metaVersionRecord = metaStore.record('version');
+  late final signatureRecord = metaStore.record('signature');
   PrefsSembast(this.prefsFactorySembast, this.name);
 
   String get dbPath => prefsFactorySembast.getDbPath(name);
@@ -48,30 +50,42 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
     }
   }
 
-  Future open() async {
-    var signatureRecord = store.record(signatureKey);
+  Future open(
+      {final int? version,
+      PrefsOnVersionChangedFunction? onVersionChanged}) async {
     // devPrint('opening $dbPath');
+    final prefsNewVersion = version;
+    late final int prefsOldVersion;
     database = await prefsFactorySembast.databaseFactory
         .openDatabase(dbPath, version: 1, onVersionChanged:
             (sembast.Database db, int oldVersion, int newVersion) async {
       if (oldVersion == 0) {
-        await signatureRecord.put(db, signatureValue);
+        await signatureRecord.put(db, prefsSignatureValue);
       }
     });
 
     await database.transaction((txn) async {
       var signature = await signatureRecord.get(txn);
-      if (signature != signatureValue || database.version > 1) {
+      if (signature != prefsSignatureValue || database.version > 1) {
         await store.delete(txn);
-        await signatureRecord.put(txn, signatureValue);
-      } else {
-        version = parseInt(await store.record(prefsVersionKey).get(txn)) ?? 0;
+        await metaStore.delete(txn);
+        await signatureRecord.put(txn, prefsSignatureValue);
       }
+      prefsOldVersion = parseInt(await metaVersionRecord.get(txn)) ?? 0;
 
       // load all
       var records = await store.find(txn);
       for (var record in records) {
         data[record.key] = record.value;
+      }
+
+      this.version = prefsOldVersion;
+      if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
+        if (onVersionChanged != null) {
+          await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
+          await metaVersionRecord.put(txn, prefsNewVersion);
+        }
+        this.version = prefsNewVersion;
       }
     });
   }
@@ -92,9 +106,7 @@ class PrefsFactorySembast extends Object
 
   @override
   Future<Prefs> openPreferences(String name,
-      {int? version,
-      Future Function(Prefs pref, int oldVersion, int newVersion)?
-          onVersionChanged}) async {
+      {int? version, PrefsOnVersionChangedFunction? onVersionChanged}) async {
     name = fixName(name);
 
     var prefs = await lock.synchronized(() async {
@@ -105,16 +117,9 @@ class PrefsFactorySembast extends Object
         _allPrefs[name] = prefs;
 
         // we read into memory
-        await prefs.open();
+        await prefs.open(version: version, onVersionChanged: onVersionChanged);
       }
 
-      final oldVersion = prefs.version;
-      if (version != null && version != oldVersion) {
-        if (onVersionChanged != null) {
-          await onVersionChanged(prefs, oldVersion, version);
-        }
-        prefs.version = version;
-      }
       return prefs;
     });
     return prefs;
