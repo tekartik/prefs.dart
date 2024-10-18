@@ -214,23 +214,14 @@ void runPrefsAsyncTests(PrefsAsyncFactory factory) {
           expect(await prefs.getBool('testInt'), isNull);
           expect(await prefs.getInt('testInt'), 1, reason: 'int testInt');
           expect(await prefs.getString('testInt'), isNull);
-          if (kDartIsWeb && !kDartIsWebWasm) {
-            expect(await prefs.getDouble('testInt'), 1,
-                reason: 'double testInt');
-            expect(await prefs.getDouble('testInt2'), -7);
-            expect(await prefs.getDouble('testInt3'), 0);
 
-            expect(await prefs.getInt('testDouble'), 1,
-                reason: 'int testTouble');
-          } else {
-            expect(await prefs.getDouble('testInt'), isNull,
-                reason: 'double testInt');
-            expect(await prefs.getDouble('testInt2'), isNull);
-            expect(await prefs.getDouble('testInt3'), isNull);
-            expect(await prefs.getInt('testDouble'), isNull,
-                reason: 'int testTouble');
-          }
-          expect(await prefs.getInt('testDouble2'), isNull,
+          expect(await prefs.getDouble('testInt'), 1, reason: 'double testInt');
+          expect(await prefs.getDouble('testInt2'), -7);
+          expect(await prefs.getDouble('testInt3'), 0);
+
+          expect(await prefs.getInt('testDouble'), 1, reason: 'int testTouble');
+
+          expect(await prefs.getInt('testDouble2'), -2,
               reason: 'int testDouble2');
           expect(await prefs.getBool('testInt3'), isNull, reason: 'testInt3');
           expect(await prefs.getString('testInt3'), isNull);

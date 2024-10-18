@@ -8,22 +8,22 @@ abstract class PrefsAsync {
   /// The version of the prefs.
   int get version;
 
-  /// Reads a value from persistent storage, throwing an exception (TypeError) if it's not a
+  /// Reads a value from persistent storage, null if it's not a
   /// bool.
   Future<bool?> getBool(String key);
 
-  /// Reads a string value from persistent storage. throwing TypeError if not a string.
+  /// Reads a string value from persistent storage. null if not a string.
   Future<String?> getString(String key);
 
-  /// Reads a value from persistent storage, throwing an exception if it's not
-  /// an int.
+  /// Reads a value from persistent storage, null if it's not
+  /// an int, rounded if double
   Future<int?> getInt(String key);
 
-  /// Reads a value from persistent storage, throwing an exception if it's not a
-  /// double.
+  /// Reads a value from persistent storage, null if it's not a
+  /// double, int converted to double if needed
   Future<double?> getDouble(String key);
 
-  /// Reads a value from persistent storage, throwing an exception if it's not a
+  /// Reads a value from persistent storage, null if it's not a
   /// string list.
   Future<List<String>?> getStringList(String key);
 

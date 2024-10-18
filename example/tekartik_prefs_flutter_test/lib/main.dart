@@ -8,10 +8,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   var prefsAsyncFactory = prefsAsyncFactoryFlutter;
   runPrefsAsyncTests(prefsAsyncFactory);
-  if (false) {
-    var prefsFactory = prefsFactoryFlutter;
-    runPrefsTests(prefsFactory);
-  }
+  var prefsFactory = prefsFactoryFlutter;
+  runPrefsTests(prefsFactory);
   runApp(const MyApp());
 }
 
@@ -22,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(appBar: AppBar(title: Text('Prefs flutter test'))),
+      home: Scaffold(appBar: AppBar(title: const Text('Prefs flutter test'))),
     );
   }
 }

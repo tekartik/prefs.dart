@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tekartik_prefs/prefs_async.dart';
-
 import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
+import 'package:tekartik_prefs/prefs_async.dart';
 
 class PrefsAsyncFlutter extends PrefsAsyncBase {
   PrefsAsyncFlutter({required super.factory, required super.name});
@@ -17,7 +16,7 @@ class PrefsAsyncFlutter extends PrefsAsyncBase {
   Future<T?> wrapTypeError<T>(Future<T?> Function() f) async {
     try {
       return await f();
-    } on TypeError catch (e) {
+    } on TypeError catch (_) {
       return null;
     }
   }
@@ -30,12 +29,24 @@ class PrefsAsyncFlutter extends PrefsAsyncBase {
       wrapTypeError(() => _impl.getBool(_implKey(key)));
 
   @override
-  Future<double?> getDouble(String key) =>
-      wrapTypeError(() => _impl.getDouble(_implKey(key)));
+  Future<double?> getDouble(String key) async {
+    var implKey = _implKey(key);
+    try {
+      return await _impl.getDouble(implKey);
+    } on TypeError catch (_) {
+      return (await wrapTypeError(() => _impl.getInt(implKey)))?.toDouble();
+    }
+  }
 
   @override
-  Future<int?> getInt(String key) =>
-      wrapTypeError(() => _impl.getInt(_implKey(key)));
+  Future<int?> getInt(String key) async {
+    var implKey = _implKey(key);
+    try {
+      return await _impl.getInt(implKey);
+    } on TypeError catch (_) {
+      return (await wrapTypeError(() => _impl.getDouble(implKey)))?.round();
+    }
+  }
 
   @override
   Future<String?> getString(String key) =>

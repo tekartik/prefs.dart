@@ -14,7 +14,7 @@ void runPrefsTests(PrefsFactory factory) {
     return await factory.openPreferences(name);
   }
 
-  group('prefs', () {
+  group('prefs_async', () {
     test('basic', () async {
       var name = 'test.prefs';
 

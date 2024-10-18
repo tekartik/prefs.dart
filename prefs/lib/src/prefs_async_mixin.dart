@@ -25,6 +25,7 @@ abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
 
   @override
   Future<void> deletePreferences(String name) async {
+    name = fixName(name);
     await lock.synchronized(() async {
       /// Close existing
       var prefs =
@@ -39,6 +40,7 @@ abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
   Future<PrefsAsync> openPreferences(String name,
       {int? version,
       PrefsAsyncOnVersionChangedFunction? onVersionChanged}) async {
+    name = fixName(name);
     var prefs = await lock.synchronized(() async {
       var prefs = allPrefs[name];
 
@@ -128,7 +130,7 @@ abstract mixin class PrefsAsyncKeyValueMixin implements PrefsAsyncMixin {
       (await getValue<num>(key))?.toDouble();
 
   @override
-  Future<int?> getInt(String key) async => (await getValue<num>(key))?.toInt();
+  Future<int?> getInt(String key) async => (await getValue<num>(key))?.round();
 
   @override
   Future<int?> getIntNoKeyCheck(String key) async =>
