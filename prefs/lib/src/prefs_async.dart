@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:cv/cv.dart';
+import 'package:cv/cv_json.dart';
 
 /// Common Prefs interface.
 abstract class PrefsAsync {
@@ -87,6 +88,22 @@ extension PrefsAsyncExt on PrefsAsync {
   /// Set or remove an int value
   Future<void> setDoubleOrNull(String key, double? value) =>
       value == null ? remove(key) : setDouble(key, value);
+
+  /// Set or remove a map value (json encodable)
+  Future<void> setMap(String key, Map value) =>
+      setString(key, jsonEncode(value));
+
+  /// Set or remove a map value
+  Future<Model?> getMap(String key) async =>
+      cvAnyToJsonObjectOrNull(await getString(key));
+
+  /// Set or remove a list value (json encodable)
+  Future<void> setList(String key, List value) =>
+      setString(key, jsonEncode(value));
+
+  /// Set or remove a list value
+  Future<List<Object?>?> getList(String key) async =>
+      cvAnyToJsonArrayOrNull(await getString(key));
 }
 
 /// Prefs factory.
@@ -126,6 +143,7 @@ class _PrefsAsyncFactoryOptions implements PrefsAsyncFactoryOptions {
   Model toDebugMap() => asModel({
         if (strictType) 'strictType': strictType,
       });
+
   @override
   String toString() => 'PrefsOptions(${toDebugMap()})';
 }

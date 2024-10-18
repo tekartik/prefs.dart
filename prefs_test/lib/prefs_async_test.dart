@@ -74,6 +74,21 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
         await prefs.close();
       }
     });
+    test('timing', () async {
+      var name = 'timing_test';
+
+      var prefs = await deleteAndOpen(name);
+      try {
+        prefs.setInt('test', 1).unawait();
+        var future1 = prefs.getInt('test');
+        prefs.setInt('test', 2).unawait();
+        var future2 = prefs.getInt('test');
+        expect(await Future.wait([future1, future2]), [1, 2]);
+        expect(await prefs.getInt('test'), 2);
+      } finally {
+        await prefs.close();
+      }
+    });
 
     test('delete', () async {
       var name = 'delete.prefs';
@@ -359,6 +374,9 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
           expect(await prefs.getBool('testList'), isNull);
           expect(await prefs.getInt('testList'), isNull);
+
+          expect(await prefs.getMap('testMap'), {'test': 1});
+          expect(await prefs.getList('testRawList'), ['test', 1]);
         }
 
         await prefs.setBool('testBool', true);
@@ -372,6 +390,11 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
         await prefs.setDouble('testDouble3', 0.0);
 
         await prefs.setStringList('testList', ['test']);
+
+        var map = {'test': 1};
+        var list = ['test', 1];
+        await prefs.setMap('testMap', map);
+        await prefs.setList('testRawList', list);
         await check();
 
         await prefs.close();

@@ -23,10 +23,6 @@ dependencies:
       url: https://github.com/tekartik/common_utils.dart
       ref: dart3a
   cv:
-    git:
-      url: https://github.com/tekartik/cv.dart
-      ref: dart3a
-      path: packages/cv
 dev_dependencies:
   flutter_test:
     sdk: flutter
