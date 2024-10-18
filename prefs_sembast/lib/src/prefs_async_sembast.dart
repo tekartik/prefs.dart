@@ -11,7 +11,10 @@ final _metaVersionRecord = _metaStore.record('version');
 final _signatureRecord = _metaStore.record('signature');
 
 class PrefsAsyncSembast extends PrefsAsyncBase
-    with PrefsAsyncNoImplementationKeyMixin, PrefsAsyncKeyValueMixin {
+    with
+        PrefsAsyncNoImplementationKeyMixin,
+        PrefsAsyncKeyValueMixin,
+        PrefsAsyncValueMixin {
   PrefsAsyncFactorySembast get _factory =>
       this.factory as PrefsAsyncFactorySembast;
 
@@ -130,28 +133,6 @@ class PrefsAsyncFactorySembast extends Object
   String getDbPath(String name) => join(path, name);
 
   PrefsAsyncFactorySembast(this.databaseFactory, this.path);
-
-  /*
-  @override
-  Future<PrefsAsync> openPreferences(String name,
-      {int? version, PrefsAsyncOnVersionChangedFunction? onVersionChanged}) async {
-    name = fixName(name);
-
-    var prefs = await lock.synchronized(() async {
-      var prefs = _allPrefs[name];
-      // devPrint('opening prefs $name $prefs');
-      if (prefs == null) {
-        prefs = PrefsSembast(this, name);
-        _allPrefs[name] = prefs;
-
-        // we read into memory
-        await prefs.open(version: version, onVersionChanged: onVersionChanged);
-      }
-
-      return prefs;
-    });
-    return prefs;
-  }*/
 
   @override
   Future deletePreferences(String name) async {

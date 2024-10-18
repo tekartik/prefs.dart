@@ -13,7 +13,8 @@ Iterable<String> get _allStorageKeys {
   return keys;
 }
 
-class PrefsAsyncBrowser extends PrefsAsyncBase with PrefsAsyncKeyValueMixin {
+class PrefsAsyncBrowser extends PrefsAsyncBase
+    with PrefsAsyncKeyValueMixin, PrefsAsyncValueMixin {
   PrefsAsyncBrowser({required super.factory, required super.name});
 
   PrefsAsyncFactoryBrowser get prefsFactoryBrowser =>
@@ -73,8 +74,8 @@ class PrefsAsyncBrowser extends PrefsAsyncBase with PrefsAsyncKeyValueMixin {
 
   @override
   Future<T?> getValueNoKeyCheck<T>(String key) async {
-    return checkValueType<T>(
-        _implementationKeyGetValue(keyToImplementationKey(key)));
+    var value = _implementationKeyGetValue(keyToImplementationKey(key));
+    return checkValueType<T>(value);
   }
 
   @override

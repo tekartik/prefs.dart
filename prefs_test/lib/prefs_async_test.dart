@@ -1,9 +1,11 @@
-import 'dart:async';
 import 'dart:io';
+
+import 'package:cv/cv_json.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_common_utils/env_utils.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 import 'package:test/test.dart';
+
 export 'package:tekartik_prefs/prefs_async.dart';
 
 void main() {
@@ -17,6 +19,7 @@ void runPrefsAsyncTests(PrefsAsyncFactory factory) {
     });
     _runPrefsAsyncTests(factory);
   });
+
   group('normal', () {
     setUpAll(() {
       factory.init(options: PrefsAsyncFactoryOptions());
@@ -32,6 +35,31 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
   }
 
   group('prefs', () {
+    test('quick', () async {
+      var prefs = await deleteAndOpen('quick');
+      // devWarning('quick debug code')
+      await prefs.close();
+    }, skip: true);
+    test('double', () async {
+      var name = 'double_conversion';
+      var prefs = await deleteAndOpen(name);
+
+      await prefs.setDouble('test', 1.0);
+      expect(await prefs.getDouble('test'), 1.0);
+      await prefs.close();
+      prefs = await factory.openPreferences(name);
+      expect(await prefs.getDouble('test'), 1.0);
+      if (prefs.options.strictType) {
+        expect(await prefs.getString('test'), isNull);
+      } else {
+        if (kDartIsWebJs) {
+          print(debugEnvMap.cvToJsonPretty());
+          expect(await prefs.getString('test'), '1');
+        } else {
+          expect(await prefs.getString('test'), '1.0');
+        }
+      }
+    });
     test('basic', () async {
       var name = 'test.prefs';
 
@@ -230,11 +258,21 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
             expect(await prefs.getStringList('testBool'), isNull);
 
             expect(await prefs.getBool('testInt'), isNull);
-            expect(await prefs.getString('testInt'), isNull);
-            expect(await prefs.getDouble('testInt'), isNull,
-                reason: 'double testInt');
-            expect(await prefs.getDouble('testInt2'), isNull);
-            expect(await prefs.getDouble('testInt3'), isNull);
+            expect(await prefs.getString('testInt'), isNull,
+                reason: 'testInt as string');
+            if (kDartIsWebJs) {
+              expect(await prefs.getDouble('testInt'), 1.0,
+                  reason: 'double testInt js');
+              expect(await prefs.getDouble('testInt2'), -7.0,
+                  reason: 'double testInt 2 js');
+              expect(await prefs.getDouble('testInt3'), 0);
+            } else {
+              expect(await prefs.getDouble('testInt'), isNull,
+                  reason: 'double testInt');
+              expect(await prefs.getDouble('testInt2'), isNull);
+              expect(await prefs.getDouble('testInt3'), isNull);
+            }
+
             expect(await prefs.getBool('testInt3'), isNull, reason: 'testInt3');
             expect(await prefs.getString('testInt3'), isNull);
 
@@ -271,7 +309,12 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
             expect(await prefs.getInt('testDouble'), 1,
                 reason: 'int testTouble');
-            expect(await prefs.getString('testDouble'), '1.0');
+            if (kDartIsWebJs) {
+              // 1.0 will encoded as an int...
+              expect(await prefs.getString('testDouble'), '1');
+            } else {
+              expect(await prefs.getString('testDouble'), '1.0');
+            }
             expect(await prefs.getBool('testDouble'), true);
             expect(await prefs.getInt('testDouble2'), -2,
                 reason: 'int testDouble2');

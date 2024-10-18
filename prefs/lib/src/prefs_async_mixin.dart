@@ -1,5 +1,6 @@
 import 'package:cv/utils/value_utils.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'package:tekartik_common_utils/env_utils.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 import 'package:tekartik_prefs/src/prefs_async.dart';
 
@@ -136,7 +137,19 @@ abstract mixin class PrefsAsyncValueMixin
   @override
   Future<double?> getDouble(String key) async {
     if (options.strictType) {
-      return getDoubleStrict(key);
+      var doubleValue = await getDoubleStrict(key);
+      if (doubleValue != null) {
+        return doubleValue;
+      }
+      if (doubleValue == null) {
+        if (kDartIsWebJs) {
+          var intValue = await getIntStrict(key);
+          if (intValue != null) {
+            return intValue.toDouble();
+          }
+        }
+      }
+      return null;
     } else {
       return basicTypeToDouble(await getRawValue(key));
     }
@@ -167,7 +180,8 @@ abstract mixin class PrefsAsyncValueMixin
     if (options.strictType) {
       return getStringStrict(key);
     } else {
-      return (await getRawValue(key))?.toString();
+      var rawValue = await getRawValue(key);
+      return rawValue?.toString();
     }
   }
 
@@ -264,38 +278,16 @@ abstract mixin class PrefsAsyncKeyValueMixin
   }
 
   @override
-  Future<double?> getDouble(String key) async {
-    if (options.strictType) {
-      return getValue<double>(key);
-    } else {
-      return (await getNum(key))?.toDouble();
-    }
-  }
-
-  @override
-  Future<int?> getInt(String key) async => (await getValue<num>(key))?.round();
-
-  @override
   Future<int?> getIntNoKeyCheck(String key) async =>
-      (await getValueNoKeyCheck<num>(key))?.toInt();
-
-  @override
-  Future<String?> getString(String key) => getValue<String>(key);
-
-  @override
-  Future<List<String>?> getStringList(String key) async {
-    var list = await getValueNoKeyCheck<List>(key);
-    return list
-        ?.map((value) => value is String ? value : null)
-        .nonNulls
-        .toList();
-  }
+      (await getValueNoKeyCheck<num>(key))?.round();
 
   @override
   Future<void> setBool(String key, bool value) => setValue(key, value);
 
   @override
-  Future<void> setDouble(String key, double value) => setValue(key, value);
+  Future<void> setDouble(String key, double value) {
+    return setValue(key, value);
+  }
 
   @override
   Future<void> setInt(String key, int value) => setValue(key, value);
