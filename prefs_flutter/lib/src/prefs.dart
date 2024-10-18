@@ -82,6 +82,7 @@ class PrefsFactoryFlutter extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
   SharedPreferences? sharedPreferences;
+  SharedPreferencesAsync? sharedPreferencesAsync;
   final lock = Lock();
 
   @override

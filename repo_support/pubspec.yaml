@@ -1,5 +1,5 @@
-name: mustache_repo_support
-description: Mustache repo (tools)
+name: tekartik_repo_support
+description: tekartik repo (tools)
 version: 0.2.0
 publish_to: none
 
@@ -7,10 +7,10 @@ environment:
   sdk: ^3.5.0
 
 dev_dependencies:
-  dev_build: '>=0.13.0'
-  path:
-  pub_semver:
-  process_run:
+  dev_build: ">=1.1.0+1"
+  path: ">=1.9.0"
+  pub_semver: ">=2.1.4"
+  process_run: ">=1.2.0+3"
   tekartik_lints:
     git:
       url: https://github.com/tekartik/common.dart

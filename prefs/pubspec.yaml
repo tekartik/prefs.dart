@@ -12,9 +12,10 @@ dependencies:
       url: https://github.com/tekartik/common_utils.dart
       ref: dart3a
   synchronized:
+  cv: ">=1.1.0+4"
 dev_dependencies:
-  test: '>=1.16.4'
-  build_runner: any
+  test: ">=1.24.0"
+  build_runner: ">=2.4.13"
   build_test: any
-  build_web_compilers: any
-  process_run: '>=0.10.1'
+  build_web_compilers: ">=4.0.11"
+  process_run: ">=1.2.0+3"

@@ -5,16 +5,16 @@ import 'package:test/test.dart';
 export 'package:tekartik_prefs/prefs.dart';
 
 void main() {
-  runTests(prefsFactoryMemory);
+  runPrefsTests(prefsFactoryMemory);
 }
 
-void runTests(PrefsFactory factory) {
+void runPrefsTests(PrefsFactory factory) {
   Future<Prefs> deleteAndOpen(String name) async {
     await factory.deletePreferences(name);
     return await factory.openPreferences(name);
   }
 
-  group('prefs', () {
+  group('prefs_async', () {
     test('basic', () async {
       var name = 'test.prefs';
 

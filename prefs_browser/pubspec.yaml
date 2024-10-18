@@ -21,16 +21,16 @@ dependencies:
       url: https://github.com/tekartik/common_utils.dart
       ref: dart3a
 dev_dependencies:
-  build_runner: '>0.10.0'
+  build_runner: ">=2.4.13"
   build_test: '>0.10.0'
-  build_web_compilers: '>=0.4.0'
-  test:
+  build_web_compilers: ">=4.0.11"
+  test: ">=1.24.0"
   tekartik_prefs_test:
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_test
       ref: dart3a
-  process_run:
+  process_run: ">=1.2.0+3"
 
 dependency_overrides:
   tekartik_prefs:
