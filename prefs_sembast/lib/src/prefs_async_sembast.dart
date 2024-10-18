@@ -113,7 +113,7 @@ class PrefsAsyncSembast extends PrefsAsyncBase
 
   @override
   Future<T?> getValueNoKeyCheck<T>(String key) async {
-    return checkValueType(_store.record(key).getSync(_client));
+    return checkValueType(await _store.record(key).get(_client));
   }
 
   @override
