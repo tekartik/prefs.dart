@@ -1,11 +1,19 @@
+import 'package:cv/utils/value_utils.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
+import 'package:tekartik_prefs/src/prefs_async.dart';
 
 import 'prefs_mixin.dart'
     show prefsVersionKey, prefsSignatureKey, prefsSignatureValue;
 
 /// Prefs mixin
 abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
+  PrefsAsyncFactoryOptions? _options;
+
+  @override
+  PrefsAsyncFactoryOptions get options =>
+      _options ??= PrefsAsyncFactoryOptions();
+
   /// Lock access
   final lock = Lock(reentrant: true);
 
@@ -67,6 +75,11 @@ abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
   Future<void> closePreferences(PrefsAsync prefs) async {
     allPrefs.remove(prefs.name);
   }
+
+  @override
+  void init({PrefsAsyncFactoryOptions? options}) {
+    _options = options;
+  }
 }
 
 /// Prefs base implementation
@@ -83,6 +96,12 @@ abstract class PrefsAsyncBase with PrefsAsyncMixin {
   PrefsAsyncBase({required this.factory, required this.name});
 }
 
+/// Private extension
+extension PrefsAsyncMixinExtPrv on PrefsAsyncMixin {
+  /// The options
+  PrefsAsyncFactoryOptions get options => this.factory.options;
+}
+
 /// mixin to discard any implementation key modification
 abstract mixin class PrefsAsyncNoImplementationKeyMixin
     implements PrefsAsyncMixin {
@@ -93,8 +112,117 @@ abstract mixin class PrefsAsyncNoImplementationKeyMixin
   String implementationKeyToKey(String implementationKey) => implementationKey;
 }
 
+/// Strict value defs
+abstract interface class PrefsAsyncStrictValue implements PrefsAsyncMixin {
+  /// Get double value
+  Future<double?> getDoubleStrict(String key);
+
+  /// Get int value
+  Future<int?> getIntStrict(String key);
+
+  /// Get bool value
+  Future<bool?> getBoolStrict(String key);
+
+  /// Get string value
+  Future<String?> getStringStrict(String key);
+
+  /// Only validate that it is a list
+  Future<List<String>?> getStringListStrict(String key);
+}
+
+/// Value getter helper
+abstract mixin class PrefsAsyncValueMixin
+    implements PrefsAsyncMixin, PrefsAsyncStrictValue, PrefsAsyncKeyValue {
+  @override
+  Future<double?> getDouble(String key) async {
+    if (options.strictType) {
+      return getDoubleStrict(key);
+    } else {
+      return basicTypeToDouble(await getRawValue(key));
+    }
+  }
+
+  @override
+  Future<int?> getInt(String key) async {
+    if (options.strictType) {
+      return getIntStrict(key);
+    } else {
+      return basicTypeToInt(await getRawValue(key));
+    }
+  }
+
+  // Get bool value
+  @override
+  Future<bool?> getBool(String key) async {
+    if (options.strictType) {
+      return getBoolStrict(key);
+    } else {
+      return basicTypeToBool(await getRawValue(key));
+    }
+  }
+
+  /// Get string value
+  @override
+  Future<String?> getString(String key) async {
+    if (options.strictType) {
+      return getStringStrict(key);
+    } else {
+      return (await getRawValue(key))?.toString();
+    }
+  }
+
+  /// Only validate that it is a list
+  @override
+  Future<List<String>?> getStringList(String key) async {
+    if (options.strictType) {
+      return getStringListStrict(key);
+    } else {
+      var list = await getRawValue(key);
+      if (list is List) {
+        return list
+            .map((value) => value is String ? value : null)
+            .nonNulls
+            .toList();
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<double?> getDoubleStrict(String key) async {
+    return getValue<double>(key);
+  }
+
+  @override
+  Future<int?> getIntStrict(String key) async {
+    return getValue<int>(key);
+  }
+
+  // Get bool value
+  @override
+  Future<bool?> getBoolStrict(String key) async {
+    return getValue<bool>(key);
+  }
+
+  /// Get string value
+  @override
+  Future<String?> getStringStrict(String key) async {
+    return getValue<String>(key);
+  }
+
+  /// Only validate that it is a list
+  @override
+  Future<List<String>?> getStringListStrict(String key) async {
+    return (await getValue<List>(key))?.cast<String>().toList();
+  }
+}
+
+/// Key value abstract interface
+abstract interface class PrefsAsyncKeyValue implements PrefsAsync {}
+
 /// Convenient key value mixin
-abstract mixin class PrefsAsyncKeyValueMixin implements PrefsAsyncMixin {
+abstract mixin class PrefsAsyncKeyValueMixin
+    implements PrefsAsyncMixin, PrefsAsyncKeyValue {
   /// Get a value without key check
   Future<T?> getValueNoKeyCheck<T>(String key);
 
@@ -102,9 +230,19 @@ abstract mixin class PrefsAsyncKeyValueMixin implements PrefsAsyncMixin {
   Future<void> setValueNoKeyCheck<T>(String key, T value);
 
   /// Check and get key
+  @override
   Future<T?> getValue<T>(String key) {
     checkKey(key);
     return getValueNoKeyCheck<T>(key);
+  }
+
+  Future<Object?> _getRawValueNoKeyCheck<Object>(String key) =>
+      getValueNoKeyCheck<Object>(key);
+
+  @override
+  Future<Object?> getRawValue(String key) {
+    checkKey(key);
+    return _getRawValueNoKeyCheck<Object>(key);
   }
 
   /// Check key and set value
@@ -126,8 +264,13 @@ abstract mixin class PrefsAsyncKeyValueMixin implements PrefsAsyncMixin {
   }
 
   @override
-  Future<double?> getDouble(String key) async =>
-      (await getValue<num>(key))?.toDouble();
+  Future<double?> getDouble(String key) async {
+    if (options.strictType) {
+      return getValue<double>(key);
+    } else {
+      return (await getNum(key))?.toDouble();
+    }
+  }
 
   @override
   Future<int?> getInt(String key) async => (await getValue<num>(key))?.round();
@@ -175,8 +318,18 @@ abstract mixin class PrefsAsyncKeyValueMixin implements PrefsAsyncMixin {
 
 /// Prefs mixin
 abstract mixin class PrefsAsyncMixin implements PrefsAsync {
+  /// Options
+  @override
+  late final options = factory.options;
+
   /// To implement
   PrefsAsyncFactoryMixin get factory;
+
+  /// Get a value (not available for strict type)
+  Future<T?> getValue<T>(String key);
+
+  /// Get a value (not available for strict type)
+  Future<Object?> getRawValue(String key);
 
   /// Check type
   T? checkValueType<T>(Object? value) {
@@ -247,11 +400,11 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
   }
 
   /// Check the name
-  void checkKey(String name) {
-    if (name.isEmpty) {
+  void checkKey(String key) {
+    if (key.isEmpty) {
       throw ArgumentError.notNull('prefs key name cannot be empty');
     }
-    if (name.startsWith('_')) {
+    if (key.startsWith('_')) {
       throw ArgumentError('prefs key name cannot start with _');
     }
   }

@@ -1,12 +1,14 @@
 import 'package:cv/cv.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
-import 'package:tekartik_prefs/src/prefs_async_mixin.dart';
 
 /// Memory implementation of async prefs
 class PrefsAsyncMemory extends PrefsAsyncBase
     with
         PrefsAsyncKeyValueMixin,
+        PrefsAsyncValueMixin,
+
         // last wins
         PrefsAsyncNoImplementationKeyMixin {
   final _map = newModel();

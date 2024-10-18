@@ -4,6 +4,9 @@ export 'package:tekartik_prefs/src/prefs_async_mixin.dart'
         PrefsAsyncBase,
         PrefsAsyncNoImplementationKeyMixin,
         PrefsAsyncFactoryMixin,
-        PrefsAsyncKeyValueMixin;
+        PrefsAsyncKeyValueMixin,
+        PrefsAsyncKeyValue,
+        PrefsAsyncValueMixin,
+        PrefsAsyncStrictValue;
 export 'package:tekartik_prefs/src/prefs_mixin.dart'
     show prefsVersionKey, prefsSignatureKey, prefsSignatureValue;

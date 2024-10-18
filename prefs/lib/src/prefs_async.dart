@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cv/cv.dart';
+
 /// Common Prefs interface.
 abstract class PrefsAsync {
   /// The name of the prefs.
@@ -7,6 +9,9 @@ abstract class PrefsAsync {
 
   /// The version of the prefs.
   int get version;
+
+  /// The options
+  PrefsAsyncFactoryOptions get options;
 
   /// Reads a value from persistent storage, null if it's not a
   /// bool.
@@ -67,12 +72,43 @@ abstract class PrefsAsync {
 
 /// Prefs factory.
 abstract class PrefsAsyncFactory {
+  /// Global options
+  PrefsAsyncFactoryOptions get options;
+
   /// Delete a prefs.
   Future<void> deletePreferences(String name);
 
   /// Open a prefs.
   Future<PrefsAsync> openPreferences(String name,
       {int? version, PrefsAsyncOnVersionChangedFunction? onVersionChanged});
+
+  /// Initialize the factory
+  void init({PrefsAsyncFactoryOptions? options});
+}
+
+/// Async factory options
+abstract class PrefsAsyncFactoryOptions {
+  /// No implied conversion between types, matches shared_preferences flutter but not preferred by default
+  /// and disable extension to generic list and maps
+  bool get strictType;
+
+  /// Default constructor
+  factory PrefsAsyncFactoryOptions({bool? strictType}) =>
+      _PrefsAsyncFactoryOptions(strictType: strictType);
+}
+
+class _PrefsAsyncFactoryOptions implements PrefsAsyncFactoryOptions {
+  @override
+  final bool strictType;
+
+  _PrefsAsyncFactoryOptions({bool? strictType})
+      : strictType = strictType ?? false;
+
+  Model toDebugMap() => asModel({
+        if (strictType) 'strictType': strictType,
+      });
+  @override
+  String toString() => 'PrefsOptions(${toDebugMap()})';
 }
 
 /// Prefs on version changed function

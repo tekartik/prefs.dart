@@ -20,4 +20,5 @@ pubspec.lock
 .idea/
 *.iml
 .vscode/
-/example/tekartik_prefs_flutter_test/.metadata
+
+pubspec_overrides.yaml

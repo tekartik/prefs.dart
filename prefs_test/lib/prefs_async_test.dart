@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_common_utils/env_utils.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 import 'package:test/test.dart';
@@ -10,6 +11,21 @@ void main() {
 }
 
 void runPrefsAsyncTests(PrefsAsyncFactory factory) {
+  group('strict', () {
+    setUpAll(() {
+      factory.init(options: PrefsAsyncFactoryOptions(strictType: true));
+    });
+    _runPrefsAsyncTests(factory);
+  });
+  group('normal', () {
+    setUpAll(() {
+      factory.init(options: PrefsAsyncFactoryOptions());
+    });
+    _runPrefsAsyncTests(factory);
+  });
+}
+
+void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
   Future<PrefsAsync> deleteAndOpen(String name) async {
     await factory.deletePreferences(name);
     return await factory.openPreferences(name);
@@ -202,49 +218,79 @@ void runPrefsAsyncTests(PrefsAsyncFactory factory) {
     test('type_conversion', () async {
       var name = 'type_conversion.prefs';
       var prefs = await deleteAndOpen(name);
+
       try {
         Future<void> check() async {
           expect(await prefs.getBool('testBool'), true);
-          expect(await prefs.getString('testBool'), isNull);
-          expect(await prefs.getInt('testBool'), isNull,
-              reason: 'int testBool');
-          expect(await prefs.getDouble('testBool'), isNull);
-          expect(await prefs.getStringList('testBool'), isNull);
+          if (prefs.options.strictType) {
+            expect(await prefs.getString('testBool'), isNull);
+            expect(await prefs.getInt('testBool'), isNull,
+                reason: 'int testBool');
+            expect(await prefs.getDouble('testBool'), isNull);
+            expect(await prefs.getStringList('testBool'), isNull);
 
-          expect(await prefs.getBool('testInt'), isNull);
+            expect(await prefs.getBool('testInt'), isNull);
+            expect(await prefs.getString('testInt'), isNull);
+            expect(await prefs.getDouble('testInt'), isNull,
+                reason: 'double testInt');
+            expect(await prefs.getDouble('testInt2'), isNull);
+            expect(await prefs.getDouble('testInt3'), isNull);
+            expect(await prefs.getBool('testInt3'), isNull, reason: 'testInt3');
+            expect(await prefs.getString('testInt3'), isNull);
+
+            expect(await prefs.getInt('testDouble2'), isNull,
+                reason: 'int testDouble2');
+            expect(await prefs.getBool('testDouble'), isNull);
+            expect(await prefs.getString('testDouble'), isNull);
+            expect(await prefs.getBool('testDouble2'), isNull);
+
+            try {
+              expect(await prefs.getString('testList'), isNull);
+            } catch (e) {
+              if (!kDartIsWeb && Platform.isAndroid) {
+                // ok
+                print('Error $e ok on Android');
+              } else {
+                rethrow;
+              }
+            }
+          } else {
+            expect(await prefs.getString('testBool'), 'true');
+            expect(await prefs.getInt('testBool'), 1, reason: 'int testBool');
+            expect(await prefs.getDouble('testBool'), 1.0);
+            expect(await prefs.getStringList('testBool'), isNull);
+
+            expect(await prefs.getBool('testInt'), true);
+            expect(await prefs.getString('testInt'), '1');
+            expect(await prefs.getDouble('testInt'), 1,
+                reason: 'double testInt');
+            expect(await prefs.getDouble('testInt2'), -7);
+            expect(await prefs.getDouble('testInt3'), 0);
+            expect(await prefs.getBool('testInt3'), false, reason: 'testInt3');
+            expect(await prefs.getString('testInt3'), '0');
+
+            expect(await prefs.getInt('testDouble'), 1,
+                reason: 'int testTouble');
+            expect(await prefs.getString('testDouble'), '1.0');
+            expect(await prefs.getBool('testDouble'), true);
+            expect(await prefs.getInt('testDouble2'), -2,
+                reason: 'int testDouble2');
+            expect(await prefs.getString('testDouble2'), '-1.5');
+            expect(await prefs.getBool('testDouble2'), true);
+            expect(await prefs.getBool('testDouble3'), false);
+
+            expect(await prefs.getStringList('testList'), ['test']);
+          }
+
+          expect(await prefs.getBool('testBool'), true);
           expect(await prefs.getInt('testInt'), 1, reason: 'int testInt');
-          expect(await prefs.getString('testInt'), isNull);
-
-          expect(await prefs.getDouble('testInt'), 1, reason: 'double testInt');
-          expect(await prefs.getDouble('testInt2'), -7);
-          expect(await prefs.getDouble('testInt3'), 0);
-
-          expect(await prefs.getInt('testDouble'), 1, reason: 'int testTouble');
-
-          expect(await prefs.getInt('testDouble2'), -2,
-              reason: 'int testDouble2');
-          expect(await prefs.getBool('testInt3'), isNull, reason: 'testInt3');
-          expect(await prefs.getString('testInt3'), isNull);
 
           expect(await prefs.getDouble('testDouble'), 1.0, reason: 'double');
-          expect(await prefs.getBool('testDouble'), isNull);
-          expect(await prefs.getString('testDouble'), isNull);
-
-          expect(await prefs.getBool('testDouble2'), isNull);
+          expect(await prefs.getDouble('testDouble2'), -1.5,
+              reason: 'double -1.5');
 
           expect(await prefs.getBool('testList'), isNull);
           expect(await prefs.getInt('testList'), isNull);
-          try {
-            expect(await prefs.getString('testList'), isNull);
-          } catch (e) {
-            if (!kDartIsWeb && Platform.isAndroid) {
-              // ok
-              print('Error $e ok on Android');
-            } else {
-              rethrow;
-            }
-          }
-          expect(await prefs.getStringList('testList'), ['test']);
         }
 
         await prefs.setBool('testBool', true);
@@ -255,6 +301,7 @@ void runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
         await prefs.setDouble('testDouble', 1.0);
         await prefs.setDouble('testDouble2', -1.5);
+        await prefs.setDouble('testDouble3', 0.0);
 
         await prefs.setStringList('testList', ['test']);
         await check();
