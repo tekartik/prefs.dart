@@ -232,7 +232,7 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
       [prefsVersionKey, prefsSignatureKey].contains(key);
 
   /// Filter any implementation keys to public keys
-  Iterable<String> filterImplementationKeys(Set<String> implementationKeys,
+  Iterable<String> filterImplementationKeys(Iterable<String> implementationKeys,
       {bool includePrivate = false}) {
     return implementationKeys.map((implementationKey) {
       if (isImplementationKey(implementationKey)) {

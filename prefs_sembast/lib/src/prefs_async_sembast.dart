@@ -5,10 +5,10 @@ import 'package:tekartik_common_utils/int_utils.dart';
 import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 
-final store = sembast.StoreRef<String, Object?>.main();
-final metaStore = sembast.StoreRef<String, Object?>('meta');
-final metaVersionRecord = metaStore.record('version');
-final signatureRecord = metaStore.record('signature');
+final _store = sembast.StoreRef<String, Object?>.main();
+final _metaStore = sembast.StoreRef<String, Object?>('meta');
+final _metaVersionRecord = _metaStore.record('version');
+final _signatureRecord = _metaStore.record('signature');
 
 class PrefsAsyncSembast extends PrefsAsyncBase
     with PrefsAsyncNoImplementationKeyMixin, PrefsAsyncKeyValueMixin {
@@ -34,7 +34,7 @@ class PrefsAsyncSembast extends PrefsAsyncBase
         onVersionChanged:
             (sembast.Database db, int oldVersion, int newVersion) async {
       if (oldVersion == 0) {
-        await signatureRecord.put(db, prefsSignatureValue);
+        await _signatureRecord.put(db, prefsSignatureValue);
       }
     });
   }
@@ -48,21 +48,21 @@ class PrefsAsyncSembast extends PrefsAsyncBase
       await database.transaction((txn) async {
         _openTransaction = txn;
         try {
-          var signature = signatureRecord.getSync(txn);
+          var signature = _signatureRecord.getSync(txn);
           if (signature != prefsSignatureValue || database.version > 1) {
-            await store.delete(txn);
-            await metaStore.delete(txn);
-            await signatureRecord.put(txn, prefsSignatureValue);
+            await _store.delete(txn);
+            await _metaStore.delete(txn);
+            await _signatureRecord.put(txn, prefsSignatureValue);
           }
 
           var prefsOldVersion =
-              this.version = parseInt(metaVersionRecord.getSync(txn)) ?? 0;
+              this.version = parseInt(_metaVersionRecord.getSync(txn)) ?? 0;
           final prefsNewVersion = version;
 
           if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
             if (onVersionChanged != null) {
               await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
-              await metaVersionRecord.put(txn, prefsNewVersion);
+              await _metaVersionRecord.put(txn, prefsNewVersion);
             }
             this.version = prefsNewVersion;
           }
@@ -86,7 +86,7 @@ class PrefsAsyncSembast extends PrefsAsyncBase
   }
 
   @override
-  Future<void> clear() => store.delete(_client);
+  Future<void> clear() => _store.delete(_client);
 
   @override
   Future<void> clearForDelete() {
@@ -94,11 +94,11 @@ class PrefsAsyncSembast extends PrefsAsyncBase
   }
 
   @override
-  Future<bool> containsKey(String key) => store.record(key).exists(_client);
+  Future<bool> containsKey(String key) => _store.record(key).exists(_client);
 
   @override
   Future<Map<String, Object?>> getAll() async {
-    var records = await store.query().getSnapshots(_client);
+    var records = await _store.query().getSnapshots(_client);
     return <String, Object?>{
       for (var record in records) record.key: record.value
     };
@@ -106,19 +106,19 @@ class PrefsAsyncSembast extends PrefsAsyncBase
 
   @override
   Future<Set<String>> getKeys() async =>
-      (await store.findKeys(_client)).toSet();
+      (await _store.findKeys(_client)).toSet();
 
   @override
   Future<T?> getValueNoKeyCheck<T>(String key) async {
-    return checkValueType(store.record(key).getSync(_client));
+    return checkValueType(_store.record(key).getSync(_client));
   }
 
   @override
-  Future<void> remove(String key) => store.record(key).delete(_client);
+  Future<void> remove(String key) => _store.record(key).delete(_client);
 
   @override
   Future<void> setValueNoKeyCheck<T>(String key, T value) =>
-      store.record(key).put(_client, value);
+      _store.record(key).put(_client, value);
 }
 
 class PrefsAsyncFactorySembast extends Object
