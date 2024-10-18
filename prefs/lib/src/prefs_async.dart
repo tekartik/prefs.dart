@@ -70,6 +70,25 @@ abstract class PrefsAsync {
   Future<void> close();
 }
 
+/// Prefs extension
+extension PrefsAsyncExt on PrefsAsync {
+  /// Set or remove an int value
+  Future<void> setIntOrNull(String key, int? value) =>
+      value == null ? remove(key) : setInt(key, value);
+
+  /// Set or remove an a bool value
+  Future<void> setBoolOrNull(String key, bool? value) =>
+      value == null ? remove(key) : setBool(key, value);
+
+  /// Set or remove an int value
+  Future<void> setStringOrNull(String key, String? value) =>
+      value == null ? remove(key) : setString(key, value);
+
+  /// Set or remove an int value
+  Future<void> setDoubleOrNull(String key, double? value) =>
+      value == null ? remove(key) : setDouble(key, value);
+}
+
 /// Prefs factory.
 abstract class PrefsAsyncFactory {
   /// Global options

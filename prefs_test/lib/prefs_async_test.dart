@@ -169,6 +169,30 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       await prefs.close();
     });
 
+    test('orNull', () async {
+      var name = 'or_ull.prefs';
+      var prefs = await deleteAndOpen(name);
+      try {
+        await prefs.setIntOrNull('test', 1);
+        expect(await prefs.getInt('test'), 1);
+        await prefs.setIntOrNull('test', null);
+        expect(await prefs.getInt('test'), null);
+        await prefs.setDoubleOrNull('test', 1.0);
+        expect(await prefs.getDouble('test'), 1.0);
+        await prefs.setDoubleOrNull('test', null);
+        expect(await prefs.getDouble('test'), null);
+        await prefs.setBoolOrNull('test', true);
+        expect(await prefs.getBool('test'), true);
+        await prefs.setBoolOrNull('test', null);
+        expect(await prefs.getBool('test'), null);
+        await prefs.setStringOrNull('test', '1');
+        expect(await prefs.getString('test'), '1');
+        await prefs.setStringOrNull('test', null);
+        expect(await prefs.getString('test'), null);
+      } finally {
+        await prefs.close();
+      }
+    });
     test('persistent', () async {
       var name = 'persistent.prefs.db';
       var prefs = await deleteAndOpen(name);
@@ -213,6 +237,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       var prefs = await deleteAndOpen(name);
       try {
         await prefs.setBool('testBool', true);
+        expect(await prefs.getBool('testBool'), true);
         expect(await prefs.getBool('testBool'), true);
         await prefs.setInt('testInt', -2);
         expect(await prefs.getInt('testInt'), -2);

@@ -3,6 +3,7 @@ export 'src/prefs_async.dart'
         PrefsAsync,
         PrefsAsyncFactory,
         PrefsAsyncOnVersionChangedFunction,
-        PrefsAsyncFactoryOptions;
+        PrefsAsyncFactoryOptions,
+        PrefsAsyncExt;
 export 'src/prefs_async_memory.dart'
     show prefsAsyncFactoryMemory, newPrefsAsyncFactoryMemory;
