@@ -81,17 +81,21 @@ extension PrefsAsyncExt on PrefsAsync {
   Future<void> setBoolOrNull(String key, bool? value) =>
       value == null ? remove(key) : setBool(key, value);
 
-  /// Set or remove an int value
+  /// Set or remove a string value
   Future<void> setStringOrNull(String key, String? value) =>
       value == null ? remove(key) : setString(key, value);
 
-  /// Set or remove an int value
+  /// Set or remove a double value
   Future<void> setDoubleOrNull(String key, double? value) =>
       value == null ? remove(key) : setDouble(key, value);
 
-  /// Set or remove a map value (json encodable)
+  /// Set a map value (json encodable)
   Future<void> setMap(String key, Map value) =>
       setString(key, jsonEncode(value));
+
+  /// Set or remove a map value (json encodable)
+  Future<void> setMapOrNull(String key, Map? value) =>
+      value == null ? remove(key) : setMap(key, value);
 
   /// Set or remove a map value
   Future<Model?> getMap(String key) async =>
@@ -100,6 +104,10 @@ extension PrefsAsyncExt on PrefsAsync {
   /// Set or remove a list value (json encodable)
   Future<void> setList(String key, List value) =>
       setString(key, jsonEncode(value));
+
+  /// Set or remove a list value (json encodable)
+  Future<void> setListOrNull(String key, List? value) =>
+      value == null ? remove(key) : setList(key, value);
 
   /// Set or remove a list value
   Future<List<Object?>?> getList(String key) async =>
