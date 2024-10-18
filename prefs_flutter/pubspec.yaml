@@ -16,7 +16,7 @@ dependencies:
       path: prefs
       ref: dart3a
     version: '>=0.1.0'
-  shared_preferences: '>=2.0.0'
+  shared_preferences: '>=2.3.0'
   synchronized:
   tekartik_common_utils:
     git:

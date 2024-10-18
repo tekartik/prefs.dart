@@ -4,5 +4,5 @@ import 'package:tekartik_prefs_test/prefs_test.dart' as prefs;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  prefs.runTests(PrefsFactoryFlutterMock());
+  prefs.runPrefsTests(PrefsFactoryFlutterMock());
 }
