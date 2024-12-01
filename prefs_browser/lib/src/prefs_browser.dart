@@ -3,6 +3,37 @@ import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_imports
 import 'package:web/web.dart' show window, Storage;
 
+const _internalId = 'tekartik_prefs_enabled_vKltV99p1fy0NGj7bD1C';
+const _internalValue = 'X';
+
+bool? _storageBrowserIsAvailableOrNull;
+
+/// Check if storage is available (read/write)
+bool checkStorageBrowserIsAvailable({bool? persistent}) =>
+    _storageBrowserIsAvailableOrNull ??= _checkStorageBrowserIsAvailable();
+
+/// Check if storage is available (read/write)
+bool _checkStorageBrowserIsAvailable({bool? persistent}) {
+  persistent ??= false;
+  try {
+    var value = window.localStorage.getItem(_internalId);
+    if (value == _internalValue) {
+      return true;
+    }
+    window.localStorage.setItem(_internalId, _internalValue);
+    value = window.localStorage.getItem(_internalId);
+    if (value == _internalValue) {
+      if (!persistent) {
+        window.localStorage.removeItem(_internalId);
+      }
+      return true;
+    }
+  } catch (_) {}
+  return false;
+}
+
+/// Global storage used not exported
+@protected
 Storage get storage => window.localStorage;
 Iterable<String> get _nativeStorageKeys {
   var keys = <String>[];
@@ -12,15 +43,15 @@ Iterable<String> get _nativeStorageKeys {
   return keys;
 }
 
-class PrefsBrowser extends Object with PrefsMixin implements Prefs {
-  final PrefsFactoryBrowser prefsFactoryBrowser;
+class _PrefsBrowser extends Object with PrefsMixin implements Prefs {
+  final _PrefsFactoryBrowser prefsFactoryBrowser;
 
   @override
   final String name;
   @override
   int version = 0;
 
-  PrefsBrowser(this.prefsFactoryBrowser, this.name);
+  _PrefsBrowser(this.prefsFactoryBrowser, this.name);
 
   String getKey(String name) => '${this.name}/$name';
 
@@ -73,9 +104,9 @@ class PrefsBrowser extends Object with PrefsMixin implements Prefs {
   }
 }
 
-final _allPrefs = <String, PrefsBrowser>{};
+final _allPrefs = <String, _PrefsBrowser>{};
 
-class PrefsFactoryBrowser extends Object
+class _PrefsFactoryBrowser extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
   final lock = Lock();
@@ -85,7 +116,7 @@ class PrefsFactoryBrowser extends Object
       {final int? version,
       PrefsOnVersionChangedFunction? onVersionChanged}) async {
     return await lock.synchronized(() async {
-      var prefs = _allPrefs[name] ??= PrefsBrowser(this, name);
+      var prefs = _allPrefs[name] ??= _PrefsBrowser(this, name);
 
       await prefs.handleMigration(
           version: version, onVersionChanged: onVersionChanged);
@@ -109,7 +140,17 @@ class PrefsFactoryBrowser extends Object
   bool get hasStorage => true;
 }
 
-PrefsFactoryBrowser? _prefsFactoryBrowser;
+_PrefsFactoryBrowser? _prefsFactoryBrowser;
 
+/// Always not null of the web
+PrefsFactory? get prefsFactoryBrowserOrNull {
+  try {
+    return prefsFactoryBrowser;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Throw if not on the web
 PrefsFactory get prefsFactoryBrowser =>
-    _prefsFactoryBrowser ??= PrefsFactoryBrowser();
+    _prefsFactoryBrowser ??= _PrefsFactoryBrowser();

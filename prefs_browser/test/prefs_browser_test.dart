@@ -10,4 +10,8 @@ import 'package:test/test.dart';
 void main() {
   prefs.runPrefsTests(prefsFactoryBrowser);
   runPrefsAsyncTests(prefsAsyncFactoryBrowser);
+  test('factories', () {
+    expect(prefsFactoryBrowserOrNull, prefsFactoryBrowser);
+    expect(prefsAsyncFactoryBrowserOrNull, prefsAsyncFactoryBrowser);
+  });
 }

@@ -13,12 +13,12 @@ Iterable<String> get _allStorageKeys {
   return keys;
 }
 
-class PrefsAsyncBrowser extends PrefsAsyncBase
+class _PrefsAsyncBrowser extends PrefsAsyncBase
     with PrefsAsyncKeyValueMixin, PrefsAsyncValueMixin {
-  PrefsAsyncBrowser({required super.factory, required super.name});
+  _PrefsAsyncBrowser({required super.factory, required super.name});
 
-  PrefsAsyncFactoryBrowser get prefsFactoryBrowser =>
-      factory as PrefsAsyncFactoryBrowser;
+  _PrefsAsyncFactoryBrowser get prefsFactoryBrowser =>
+      factory as _PrefsAsyncFactoryBrowser;
 
   String _implKey(String key) {
     checkKey(key);
@@ -89,13 +89,18 @@ class PrefsAsyncBrowser extends PrefsAsyncBase
   }
 }
 
-class PrefsAsyncFactoryBrowser with PrefsAsyncFactoryMixin {
+class _PrefsAsyncFactoryBrowser with PrefsAsyncFactoryMixin {
   @override
   Future<PrefsAsyncMixin> newPrefs(String name) async {
-    return PrefsAsyncBrowser(factory: this, name: name);
+    return _PrefsAsyncBrowser(factory: this, name: name);
   }
 }
 
-final _prefsAsyncFactoryBrowser = PrefsAsyncFactoryBrowser();
+final _prefsAsyncFactoryBrowser = _PrefsAsyncFactoryBrowser();
 
+/// Async prefs factory for browser or null
+PrefsAsyncFactory? get prefsAsyncFactoryBrowserOrNull =>
+    prefsAsyncFactoryBrowser;
+
+/// Async prefs factory for browser
 PrefsAsyncFactory get prefsAsyncFactoryBrowser => _prefsAsyncFactoryBrowser;

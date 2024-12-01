@@ -33,6 +33,7 @@ dev_dependencies:
   process_run: ">=1.2.0+3"
 
 dependency_overrides:
+  #web: ">=1.0.0 <1.1.0"
   tekartik_prefs:
     path: ../prefs
   tekartik_prefs_test:
