@@ -8,11 +8,12 @@ const _internalValue = 'X';
 
 bool? _storageBrowserIsAvailableOrNull;
 
-/// Check if storage is available (read/write)
+/// Check if storage is available (read, write check if persistent)
 bool checkStorageBrowserIsAvailable({bool? persistent}) =>
-    _storageBrowserIsAvailableOrNull ??= _checkStorageBrowserIsAvailable();
+    _storageBrowserIsAvailableOrNull ??=
+        _checkStorageBrowserIsAvailable(persistent: persistent);
 
-/// Check if storage is available (read/write)
+/// Check if storage is available (read, write check if persistent)
 bool _checkStorageBrowserIsAvailable({bool? persistent}) {
   persistent ??= false;
   try {
@@ -20,15 +21,17 @@ bool _checkStorageBrowserIsAvailable({bool? persistent}) {
     if (value == _internalValue) {
       return true;
     }
+    if (!persistent) {
+      return true;
+    }
     window.localStorage.setItem(_internalId, _internalValue);
     value = window.localStorage.getItem(_internalId);
     if (value == _internalValue) {
-      if (!persistent) {
-        window.localStorage.removeItem(_internalId);
-      }
       return true;
     }
-  } catch (_) {}
+  } catch (_) {
+    // False if error
+  }
   return false;
 }
 
