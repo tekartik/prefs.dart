@@ -1,4 +1,5 @@
 import 'package:cv/utils/value_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
@@ -8,11 +9,14 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
     implements PrefsAsyncStrictValue {
   PrefsAsyncFlutter({required super.factory, required super.name});
 
-  PrefsAsyncFactoryFlutter get _factory => factory as PrefsAsyncFactoryFlutter;
+  PrefsAsyncFactoryFlutter get _factory =>
+      super.factory as PrefsAsyncFactoryFlutter;
 
   SharedPreferencesAsync get _impl => _factory.sharedPreferencesAsync;
+
   SharedPreferencesWithCache get _implWithCache =>
       _factory.sharePreferencesWithCache;
+
   String _implKey(String key) {
     checkKey(key);
     return keyToImplementationKey(key);
@@ -27,7 +31,14 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   }
 
   @override
-  Future<bool> containsKey(String key) => _impl.containsKey(_implKey(key));
+  Future<bool> containsKey(String key) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.containsKey(implKey);
+    } else {
+      return Future.value(_implWithCache.containsKey(implKey));
+    }
+  }
 
   @override
   Future<bool?> getBoolStrict(String key) =>
@@ -60,40 +71,86 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   @override
   Future<List<String>?> getStringListStrict(String key) =>
       wrapTypeError(() => _impl.getStringList(_implKey(key)));
+
   @override
   Future<Set<String>> getKeys() async {
-    var allImplementationKeys = filterImplementationKeys(await _impl.getKeys());
+    var allImplementationKeys =
+        filterImplementationKeys(await _implGetAllKeys());
     return allImplementationKeys.map(implementationKeyToKey).toSet();
   }
 
   @override
-  Future<void> remove(String key) => _impl.remove(_implKey(key));
+  Future<void> remove(String key) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.remove(implKey);
+    } else {
+      return _implWithCache.remove(implKey);
+    }
+  }
 
   @override
-  Future<void> setBool(String key, bool value) =>
-      _impl.setBool(_implKey(key), value);
+  Future<void> setBool(String key, bool value) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.setBool(implKey, value);
+    } else {
+      return _implWithCache.setBool(implKey, value);
+    }
+  }
 
   @override
-  Future<void> setDouble(String key, double value) =>
-      _impl.setDouble(_implKey(key), value);
+  Future<void> setDouble(String key, double value) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.setDouble(implKey, value);
+    } else {
+      return _implWithCache.setDouble(implKey, value);
+    }
+  }
 
   @override
-  Future<void> setInt(String key, int value) =>
-      _impl.setInt(_implKey(key), value);
+  Future<void> setInt(String key, int value) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.setInt(implKey, value);
+    } else {
+      return _implWithCache.setInt(implKey, value);
+    }
+  }
 
   @override
-  Future<void> setString(String key, String value) =>
-      _impl.setString(_implKey(key), value);
+  Future<void> setString(String key, String value) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.setString(implKey, value);
+    } else {
+      return _implWithCache.setString(implKey, value);
+    }
+  }
 
   @override
-  Future<void> setStringList(String key, List<String> value) =>
-      _impl.setStringList(_implKey(key), value);
+  Future<void> setStringList(String key, List<String> value) {
+    var implKey = _implKey(key);
+    if (options.strictType) {
+      return _impl.setStringList(implKey, value);
+    } else {
+      return _implWithCache.setStringList(implKey, value);
+    }
+  }
 
   @override
   Future<void> clear() async {
-    var allImplementationKeys = filterImplementationKeys(await _impl.getKeys());
-
-    await _impl.clear(allowList: allImplementationKeys.toSet());
+    var allImplementationKeys = filterImplementationKeys(
+        await _implGetAllKeys(),
+        includePrivate: false);
+    if (options.strictType) {
+      await _impl.clear(allowList: allImplementationKeys.toSet());
+    } else {
+      for (var key in allImplementationKeys) {
+        await _implWithCache.remove(key);
+      }
+    }
   }
 
   Future<Set<String>> _implGetAllKeys() async {
@@ -108,7 +165,13 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   Future<void> clearForDelete() async {
     var allImplementationKeys =
         filterImplementationKeys(await _implGetAllKeys(), includePrivate: true);
-    await _impl.clear(allowList: allImplementationKeys.toSet());
+    if (options.strictType) {
+      await _impl.clear(allowList: allImplementationKeys.toSet());
+    } else {
+      for (var key in allImplementationKeys) {
+        await _implWithCache.remove(key);
+      }
+    }
   }
 
   @override
@@ -167,13 +230,14 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   }
 
   Object? _getRawValue(String key) {
-    return _implWithCache.get(keyToImplementationKey(key));
+    return _implWithCache.get(key);
   }
 
   @override
   Future<Object?> getRawValue(String key) async {
     checkKey(key);
-    return _getRawValue(key);
+    var implKey = keyToImplementationKey(key);
+    return _getRawValue(implKey);
   }
 
   @override
@@ -189,6 +253,7 @@ class PrefsAsyncFactoryFlutter extends PrefsAsyncFactory
 
   /// Implementation
   SharedPreferencesAsync get sharedPreferencesAsync => _sharedPreferencesAsync!;
+
   SharedPreferencesWithCache get sharePreferencesWithCache =>
       _sharePreferencesWithCache!;
 
@@ -196,13 +261,22 @@ class PrefsAsyncFactoryFlutter extends PrefsAsyncFactory
   Future<PrefsAsyncFlutter> newPrefs(String name) async {
     if (options.strictType) {
       _sharedPreferencesAsync ??= SharedPreferencesAsync();
+      if (kDebugMode) {
+        _sharePreferencesWithCache = null;
+      }
     } else {
       _sharePreferencesWithCache ??= await SharedPreferencesWithCache.create(
         cacheOptions: const SharedPreferencesWithCacheOptions(),
       );
+      if (kDebugMode) {
+        _sharedPreferencesAsync = null;
+      }
     }
     return PrefsAsyncFlutter(factory: this, name: name);
   }
+
+  @override
+  String toString() => 'PrefsAsyncFactoryFlutter($options)';
 }
 
 final _prefsAsyncFactoryFlutter = PrefsAsyncFactoryFlutter();

@@ -30,6 +30,7 @@ void runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
 void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
   Future<PrefsAsync> deleteAndOpen(String name) async {
+    // print('factory: ${factory.runtimeType}');
     await factory.deletePreferences(name);
     return await factory.openPreferences(name);
   }
@@ -120,6 +121,28 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
         await prefs.close();
       }
     });
+    test('first version no migration', () async {
+      // print('factory: ${factory.runtimeType} $factory');
+      var name = 'clear.prefs';
+      await factory.deletePreferences(name);
+      var openedPrefs = await factory.openPreferences(
+        name,
+        version: 1,
+      );
+      await openedPrefs.setBool('test', true);
+      await openedPrefs.close();
+    });
+    test('first migration clear', () async {
+      // print('factory: ${factory.runtimeType} $factory');
+      var name = 'clear.prefs';
+      await factory.deletePreferences(name);
+      var openedPrefs = await factory.openPreferences(name, version: 1,
+          onVersionChanged: (prefs, oldVersion, newVersion) async {
+        await prefs.setBool('test', true);
+      });
+      await openedPrefs.setBool('test', true);
+      await openedPrefs.close();
+    });
     test('change prefs during version change', () async {
       var name = 'version.prefs';
       await factory.deletePreferences(name);
@@ -162,6 +185,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       await prefs.close();
     });
     test('version', () async {
+      // devPrint('factory: ${factory.runtimeType} $factory');
       var name = 'version.prefs';
       await factory.deletePreferences(name);
       var onVersionChangedCalled = false;
@@ -201,7 +225,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
     });
 
     test('orNull', () async {
-      var name = 'or_ull.prefs';
+      var name = 'or_null.prefs';
       var prefs = await deleteAndOpen(name);
       try {
         await prefs.setIntOrNull('test', 1);
