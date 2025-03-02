@@ -5,7 +5,7 @@ homepage:
 publish_to: none
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.6.0
 
 dependencies:
   flutter:
@@ -22,7 +22,7 @@ dependencies:
     git:
       url: https://github.com/tekartik/common_utils.dart
       ref: dart3a
-  cv:
+  cv: ">=1.1.0+4"
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -31,7 +31,7 @@ dev_dependencies:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_test
       ref: dart3a
-  process_run: ">=1.2.0+3"
+  process_run: ">=1.2.1+1"
   tekartik_lints_flutter:
     git:
       url: https://github.com/tekartik/common_flutter.dart

@@ -22,8 +22,8 @@ void main() {
           await prefs.close();
 
           // check prefs
-          expect(window.localStorage['basic/test'], '1');
-          window.localStorage['basic/test'] = '2';
+          expect(window.localStorage.getItem('basic/test'), '1');
+          window.localStorage.setItem('basic/test', '2');
           prefs = await factory.openPreferences(name);
           expect(prefs.getInt('test'), 2);
         }
