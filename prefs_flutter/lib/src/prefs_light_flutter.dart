@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart' as impl;
 import 'package:tekartik_prefs/prefs_light.dart';
 
-abstract class PrefsFlutter implements Prefs {}
+abstract class PrefsFlutter implements PrefsLight {}
 
 class _PrefsFlutter implements PrefsFlutter {
   final Future<impl.SharedPreferences> _sharedPreferences =
@@ -82,4 +82,4 @@ class _PrefsFlutter implements PrefsFlutter {
   }
 }
 
-final Prefs prefsFlutter = _PrefsFlutter();
+final PrefsLight prefsFlutter = _PrefsFlutter();

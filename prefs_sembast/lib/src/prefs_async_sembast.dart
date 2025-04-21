@@ -143,6 +143,7 @@ class PrefsAsyncFactorySembast extends Object
 
   String getDbPath(String name) => join(path, name);
 
+  /// path is the root path
   PrefsAsyncFactorySembast(this.databaseFactory, this.path);
 
   @override

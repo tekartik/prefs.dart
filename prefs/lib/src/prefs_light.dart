@@ -1,5 +1,5 @@
 /// Prefs interface (light)
-abstract class Prefs {
+abstract class PrefsLight {
   /// Returns the value associated with the given [key].
   Future<String?> getString(String key);
 

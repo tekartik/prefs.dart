@@ -4,7 +4,7 @@ import 'package:tekartik_prefs/prefs_light.dart';
 import 'package:tekartik_prefs/src/prefs_utils.dart';
 
 /// In memory prefs (light)
-abstract class PrefsMemory implements Prefs {
+abstract class PrefsMemory implements PrefsLight {
   /// Creates a new instance of [PrefsMemory].
   factory PrefsMemory() {
     return _PrefsMemory();
