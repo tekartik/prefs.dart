@@ -13,7 +13,7 @@ class PrefsFactoryFlutterMock extends PrefsFactoryFlutter {
       initSharedPreferencesMock();
     }
   }
-/*
+  /*
   @override
   bool get hasStorage => false;
   */
@@ -73,8 +73,9 @@ class SharedPreferencesMock {
   }
 }
 
-Future<SharedPreferences> initSharedPreferencesMock(
-    [Map<String, Object?>? data]) async {
+Future<SharedPreferences> initSharedPreferencesMock([
+  Map<String, Object?>? data,
+]) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues(<String, Object>{});
   sharedPreferencesMock = SharedPreferencesMock();

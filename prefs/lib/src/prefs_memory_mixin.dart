@@ -20,10 +20,10 @@ mixin PrefsMemoryMixin
   }
 
   /// sync getter
-  Map<String, Object?> memoryGetAll() => _map.deepClone()
-    ..removeWhere((key, value) {
-      return isPrivateKey(key);
-    });
+  Map<String, Object?> memoryGetAll() =>
+      _map.deepClone()..removeWhere((key, value) {
+        return isPrivateKey(key);
+      });
   @override
   Future<void> setValueNoKeyCheck<T>(String key, T value) async {
     _map[key] = value;

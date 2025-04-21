@@ -49,37 +49,55 @@ void runPrefsTests(PrefsFactory factory) {
       await factory.deletePreferences(name);
 
       Future onVersionChanged1(
-          Prefs prefs, int oldVersion, int newVersion) async {
+        Prefs prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         prefs.setInt('value', 1);
       }
 
-      var prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(prefs.getInt('value'), 1);
       await prefs.close();
 
       Future onVersionChanged2(
-          Prefs prefs, int oldVersion, int newVersion) async {
+        Prefs prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(prefs.getInt('value'), 1);
         prefs.setInt('value', 2);
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 2, onVersionChanged: onVersionChanged2);
+      prefs = await factory.openPreferences(
+        name,
+        version: 2,
+        onVersionChanged: onVersionChanged2,
+      );
       expect(prefs.version, 2);
       expect(prefs.getInt('value'), 2);
       await prefs.close();
 
       // clear during version change
       Future onVersionChanged3(
-          Prefs prefs, int oldVersion, int newVersion) async {
+        Prefs prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         prefs.clear();
         prefs.setInt('value2', 3);
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 3, onVersionChanged: onVersionChanged3);
+      prefs = await factory.openPreferences(
+        name,
+        version: 3,
+        onVersionChanged: onVersionChanged3,
+      );
       expect(prefs.version, 3);
       expect(prefs.getInt('value'), isNull);
       expect(prefs.getInt('value2'), 3);
@@ -90,34 +108,49 @@ void runPrefsTests(PrefsFactory factory) {
       await factory.deletePreferences(name);
       var onVersionChangedCalled = false;
       Future onVersionChanged1(
-          Prefs prefs, int oldVersion, int newVersion) async {
+        Prefs prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(oldVersion, 0);
         expect(newVersion, 1);
         expect(prefs.version, 0);
         onVersionChangedCalled = true;
       }
 
-      var prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, true);
       onVersionChangedCalled = false;
       await prefs.close();
-      prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, false);
       await prefs.close();
       Future onVersionChanged2(
-          Prefs prefs, int oldVersion, int newVersion) async {
+        Prefs prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(oldVersion, 1);
         expect(newVersion, 2);
         expect(prefs.version, 1);
         onVersionChangedCalled = true;
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 2, onVersionChanged: onVersionChanged2);
+      prefs = await factory.openPreferences(
+        name,
+        version: 2,
+        onVersionChanged: onVersionChanged2,
+      );
       expect(prefs.version, 2);
       expect(onVersionChangedCalled, true);
 
@@ -195,16 +228,16 @@ void runPrefsTests(PrefsFactory factory) {
             [
               1,
               {
-                'map': {'int': 3}
-              }
-            ]
+                'map': {'int': 3},
+              },
+            ],
           ],
           'map': {
             'sub': {
-              'list': [5, 6]
+              'list': [5, 6],
             },
-            'list': [1]
-          }
+            'list': [1],
+          },
         };
         prefs.setMap('testComplex', map);
         expect(prefs.getMap('testComplex'), map);
@@ -259,13 +292,19 @@ void runPrefsTests(PrefsFactory factory) {
 
           expect(prefs.getBool('testDouble'), true);
           var doubleStringValue = prefs.getString('testDouble');
-          expect(doubleStringValue == '1.0' || doubleStringValue == '1', isTrue,
-              reason: '$doubleStringValue');
+          expect(
+            doubleStringValue == '1.0' || doubleStringValue == '1',
+            isTrue,
+            reason: '$doubleStringValue',
+          );
           expect(prefs.getInt('testDouble'), 1, reason: 'int testTouble');
 
           var double2StringValue = prefs.getString('testDouble2');
-          expect(double2StringValue == '-1.5', isTrue,
-              reason: '$double2StringValue');
+          expect(
+            double2StringValue == '-1.5',
+            isTrue,
+            reason: '$double2StringValue',
+          );
           expect(prefs.getBool('testDouble2'), true);
           expect(prefs.getInt('testDouble2'), -1);
 

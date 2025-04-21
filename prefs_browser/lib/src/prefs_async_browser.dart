@@ -40,8 +40,10 @@ class _PrefsAsyncBrowser extends PrefsAsyncBase
 
   @override
   Future<void> clearForDelete() async {
-    var allImplementationKeys =
-        filterImplementationKeys(_allStorageKeys, includePrivate: true);
+    var allImplementationKeys = filterImplementationKeys(
+      _allStorageKeys,
+      includePrivate: true,
+    );
     for (var implKey in allImplementationKeys) {
       _storage.removeItem(implKey);
     }
@@ -65,7 +67,7 @@ class _PrefsAsyncBrowser extends PrefsAsyncBase
     var allImplementationKeys = filterImplementationKeys(_allStorageKeys);
     var map = <String, Object?>{
       for (var key in allImplementationKeys)
-        key: _implementationKeyGetValue(key)
+        key: _implementationKeyGetValue(key),
     };
     return map;
   }

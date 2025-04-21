@@ -132,8 +132,11 @@ abstract class PrefsAsyncFactory {
   Future<void> deletePreferences(String name);
 
   /// Open a prefs.
-  Future<PrefsAsync> openPreferences(String name,
-      {int? version, PrefsAsyncOnVersionChangedFunction? onVersionChanged});
+  Future<PrefsAsync> openPreferences(
+    String name, {
+    int? version,
+    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+  });
 
   /// Initialize the factory
   void init({PrefsAsyncFactoryOptions? options});
@@ -155,16 +158,14 @@ class _PrefsAsyncFactoryOptions implements PrefsAsyncFactoryOptions {
   final bool strictType;
 
   _PrefsAsyncFactoryOptions({bool? strictType})
-      : strictType = strictType ?? false;
+    : strictType = strictType ?? false;
 
-  Model toDebugMap() => asModel({
-        if (strictType) 'strictType': strictType,
-      });
+  Model toDebugMap() => asModel({if (strictType) 'strictType': strictType});
 
   @override
   String toString() => 'PrefsOptions(${toDebugMap()})';
 }
 
 /// Prefs on version changed function
-typedef PrefsAsyncOnVersionChangedFunction = FutureOr<void> Function(
-    PrefsAsync pref, int oldVersion, int newVersion);
+typedef PrefsAsyncOnVersionChangedFunction =
+    FutureOr<void> Function(PrefsAsync pref, int oldVersion, int newVersion);

@@ -50,19 +50,26 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
     }
   }
 
-  Future open(
-      {final int? version,
-      PrefsOnVersionChangedFunction? onVersionChanged}) async {
+  Future open({
+    final int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  }) async {
     // devPrint('opening $dbPath');
     final prefsNewVersion = version;
     late final int prefsOldVersion;
-    database = await prefsFactorySembast.databaseFactory
-        .openDatabase(dbPath, version: 1, onVersionChanged:
-            (sembast.Database db, int oldVersion, int newVersion) async {
-      if (oldVersion == 0) {
-        await signatureRecord.put(db, prefsSignatureValue);
-      }
-    });
+    database = await prefsFactorySembast.databaseFactory.openDatabase(
+      dbPath,
+      version: 1,
+      onVersionChanged: (
+        sembast.Database db,
+        int oldVersion,
+        int newVersion,
+      ) async {
+        if (oldVersion == 0) {
+          await signatureRecord.put(db, prefsSignatureValue);
+        }
+      },
+    );
 
     await database.transaction((txn) async {
       var signature = await signatureRecord.get(txn);
@@ -105,8 +112,11 @@ class PrefsFactorySembast extends Object
   PrefsFactorySembast(this.databaseFactory, this.path);
 
   @override
-  Future<Prefs> openPreferences(String name,
-      {int? version, PrefsOnVersionChangedFunction? onVersionChanged}) async {
+  Future<Prefs> openPreferences(
+    String name, {
+    int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  }) async {
     name = fixName(name);
 
     var prefs = await lock.synchronized(() async {
@@ -144,5 +154,6 @@ class PrefsFactorySembast extends Object
 }
 
 PrefsFactorySembast getPrefsFactorySembast(
-        sembast.DatabaseFactory databaseFactory, String path) =>
-    PrefsFactorySembast(databaseFactory, path);
+  sembast.DatabaseFactory databaseFactory,
+  String path,
+) => PrefsFactorySembast(databaseFactory, path);

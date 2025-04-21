@@ -10,8 +10,16 @@ import 'package:tekartik_prefs_test/prefs_test.dart' as prefs;
 import 'package:test/test.dart';
 
 void main() {
-  prefs.runPrefsTests(getPrefsFactorySembast(
-      databaseFactoryIo, join('.dart_tool', 'tekartik_prefs_sembast', 'test')));
-  runPrefsAsyncTests(getPrefsAsyncFactorySembast(databaseFactoryIo,
-      join('.dart_tool', 'tekartik_prefs_sembast', 'test_async')));
+  prefs.runPrefsTests(
+    getPrefsFactorySembast(
+      databaseFactoryIo,
+      join('.dart_tool', 'tekartik_prefs_sembast', 'test'),
+    ),
+  );
+  runPrefsAsyncTests(
+    getPrefsAsyncFactorySembast(
+      databaseFactoryIo,
+      join('.dart_tool', 'tekartik_prefs_sembast', 'test_async'),
+    ),
+  );
 }

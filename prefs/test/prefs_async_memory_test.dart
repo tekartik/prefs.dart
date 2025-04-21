@@ -23,7 +23,7 @@ void main() {
       expect(prefsMemory.map, {
         '__tekartik_prefs_signature__': 'tekartik_prefs',
         '__tekartik_prefs_version__': 0,
-        'test': true
+        'test': true,
       });
       var prefsFactoryMemory = prefsFactory as PrefsAsyncFactoryMemory;
       expect(prefsFactoryMemory.allPrefs, {'test1': prefs});
@@ -37,11 +37,14 @@ void main() {
       expect(await prefs.getBool('test'), isNull);
     });
     test('onVersionChanged', () async {
-      var prefs = await newPrefsAsyncFactoryMemory().openPreferences('test1',
-          version: 1, onVersionChanged: (prefs, oldVersion, newVersion) async {
-        expect(oldVersion, 0);
-        expect(newVersion, 1);
-      });
+      var prefs = await newPrefsAsyncFactoryMemory().openPreferences(
+        'test1',
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) async {
+          expect(oldVersion, 0);
+          expect(newVersion, 1);
+        },
+      );
       expect(prefs.name, 'test1');
       expect(prefs.version, 1);
       await prefs.close();

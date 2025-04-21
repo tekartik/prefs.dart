@@ -104,9 +104,11 @@ class PrefsFactoryFlutter extends Object
   bool get hasStorage => true;
 
   @override
-  Future<Prefs> openPreferences(String name,
-      {final int? version,
-      PrefsOnVersionChangedFunction? onVersionChanged}) async {
+  Future<Prefs> openPreferences(
+    String name, {
+    final int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  }) async {
     var prefs = await lock.synchronized(() async {
       sharedPreferences ??= await SharedPreferences.getInstance();
       var prefs = _allPrefs[name];
@@ -117,7 +119,9 @@ class PrefsFactoryFlutter extends Object
       }
 
       await prefs.handleMigration(
-          version: version, onVersionChanged: onVersionChanged);
+        version: version,
+        onVersionChanged: onVersionChanged,
+      );
       return prefs;
     });
     return prefs;

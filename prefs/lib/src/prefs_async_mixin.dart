@@ -49,9 +49,11 @@ abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
   }
 
   @override
-  Future<PrefsAsync> openPreferences(String name,
-      {int? version,
-      PrefsAsyncOnVersionChangedFunction? onVersionChanged}) async {
+  Future<PrefsAsync> openPreferences(
+    String name, {
+    int? version,
+    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+  }) async {
     name = fixName(name);
     var prefs = await lock.synchronized(() async {
       var prefs = allPrefs[name];
@@ -61,12 +63,15 @@ abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
         allPrefs[name] = prefs;
 
         await prefs.handleMigration(
-            version: version, onVersionChanged: onVersionChanged);
+          version: version,
+          onVersionChanged: onVersionChanged,
+        );
       } else {
         if (version != null) {
           if (version != prefs.version) {
             throw StateError(
-                'Cannot reopen preferences version ${prefs.version} with a different version');
+              'Cannot reopen preferences version ${prefs.version} with a different version',
+            );
           }
         }
       }
@@ -404,8 +409,10 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
       [prefsVersionKey, prefsSignatureKey].contains(key);
 
   /// Filter any implementation keys to public keys
-  Iterable<String> filterImplementationKeys(Iterable<String> implementationKeys,
-      {bool includePrivate = false}) {
+  Iterable<String> filterImplementationKeys(
+    Iterable<String> implementationKeys, {
+    bool includePrivate = false,
+  }) {
     return implementationKeys.map((implementationKey) {
       if (isImplementationKey(implementationKey)) {
         var publicKey = implementationKeyToKey(implementationKey);
@@ -434,9 +441,10 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
   String keyToImplementationKey(String key) => '$implementationKeyPrefix$key';
 
   /// Handle migration
-  Future<void> handleMigration(
-      {final int? version,
-      PrefsAsyncOnVersionChangedFunction? onVersionChanged}) async {
+  Future<void> handleMigration({
+    final int? version,
+    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+  }) async {
     await lock.synchronized(() async {
       var signature = await getStringNoKeyCheck(prefsSignatureKey);
       if (signature != prefsSignatureValue) {

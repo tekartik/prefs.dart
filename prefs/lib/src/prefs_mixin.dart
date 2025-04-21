@@ -167,9 +167,10 @@ abstract mixin class PrefsMixin implements Prefs {
   }
 
   /// Handle migration
-  Future<void> handleMigration(
-      {final int? version,
-      PrefsOnVersionChangedFunction? onVersionChanged}) async {
+  Future<void> handleMigration({
+    final int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  }) async {
     var signature = getString(prefsSignatureKey);
     if (signature == prefsSignatureValue) {
       clear();
@@ -306,7 +307,8 @@ abstract mixin class PrefsMixin implements Prefs {
         value.forEach((dynamic k, dynamic v) => checkValue(v));
       } else {
         throw ArgumentError(
-            '$value type ${value.runtimeType} in $testedValue not supported');
+          '$value type ${value.runtimeType} in $testedValue not supported',
+        );
       }
     }
 
@@ -320,5 +322,5 @@ abstract mixin class PrefsMixin implements Prefs {
 }
 
 /// Prefs on version changed function
-typedef PrefsOnVersionChangedFunction = FutureOr<void> Function(
-    Prefs pref, int oldVersion, int newVersion);
+typedef PrefsOnVersionChangedFunction =
+    FutureOr<void> Function(Prefs pref, int oldVersion, int newVersion);

@@ -74,8 +74,9 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
 
   @override
   Future<Set<String>> getKeys() async {
-    var allImplementationKeys =
-        filterImplementationKeys(await _implGetAllKeys());
+    var allImplementationKeys = filterImplementationKeys(
+      await _implGetAllKeys(),
+    );
     return allImplementationKeys.map(implementationKeyToKey).toSet();
   }
 
@@ -142,8 +143,9 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   @override
   Future<void> clear() async {
     var allImplementationKeys = filterImplementationKeys(
-        await _implGetAllKeys(),
-        includePrivate: false);
+      await _implGetAllKeys(),
+      includePrivate: false,
+    );
     if (options.strictType) {
       await _impl.clear(allowList: allImplementationKeys.toSet());
     } else {
@@ -163,8 +165,10 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
 
   @override
   Future<void> clearForDelete() async {
-    var allImplementationKeys =
-        filterImplementationKeys(await _implGetAllKeys(), includePrivate: true);
+    var allImplementationKeys = filterImplementationKeys(
+      await _implGetAllKeys(),
+      includePrivate: true,
+    );
     if (options.strictType) {
       await _impl.clear(allowList: allImplementationKeys.toSet());
     } else {
@@ -178,12 +182,13 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   Future<Map<String, Object?>> getAll() async {
     var allImplementationKeys = await _implGetAllKeys();
     if (options.strictType) {
-      return (await _impl.getAll(allowList: allImplementationKeys))
-          .map((key, value) => MapEntry(implementationKeyToKey(key), value));
+      return (await _impl.getAll(
+        allowList: allImplementationKeys,
+      )).map((key, value) => MapEntry(implementationKeyToKey(key), value));
     } else {
       var map = <String, Object?>{
         for (var key in allImplementationKeys)
-          implementationKeyToKey(key): _implWithCache.get(key)
+          implementationKeyToKey(key): _implWithCache.get(key),
       };
       return map;
     }

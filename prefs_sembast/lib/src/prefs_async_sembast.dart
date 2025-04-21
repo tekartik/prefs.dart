@@ -36,20 +36,27 @@ class PrefsAsyncSembast extends PrefsAsyncBase
   sembast.Transaction? _openTransaction;
 
   Future open() async {
-    database = await _factory.databaseFactory.openDatabase(dbPath, version: 1,
-        onVersionChanged:
-            (sembast.Database db, int oldVersion, int newVersion) async {
-      if (oldVersion == 0) {
-        await _signatureRecord.put(db, prefsSignatureValue);
-      }
-    });
+    database = await _factory.databaseFactory.openDatabase(
+      dbPath,
+      version: 1,
+      onVersionChanged: (
+        sembast.Database db,
+        int oldVersion,
+        int newVersion,
+      ) async {
+        if (oldVersion == 0) {
+          await _signatureRecord.put(db, prefsSignatureValue);
+        }
+      },
+    );
   }
 
   /// Handle migration
   @override
-  Future<void> handleMigration(
-      {final int? version,
-      PrefsAsyncOnVersionChangedFunction? onVersionChanged}) async {
+  Future<void> handleMigration({
+    final int? version,
+    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+  }) async {
     await lock.synchronized(() async {
       await database.transaction((txn) async {
         _openTransaction = txn;
@@ -83,7 +90,8 @@ class PrefsAsyncSembast extends PrefsAsyncBase
 
   // ignore: unused_element
   Future<T> _transaction<T>(
-      Future<T> Function(sembast.Transaction txn) action) async {
+    Future<T> Function(sembast.Transaction txn) action,
+  ) async {
     if (_openTransaction != null) {
       return await action(_openTransaction!);
     } else {
@@ -106,7 +114,7 @@ class PrefsAsyncSembast extends PrefsAsyncBase
   Future<Map<String, Object?>> getAll() async {
     var records = await _store.query().getSnapshots(_client);
     return <String, Object?>{
-      for (var record in records) record.key: record.value
+      for (var record in records) record.key: record.value,
     };
   }
 
@@ -159,5 +167,6 @@ class PrefsAsyncFactorySembast extends Object
 }
 
 PrefsAsyncFactorySembast getPrefsAsyncFactorySembast(
-        sembast.DatabaseFactory databaseFactory, String path) =>
-    PrefsAsyncFactorySembast(databaseFactory, path);
+  sembast.DatabaseFactory databaseFactory,
+  String path,
+) => PrefsAsyncFactorySembast(databaseFactory, path);

@@ -22,6 +22,9 @@ abstract class PrefsAsyncWithCacheFactory {
   Future<void> deletePreferences(String name);
 
   /// Open a prefs.
-  Future<PrefsAsync> openPreferences(String name,
-      {int? version, PrefsAsyncOnVersionChangedFunction? onVersionChanged});
+  Future<PrefsAsync> openPreferences(
+    String name, {
+    int? version,
+    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+  });
 }

@@ -41,6 +41,20 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       // devWarning('quick debug code')
       await prefs.close();
     }, skip: true);
+
+    test('bad type', () async {
+      var prefs = await deleteAndOpen('bad_type');
+      await prefs.setInt('test', 1);
+      if (prefs.options.strictType) {
+        expect(await prefs.getString('test'), isNull);
+      } else {
+        expect(await prefs.getString('test'), '1');
+      }
+      await prefs.setString('test', 'dummy');
+      expect(await prefs.getInt('dummy'), isNull);
+      // devWarning('quick debug code')
+      await prefs.close();
+    });
     test('double', () async {
       var name = 'double_conversion';
       var prefs = await deleteAndOpen(name);
@@ -60,6 +74,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
           expect(await prefs.getString('test'), '1.0');
         }
       }
+      await prefs.close();
     });
     test('basic', () async {
       var name = 'test.prefs';
@@ -125,10 +140,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       // print('factory: ${factory.runtimeType} $factory');
       var name = 'clear.prefs';
       await factory.deletePreferences(name);
-      var openedPrefs = await factory.openPreferences(
-        name,
-        version: 1,
-      );
+      var openedPrefs = await factory.openPreferences(name, version: 1);
       await openedPrefs.setBool('test', true);
       await openedPrefs.close();
     });
@@ -136,10 +148,13 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       // print('factory: ${factory.runtimeType} $factory');
       var name = 'clear.prefs';
       await factory.deletePreferences(name);
-      var openedPrefs = await factory.openPreferences(name, version: 1,
-          onVersionChanged: (prefs, oldVersion, newVersion) async {
-        await prefs.setBool('test', true);
-      });
+      var openedPrefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) async {
+          await prefs.setBool('test', true);
+        },
+      );
       await openedPrefs.setBool('test', true);
       await openedPrefs.close();
     });
@@ -148,37 +163,55 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       await factory.deletePreferences(name);
 
       Future onVersionChanged1(
-          PrefsAsync prefs, int oldVersion, int newVersion) async {
+        PrefsAsync prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         await prefs.setInt('value', 1);
       }
 
-      var prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(await prefs.getInt('value'), 1);
       await prefs.close();
 
       Future onVersionChanged2(
-          PrefsAsync prefs, int oldVersion, int newVersion) async {
+        PrefsAsync prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(await prefs.getInt('value'), 1);
         await prefs.setInt('value', 2);
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 2, onVersionChanged: onVersionChanged2);
+      prefs = await factory.openPreferences(
+        name,
+        version: 2,
+        onVersionChanged: onVersionChanged2,
+      );
       expect(prefs.version, 2);
       expect(await prefs.getInt('value'), 2);
       await prefs.close();
 
       // clear during version change
       Future onVersionChanged3(
-          PrefsAsync prefs, int oldVersion, int newVersion) async {
+        PrefsAsync prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         await prefs.clear();
         await prefs.setInt('value2', 3);
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 3, onVersionChanged: onVersionChanged3);
+      prefs = await factory.openPreferences(
+        name,
+        version: 3,
+        onVersionChanged: onVersionChanged3,
+      );
       expect(prefs.version, 3);
       expect(await prefs.getInt('value'), isNull);
       expect(await prefs.getInt('value2'), 3);
@@ -190,34 +223,49 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       await factory.deletePreferences(name);
       var onVersionChangedCalled = false;
       Future onVersionChanged1(
-          PrefsAsync prefs, int oldVersion, int newVersion) async {
+        PrefsAsync prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(oldVersion, 0);
         expect(newVersion, 1);
         expect(prefs.version, 0);
         onVersionChangedCalled = true;
       }
 
-      var prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, true);
       onVersionChangedCalled = false;
       await prefs.close();
-      prefs = await factory.openPreferences(name,
-          version: 1, onVersionChanged: onVersionChanged1);
+      prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: onVersionChanged1,
+      );
       expect(prefs.version, 1);
       expect(onVersionChangedCalled, false);
       await prefs.close();
       Future onVersionChanged2(
-          PrefsAsync prefs, int oldVersion, int newVersion) async {
+        PrefsAsync prefs,
+        int oldVersion,
+        int newVersion,
+      ) async {
         expect(oldVersion, 1);
         expect(newVersion, 2);
         expect(prefs.version, 1);
         onVersionChangedCalled = true;
       }
 
-      prefs = await factory.openPreferences(name,
-          version: 2, onVersionChanged: onVersionChanged2);
+      prefs = await factory.openPreferences(
+        name,
+        version: 2,
+        onVersionChanged: onVersionChanged2,
+      );
       expect(prefs.version, 2);
       expect(onVersionChangedCalled, true);
 
@@ -332,23 +380,38 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
           expect(await prefs.getBool('testBool'), true);
           if (prefs.options.strictType) {
             expect(await prefs.getString('testBool'), isNull);
-            expect(await prefs.getInt('testBool'), isNull,
-                reason: 'int testBool');
+            expect(
+              await prefs.getInt('testBool'),
+              isNull,
+              reason: 'int testBool',
+            );
             expect(await prefs.getDouble('testBool'), isNull);
             expect(await prefs.getStringList('testBool'), isNull);
 
             expect(await prefs.getBool('testInt'), isNull);
-            expect(await prefs.getString('testInt'), isNull,
-                reason: 'testInt as string');
+            expect(
+              await prefs.getString('testInt'),
+              isNull,
+              reason: 'testInt as string',
+            );
             if (kDartIsWebJs) {
-              expect(await prefs.getDouble('testInt'), 1.0,
-                  reason: 'double testInt js');
-              expect(await prefs.getDouble('testInt2'), -7.0,
-                  reason: 'double testInt 2 js');
+              expect(
+                await prefs.getDouble('testInt'),
+                1.0,
+                reason: 'double testInt js',
+              );
+              expect(
+                await prefs.getDouble('testInt2'),
+                -7.0,
+                reason: 'double testInt 2 js',
+              );
               expect(await prefs.getDouble('testInt3'), 0);
             } else {
-              expect(await prefs.getDouble('testInt'), isNull,
-                  reason: 'double testInt');
+              expect(
+                await prefs.getDouble('testInt'),
+                isNull,
+                reason: 'double testInt',
+              );
               expect(await prefs.getDouble('testInt2'), isNull);
               expect(await prefs.getDouble('testInt3'), isNull);
             }
@@ -356,8 +419,11 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
             expect(await prefs.getBool('testInt3'), isNull, reason: 'testInt3');
             expect(await prefs.getString('testInt3'), isNull);
 
-            expect(await prefs.getInt('testDouble2'), isNull,
-                reason: 'int testDouble2');
+            expect(
+              await prefs.getInt('testDouble2'),
+              isNull,
+              reason: 'int testDouble2',
+            );
             expect(await prefs.getBool('testDouble'), isNull);
             expect(await prefs.getString('testDouble'), isNull);
             expect(await prefs.getBool('testDouble2'), isNull);
@@ -380,15 +446,21 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
             expect(await prefs.getBool('testInt'), true);
             expect(await prefs.getString('testInt'), '1');
-            expect(await prefs.getDouble('testInt'), 1,
-                reason: 'double testInt');
+            expect(
+              await prefs.getDouble('testInt'),
+              1,
+              reason: 'double testInt',
+            );
             expect(await prefs.getDouble('testInt2'), -7);
             expect(await prefs.getDouble('testInt3'), 0);
             expect(await prefs.getBool('testInt3'), false, reason: 'testInt3');
             expect(await prefs.getString('testInt3'), '0');
 
-            expect(await prefs.getInt('testDouble'), 1,
-                reason: 'int testTouble');
+            expect(
+              await prefs.getInt('testDouble'),
+              1,
+              reason: 'int testTouble',
+            );
             if (kDartIsWebJs) {
               // 1.0 will encoded as an int...
               expect(await prefs.getString('testDouble'), '1');
@@ -396,8 +468,11 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
               expect(await prefs.getString('testDouble'), '1.0');
             }
             expect(await prefs.getBool('testDouble'), true);
-            expect(await prefs.getInt('testDouble2'), -2,
-                reason: 'int testDouble2');
+            expect(
+              await prefs.getInt('testDouble2'),
+              -2,
+              reason: 'int testDouble2',
+            );
             expect(await prefs.getString('testDouble2'), '-1.5');
             expect(await prefs.getBool('testDouble2'), true);
             expect(await prefs.getBool('testDouble3'), false);
@@ -409,8 +484,11 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
           expect(await prefs.getInt('testInt'), 1, reason: 'int testInt');
 
           expect(await prefs.getDouble('testDouble'), 1.0, reason: 'double');
-          expect(await prefs.getDouble('testDouble2'), -1.5,
-              reason: 'double -1.5');
+          expect(
+            await prefs.getDouble('testDouble2'),
+            -1.5,
+            reason: 'double -1.5',
+          );
 
           expect(await prefs.getBool('testList'), isNull);
           expect(await prefs.getInt('testList'), isNull);

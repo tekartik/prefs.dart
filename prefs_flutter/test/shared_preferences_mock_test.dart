@@ -79,12 +79,12 @@ void main() {
       makeNullable(TestDefaultBinaryMessengerBinding.instance)!
           .defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'getAll') {
-          return kTestValues;
-        }
-        return null;
-      });
+            log.add(methodCall);
+            if (methodCall.method == 'getAll') {
+              return kTestValues;
+            }
+            return null;
+          });
       preferences = await SharedPreferences.getInstance();
       log.clear();
     });
@@ -110,39 +110,57 @@ void main() {
     test('writing', () async {
       await Future.wait(<Future<bool>>[
         preferences.setString(
-            'String', kTestValues2['flutter.String'] as String),
+          'String',
+          kTestValues2['flutter.String'] as String,
+        ),
         preferences.setBool('bool', kTestValues2['flutter.bool'] as bool),
         preferences.setInt('int', kTestValues2['flutter.int'] as int),
         preferences.setDouble(
-            'double', kTestValues2['flutter.double'] as double),
+          'double',
+          kTestValues2['flutter.double'] as double,
+        ),
         preferences.setStringList(
-            'List', kTestValues2['flutter.List'] as List<String>)
+          'List',
+          kTestValues2['flutter.List'] as List<String>,
+        ),
       ]);
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('setString', arguments: <String, Object?>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'setString',
+          arguments: <String, Object?>{
             'key': 'flutter.String',
-            'value': kTestValues2['flutter.String']
-          }),
-          isMethodCall('setBool', arguments: <String, Object?>{
+            'value': kTestValues2['flutter.String'],
+          },
+        ),
+        isMethodCall(
+          'setBool',
+          arguments: <String, Object?>{
             'key': 'flutter.bool',
-            'value': kTestValues2['flutter.bool']
-          }),
-          isMethodCall('setInt', arguments: <String, Object?>{
+            'value': kTestValues2['flutter.bool'],
+          },
+        ),
+        isMethodCall(
+          'setInt',
+          arguments: <String, Object?>{
             'key': 'flutter.int',
-            'value': kTestValues2['flutter.int']
-          }),
-          isMethodCall('setDouble', arguments: <String, Object?>{
+            'value': kTestValues2['flutter.int'],
+          },
+        ),
+        isMethodCall(
+          'setDouble',
+          arguments: <String, Object?>{
             'key': 'flutter.double',
-            'value': kTestValues2['flutter.double']
-          }),
-          isMethodCall('setStringList', arguments: <String, Object?>{
+            'value': kTestValues2['flutter.double'],
+          },
+        ),
+        isMethodCall(
+          'setStringList',
+          arguments: <String, Object?>{
             'key': 'flutter.List',
-            'value': kTestValues2['flutter.List']
-          }),
-        ],
-      );
+            'value': kTestValues2['flutter.List'],
+          },
+        ),
+      ]);
       log.clear();
 
       expect(preferences.getString('String'), kTestValues2['flutter.String']);
@@ -158,15 +176,16 @@ void main() {
 
       await preferences.remove(key);
       expect(
-          log,
-          List<Matcher>.filled(
-            6,
-            isMethodCall(
-              'remove',
-              arguments: <String, Object?>{'key': 'flutter.$key'},
-            ),
-            growable: true,
-          ));
+        log,
+        List<Matcher>.filled(
+          6,
+          isMethodCall(
+            'remove',
+            arguments: <String, Object?>{'key': 'flutter.$key'},
+          ),
+          growable: true,
+        ),
+      );
     }, skip: 'Channel mock no longer supported');
 
     test('clearing', () async {

@@ -96,6 +96,9 @@ abstract class PrefsFactory {
   Future deletePreferences(String name);
 
   /// Open a prefs.
-  Future<Prefs> openPreferences(String name,
-      {int? version, PrefsOnVersionChangedFunction? onVersionChanged});
+  Future<Prefs> openPreferences(
+    String name, {
+    int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  });
 }

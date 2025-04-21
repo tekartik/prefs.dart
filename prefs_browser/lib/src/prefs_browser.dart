@@ -10,8 +10,9 @@ bool? _storageBrowserIsAvailableOrNull;
 
 /// Check if storage is available (read, write check if persistent)
 bool checkStorageBrowserIsAvailable({bool? persistent}) =>
-    _storageBrowserIsAvailableOrNull ??=
-        _checkStorageBrowserIsAvailable(persistent: persistent);
+    _storageBrowserIsAvailableOrNull ??= _checkStorageBrowserIsAvailable(
+      persistent: persistent,
+    );
 
 /// Check if storage is available (read, write check if persistent)
 bool _checkStorageBrowserIsAvailable({bool? persistent}) {
@@ -115,14 +116,18 @@ class _PrefsFactoryBrowser extends Object
   final lock = Lock();
 
   @override
-  Future<Prefs> openPreferences(String name,
-      {final int? version,
-      PrefsOnVersionChangedFunction? onVersionChanged}) async {
+  Future<Prefs> openPreferences(
+    String name, {
+    final int? version,
+    PrefsOnVersionChangedFunction? onVersionChanged,
+  }) async {
     return await lock.synchronized(() async {
       var prefs = _allPrefs[name] ??= _PrefsBrowser(this, name);
 
       await prefs.handleMigration(
-          version: version, onVersionChanged: onVersionChanged);
+        version: version,
+        onVersionChanged: onVersionChanged,
+      );
 
       return prefs;
     });
