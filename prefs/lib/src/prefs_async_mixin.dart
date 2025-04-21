@@ -1,11 +1,14 @@
 import 'package:cv/utils/value_utils.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_common_utils/env_utils.dart';
-import 'package:tekartik_prefs/prefs_async.dart';
 import 'package:tekartik_prefs/src/prefs_async.dart';
 
 import 'prefs_mixin.dart'
-    show prefsVersionKey, prefsSignatureKey, prefsSignatureValue;
+    show
+        PrefsCommonPrv,
+        prefsSignatureKey,
+        prefsSignatureValue,
+        prefsVersionKey;
 
 /// Prefs mixin
 abstract mixin class PrefsAsyncFactoryMixin implements PrefsAsyncFactory {
@@ -104,8 +107,7 @@ extension PrefsAsyncMixinExtPrv on PrefsAsyncMixin {
 }
 
 /// mixin to discard any implementation key modification
-abstract mixin class PrefsAsyncNoImplementationKeyMixin
-    implements PrefsAsyncMixin {
+mixin PrefsAsyncNoImplementationKeyMixin implements PrefsCommonPrv {
   @override
   String keyToImplementationKey(String key) => key;
 
@@ -234,22 +236,59 @@ abstract mixin class PrefsAsyncValueMixin
 /// Key value abstract interface
 abstract interface class PrefsAsyncKeyValue implements PrefsAsync {}
 
-/// Convenient key value mixin
-abstract mixin class PrefsAsyncKeyValueMixin
-    implements PrefsAsyncMixin, PrefsAsyncKeyValue {
+/// Read interface
+abstract class PrefsAsyncReadKeyValuePrv {
+  /// Get a value (not available for strict type)
+  Future<T?> getValue<T>(String key);
+
+  /// Get a value (not available for strict type)
+  Future<Object?> getRawValue(String key);
+
   /// Get a value without key check
   Future<T?> getValueNoKeyCheck<T>(String key);
+}
 
-  /// Set any value
-  Future<void> setValueNoKeyCheck<T>(String key, T value);
-
+/// Async Read halper
+abstract mixin class PrefsAsyncReadKeyValueMixin
+    implements PrefsAsyncReadKeyValuePrv, PrefsCommonPrv {
   /// Check and get key
   @override
   Future<T?> getValue<T>(String key) {
     checkKey(key);
     return getValueNoKeyCheck<T>(key);
   }
+}
 
+/// Read interface
+abstract class PrefsAsyncWriteKeyValuePrv {
+  /// Check key and set value
+  Future<void> setValue<T>(String key, T value);
+
+  /// Set any value
+  Future<void> setValueNoKeyCheck<T>(String key, T value);
+
+  /// Clear before delete
+  Future<void> clearForDelete();
+}
+
+/// Async Write mixin
+abstract mixin class PrefsAsyncWriteKeyValueMixin
+    implements PrefsAsyncWriteKeyValuePrv, PrefsCommonPrv {
+  /// Check key and set value
+  @override
+  Future<void> setValue<T>(String key, T value) {
+    checkKey(key);
+    return setValueNoKeyCheck(key, value);
+  }
+}
+
+/// Convenient key value mixin
+abstract mixin class PrefsAsyncKeyValueMixin
+    implements
+        PrefsAsyncMixin,
+        PrefsAsyncKeyValue,
+        PrefsAsyncReadKeyValuePrv,
+        PrefsAsyncWriteKeyValuePrv {
   Future<Object?> _getRawValueNoKeyCheck<Object>(String key) =>
       getValueNoKeyCheck<Object>(key);
 
@@ -257,12 +296,6 @@ abstract mixin class PrefsAsyncKeyValueMixin
   Future<Object?> getRawValue(String key) {
     checkKey(key);
     return _getRawValueNoKeyCheck<Object>(key);
-  }
-
-  /// Check key and set value
-  Future<void> setValue<T>(String key, T value) {
-    checkKey(key);
-    return setValueNoKeyCheck(key, value);
   }
 
   @override
@@ -309,7 +342,7 @@ abstract mixin class PrefsAsyncKeyValueMixin
 }
 
 /// Prefs mixin
-abstract mixin class PrefsAsyncMixin implements PrefsAsync {
+abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
   /// Options
   @override
   late final options = factory.options;
@@ -322,14 +355,6 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
 
   /// Get a value (not available for strict type)
   Future<Object?> getRawValue(String key);
-
-  /// Check type
-  T? checkValueType<T>(Object? value) {
-    if (value is T) {
-      return value;
-    }
-    return null;
-  }
 
   /// Lock access
   final lock = Lock(reentrant: true);
@@ -368,11 +393,13 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
   }
 
   /// Remove the prefix (must check isImplementationKey before)
+  @override
   String implementationKeyToKey(String implementationKey) {
     return implementationKey.substring(implementationKeyPrefix.length);
   }
 
   /// True for private key
+  @override
   bool isPrivateKey(String key) =>
       [prefsVersionKey, prefsSignatureKey].contains(key);
 
@@ -392,6 +419,7 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
   }
 
   /// Check the name
+  @override
   void checkKey(String key) {
     if (key.isEmpty) {
       throw ArgumentError.notNull('prefs key name cannot be empty');
@@ -402,6 +430,7 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync {
   }
 
   /// Get the prefs key
+  @override
   String keyToImplementationKey(String key) => '$implementationKeyPrefix$key';
 
   /// Handle migration

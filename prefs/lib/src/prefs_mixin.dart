@@ -1,5 +1,6 @@
 import 'package:tekartik_common_utils/common_utils_import.dart';
-import 'package:tekartik_prefs/prefs.dart';
+
+import 'prefs.dart';
 
 /// signature key
 const String prefsSignatureKey = '__tekartik_prefs_signature__';
@@ -10,6 +11,40 @@ const String prefsVersionKey = '__tekartik_prefs_version__';
 /// signature value
 const String prefsSignatureValue = 'tekartik_prefs';
 
+/// Common prefs private interface
+abstract class PrefsCommonPrv {
+  /// Check the key
+  void checkKey(String key);
+
+  /// True for private key
+  bool isPrivateKey(String key);
+
+  /// Convert a key to an implementation key
+  String keyToImplementationKey(String key);
+
+  /// Convert an implementation key to a key
+  String implementationKeyToKey(String implementationKey);
+
+  /// Check type
+  T? checkValueType<T>(Object? value);
+}
+
+/// Prefs common mixin
+mixin PrefsCommonMixin implements PrefsCommonPrv {
+  /// True for private key
+  @override
+  bool isPrivateKey(String key) =>
+      [prefsVersionKey, prefsSignatureKey].contains(key);
+
+  /// Check type
+  @override
+  T? checkValueType<T>(Object? value) {
+    if (value is T) {
+      return value;
+    }
+    return null;
+  }
+}
 Map<String, Object?>? _parseJsonObject(dynamic source) {
   if (source is Map) {
     return source.cast<String, Object?>();
@@ -75,6 +110,9 @@ abstract mixin class PrefsFactoryMixin {
     return name;
   }
 }
+
+/// Prefs sync read key value mixin
+mixin PrefsSyncReadKeyValueMixin implements PrefsSyncRead {}
 
 /// Prefs mixin
 abstract mixin class PrefsMixin implements Prefs {

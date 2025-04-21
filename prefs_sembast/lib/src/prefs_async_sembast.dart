@@ -12,8 +12,11 @@ final _signatureRecord = _metaStore.record('signature');
 
 class PrefsAsyncSembast extends PrefsAsyncBase
     with
+        PrefsCommonMixin,
         PrefsAsyncNoImplementationKeyMixin,
         PrefsAsyncKeyValueMixin,
+        PrefsAsyncReadKeyValueMixin,
+        PrefsAsyncWriteKeyValueMixin,
         PrefsAsyncValueMixin {
   PrefsAsyncFactorySembast get _factory =>
       this.factory as PrefsAsyncFactorySembast;

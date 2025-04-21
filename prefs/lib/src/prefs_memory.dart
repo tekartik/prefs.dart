@@ -5,7 +5,9 @@ import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_mixin.dart';
 
 /// In memory prefs
-class PrefsMemory extends Object with PrefsMixin implements Prefs {
+class PrefsMemory extends Object
+    with PrefsMixin, PrefsSyncReadKeyValueMixin
+    implements Prefs {
   @override
   final String name;
 

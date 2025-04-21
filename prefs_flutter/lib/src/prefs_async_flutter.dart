@@ -5,7 +5,7 @@ import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 
 class PrefsAsyncFlutter extends PrefsAsyncBase
-    with PrefsAsyncValueMixin
+    with PrefsCommonMixin, PrefsAsyncValueMixin
     implements PrefsAsyncStrictValue {
   PrefsAsyncFlutter({required super.factory, required super.name});
 

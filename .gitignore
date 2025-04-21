@@ -20,5 +20,5 @@ pubspec.lock
 .idea/
 *.iml
 .vscode/
-
+.local/
 pubspec_overrides.yaml

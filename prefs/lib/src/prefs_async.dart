@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:cv/cv_json.dart';
 
 /// Common Prefs interface.
-abstract class PrefsAsync {
+abstract class PrefsAsync implements PrefsAsyncRead, PrefsAsyncWrite {
   /// The name of the prefs.
   String get name;
 
@@ -14,6 +14,43 @@ abstract class PrefsAsync {
   /// The options
   PrefsAsyncFactoryOptions get options;
 
+  /// Reads a value from persistent storage, null if it's not a
+  /// Avoid
+  /// Saves a list of String [value] to persistent storage in the background.
+  // @Deprecated('Avoid use string and json instead')
+  Future<void> setStringList(String key, List<String> value);
+
+  /// no more access possible
+  Future<void> close();
+}
+
+/// Common Prefs interface.
+abstract class PrefsAsyncWrite {
+  /// Saves a string [value] to persistent storage in the background.
+  ///
+  Future<void> setString(String key, String value);
+
+  /// Saves an integer [value] to persistent storage in the background.
+  ///
+  Future<void> setInt(String key, int value);
+
+  /// Saves a boolean [value] to persistent storage in the background.
+  ///
+  Future<void> setBool(String key, bool value);
+
+  /// Saves a double [value] to persistent storage in the background.
+  ///
+  Future<void> setDouble(String key, double value);
+
+  /// Removes an entry from persistent storage.
+  Future<void> remove(String key);
+
+  /// Clear all prefs.
+  Future<void> clear();
+}
+
+/// Prefs async read interface
+abstract class PrefsAsyncRead {
   /// Reads a value from persistent storage, null if it's not a
   /// bool.
   Future<bool?> getBool(String key);
@@ -41,34 +78,6 @@ abstract class PrefsAsync {
 
   /// Return all keys and values
   Future<Map<String, Object?>> getAll();
-
-  /// Saves a string [value] to persistent storage in the background.
-  ///
-  Future<void> setString(String key, String value);
-
-  /// Saves an integer [value] to persistent storage in the background.
-  ///
-  Future<void> setInt(String key, int value);
-
-  /// Saves a boolean [value] to persistent storage in the background.
-  ///
-  Future<void> setBool(String key, bool value);
-
-  /// Saves a double [value] to persistent storage in the background.
-  ///
-  Future<void> setDouble(String key, double value);
-
-  /// Saves a list of String [value] to persistent storage in the background.
-  Future<void> setStringList(String key, List<String> value);
-
-  /// Removes an entry from persistent storage.
-  Future<void> remove(String key);
-
-  /// Clear all prefs.
-  Future<void> clear();
-
-  /// no more access possible
-  Future<void> close();
 }
 
 /// Prefs extension

@@ -1,60 +1,36 @@
-import 'package:cv/cv.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
-import 'package:tekartik_prefs/prefs_async.dart';
+import 'package:tekartik_prefs/src/prefs_async.dart';
+
+import 'prefs_memory_mixin.dart';
 
 /// Memory implementation of async prefs
 class PrefsAsyncMemory extends PrefsAsyncBase
     with
+        PrefsMemoryMixin,
+        PrefsCommonMixin,
         PrefsAsyncKeyValueMixin,
+        PrefsAsyncReadKeyValueMixin,
+        PrefsAsyncWriteKeyValueMixin,
         PrefsAsyncValueMixin,
-
         // last wins
         PrefsAsyncNoImplementationKeyMixin {
-  final _map = newModel();
-
-  /// Test map content
-  @visibleForTesting
-  Model get map => _map;
-
   /// Create a memory prefs with a name
   PrefsAsyncMemory({required super.factory, required super.name});
 
   @override
-  Future<void> clear() async {
-    _map.removeWhere((key, value) => !isPrivateKey(key));
-  }
-
-  @override
-  Future<void> clearForDelete() async {
-    _map.clear();
-  }
-
-  @override
   Future<T?> getValueNoKeyCheck<T>(String key) async {
-    return checkValueType(_map[key]);
+    return memoryGetValueNoKeyCheck(key);
   }
 
   @override
-  Future<void> setValueNoKeyCheck<T>(String key, T value) async {
-    _map[key] = value;
-  }
+  Future<bool> containsKey(String key) async => memoryContainsKey(key);
 
   @override
-  Future<bool> containsKey(String key) async => _map.containsKey(key);
+  Future<Map<String, Object?>> getAll() async => memoryGetAll();
 
   @override
-  Future<Map<String, Object?>> getAll() async => _map.deepClone()
-    ..removeWhere((key, value) {
-      return isPrivateKey(key);
-    });
-
-  @override
-  Future<Set<String>> getKeys() async =>
-      Set<String>.of(_map.keys)..removeWhere(isPrivateKey);
-
-  @override
-  Future<void> remove(String key) async => _map.remove(key);
+  Future<Set<String>> getKeys() async => memoryGetKeys();
 }
 
 /// Memory implementation of async prefs factory

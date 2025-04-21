@@ -14,7 +14,12 @@ Iterable<String> get _allStorageKeys {
 }
 
 class _PrefsAsyncBrowser extends PrefsAsyncBase
-    with PrefsAsyncKeyValueMixin, PrefsAsyncValueMixin {
+    with
+        PrefsCommonMixin,
+        PrefsAsyncKeyValueMixin,
+        PrefsAsyncReadKeyValueMixin,
+        PrefsAsyncWriteKeyValueMixin,
+        PrefsAsyncValueMixin {
   _PrefsAsyncBrowser({required super.factory, required super.name});
 
   _PrefsAsyncFactoryBrowser get prefsFactoryBrowser =>
