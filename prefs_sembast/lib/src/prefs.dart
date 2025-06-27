@@ -60,15 +60,12 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
     database = await prefsFactorySembast.databaseFactory.openDatabase(
       dbPath,
       version: 1,
-      onVersionChanged: (
-        sembast.Database db,
-        int oldVersion,
-        int newVersion,
-      ) async {
-        if (oldVersion == 0) {
-          await signatureRecord.put(db, prefsSignatureValue);
-        }
-      },
+      onVersionChanged:
+          (sembast.Database db, int oldVersion, int newVersion) async {
+            if (oldVersion == 0) {
+              await signatureRecord.put(db, prefsSignatureValue);
+            }
+          },
     );
 
     await database.transaction((txn) async {

@@ -39,15 +39,12 @@ class PrefsAsyncSembast extends PrefsAsyncBase
     database = await _factory.databaseFactory.openDatabase(
       dbPath,
       version: 1,
-      onVersionChanged: (
-        sembast.Database db,
-        int oldVersion,
-        int newVersion,
-      ) async {
-        if (oldVersion == 0) {
-          await _signatureRecord.put(db, prefsSignatureValue);
-        }
-      },
+      onVersionChanged:
+          (sembast.Database db, int oldVersion, int newVersion) async {
+            if (oldVersion == 0) {
+              await _signatureRecord.put(db, prefsSignatureValue);
+            }
+          },
     );
   }
 
@@ -68,8 +65,8 @@ class PrefsAsyncSembast extends PrefsAsyncBase
             await _signatureRecord.put(txn, prefsSignatureValue);
           }
 
-          var prefsOldVersion =
-              this.version = parseInt(_metaVersionRecord.getSync(txn)) ?? 0;
+          var prefsOldVersion = this.version =
+              parseInt(_metaVersionRecord.getSync(txn)) ?? 0;
           final prefsNewVersion = version;
 
           if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
