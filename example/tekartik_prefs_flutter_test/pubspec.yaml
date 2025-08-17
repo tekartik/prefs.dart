@@ -62,13 +62,6 @@ dev_dependencies:
       ref: dart3a
       path: packages/lints_flutter
   dev_build: ">=1.1.2"
-dependency_overrides:
-  tekartik_prefs_flutter:
-    path: ../../prefs_flutter
-  tekartik_prefs_test:
-    path: ../../prefs_test
-  tekartik_prefs:
-    path: ../../prefs
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -80,6 +73,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+resolution: workspace
 
   # To add assets to your application, add an assets section, like this:
   # assets:

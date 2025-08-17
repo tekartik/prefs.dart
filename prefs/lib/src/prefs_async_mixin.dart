@@ -294,13 +294,13 @@ abstract mixin class PrefsAsyncKeyValueMixin
         PrefsAsyncKeyValue,
         PrefsAsyncReadKeyValuePrv,
         PrefsAsyncWriteKeyValuePrv {
-  Future<Object?> _getRawValueNoKeyCheck<Object>(String key) =>
+  Future<Object?> _getRawValueNoKeyCheck(String key) =>
       getValueNoKeyCheck<Object>(key);
 
   @override
   Future<Object?> getRawValue(String key) {
     checkKey(key);
-    return _getRawValueNoKeyCheck<Object>(key);
+    return _getRawValueNoKeyCheck(key);
   }
 
   @override

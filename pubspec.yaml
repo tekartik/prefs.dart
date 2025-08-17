@@ -1,0 +1,12 @@
+name: _
+publish_to: none
+environment:
+  sdk: ^3.9.0
+workspace:
+  - example/tekartik_prefs_flutter_test
+  - prefs
+  - prefs_browser
+  - prefs_flutter
+  - prefs_sembast
+  - prefs_test
+  - repo_support

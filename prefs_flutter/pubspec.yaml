@@ -43,6 +43,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+resolution: workspace
 
   # To add assets to your package, add an assets section, like this:
   # assets:
@@ -76,8 +77,3 @@ flutter:
   # https://flutter.io/custom-fonts/#from-packages
 
 
-dependency_overrides:
-  tekartik_prefs:
-    path: ../prefs
-  tekartik_prefs_test:
-    path: ../prefs_test
