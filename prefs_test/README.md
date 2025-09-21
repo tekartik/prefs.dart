@@ -7,6 +7,5 @@
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_test
-      ref: dart3a
 ```
 

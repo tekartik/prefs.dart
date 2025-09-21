@@ -38,12 +38,10 @@ dependencies:
   tekartik_prefs_test:
     git:
       url: https://github.com/tekartik/prefs.dart
-      ref: dart3a
       path: prefs_test
   tekartik_prefs_flutter:
     git:
       url: https://github.com/tekartik/prefs.dart
-      ref: dart3a
       path: prefs_flutter
 
 dev_dependencies:
@@ -59,7 +57,6 @@ dev_dependencies:
   tekartik_lints_flutter:
     git:
       url: https://github.com/tekartik/common_flutter.dart
-      ref: dart3a
       path: packages/lints_flutter
   dev_build: ">=1.1.2"
 
