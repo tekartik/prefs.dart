@@ -81,7 +81,18 @@ abstract class PrefsAsyncRead {
 }
 
 /// Prefs extension
-extension PrefsAsyncExt on PrefsAsync {
+extension PrefsAsyncReadExt on PrefsAsync {
+  /// Set or remove a map value
+  Future<Model?> getMap(String key) async =>
+      cvAnyToJsonObjectOrNull(await getString(key));
+
+  /// Set or remove a list value
+  Future<List<Object?>?> getList(String key) async =>
+      cvAnyToJsonArrayOrNull(await getString(key));
+}
+
+/// Prefs extension
+extension PrefsAsyncWriteExt on PrefsAsyncWrite {
   /// Set or remove an int value
   Future<void> setIntOrNull(String key, int? value) =>
       value == null ? remove(key) : setInt(key, value);
@@ -106,10 +117,6 @@ extension PrefsAsyncExt on PrefsAsync {
   Future<void> setMapOrNull(String key, Map? value) =>
       value == null ? remove(key) : setMap(key, value);
 
-  /// Set or remove a map value
-  Future<Model?> getMap(String key) async =>
-      cvAnyToJsonObjectOrNull(await getString(key));
-
   /// Set or remove a list value (json encodable)
   Future<void> setList(String key, List value) =>
       setString(key, jsonEncode(value));
@@ -117,10 +124,6 @@ extension PrefsAsyncExt on PrefsAsync {
   /// Set or remove a list value (json encodable)
   Future<void> setListOrNull(String key, List? value) =>
       value == null ? remove(key) : setList(key, value);
-
-  /// Set or remove a list value
-  Future<List<Object?>?> getList(String key) async =>
-      cvAnyToJsonArrayOrNull(await getString(key));
 }
 
 /// Prefs factory.

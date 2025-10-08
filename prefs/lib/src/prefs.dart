@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cv/cv_json.dart';
+
 import 'prefs_mixin.dart';
 
 /// Common Prefs interface.
@@ -19,19 +21,20 @@ abstract class PrefsSyncRead {
   /// double.
   double? getDouble(String name);
 
-  /// Reads a value from persistent storage, throwing an exception if it's not a
-  /// map.
-  Map<String, Object?>? getMap(String name);
-
-  /// Reads a value from persistent storage, throwing an exception if it's not a
-  /// list.
-  List<Object?>? getList(String name);
-
   /// Returns true if persistent storage the contains the given [key].
   bool containsKey(String key);
 
   /// List of keys.
   Set<String> get keys;
+}
+
+/// Prefs extension
+extension PrefsSyncReadExt on PrefsSyncRead {
+  /// Set or remove a map value
+  Model? getMap(String key) => cvAnyToJsonObjectOrNull(getString(key));
+
+  /// Set or remove a list value
+  List<Object?>? getList(String key) => cvAnyToJsonArrayOrNull(getString(key));
 }
 
 /// Common Prefs interface.

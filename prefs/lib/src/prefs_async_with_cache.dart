@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:tekartik_prefs/src/prefs.dart';
 import 'package:tekartik_prefs/src/prefs_async.dart';
 
@@ -11,20 +13,40 @@ abstract class PrefsAsyncWithCache implements PrefsSyncRead, PrefsAsyncWrite {
 
   /// no more access possible
   Future<void> close();
+
+  /// The options
+  PrefsAsyncWithCacheFactoryOptions get options;
 }
 
 /// Prefs factory.
 abstract class PrefsAsyncWithCacheFactory {
   /// Global options
-  PrefsAsyncFactoryOptions get options;
+  PrefsAsyncWithCacheFactoryOptions get options;
 
   /// Delete a prefs.
   Future<void> deletePreferences(String name);
 
   /// Open a prefs.
-  Future<PrefsAsync> openPreferences(
+  Future<PrefsAsyncWithCache> openPreferences(
     String name, {
     int? version,
-    PrefsAsyncOnVersionChangedFunction? onVersionChanged,
+    PrefsAsyncWithCacheOnVersionChangedFunction? onVersionChanged,
   });
+
+  /// Initialize the factory
+  void init({PrefsAsyncWithCacheFactoryOptions? options});
+}
+
+/// Prefs on version changed function
+typedef PrefsAsyncWithCacheOnVersionChangedFunction =
+    FutureOr<void> Function(
+      PrefsAsyncWithCache pref,
+      int oldVersion,
+      int newVersion,
+    );
+
+/// Async factory options
+class PrefsAsyncWithCacheFactoryOptions {
+  /// Default constructor
+  PrefsAsyncWithCacheFactoryOptions();
 }

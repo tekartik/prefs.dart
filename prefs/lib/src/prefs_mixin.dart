@@ -45,26 +45,6 @@ mixin PrefsCommonMixin implements PrefsCommonPrv {
     return null;
   }
 }
-Map<String, Object?>? _parseJsonObject(dynamic source) {
-  if (source is Map) {
-    return source.cast<String, Object?>();
-  } else if (source is String) {
-    return parseJsonObject(source)?.cast<String, Object?>();
-  }
-  return null;
-}
-
-List<Object?>? _parseJsonArray(dynamic source) {
-  if (source is List) {
-    return source.cast<Object?>();
-  } else if (source is String) {
-    dynamic decoded = parseJson(source);
-    if (decoded is List) {
-      return decoded.cast<Object?>();
-    }
-  }
-  return null;
-}
 
 /// Parse an int value
 int? parseInt(dynamic source) {
@@ -197,12 +177,6 @@ abstract mixin class PrefsMixin implements Prefs {
 
   @override
   int? getInt(String name) => parseInt(getValue(name));
-
-  @override
-  Map<String, Object?>? getMap(String name) => _parseJsonObject(getValue(name));
-
-  @override
-  List<Object?>? getList(String name) => _parseJsonArray(getValue(name));
 
   @override
   String? getString(String name) {

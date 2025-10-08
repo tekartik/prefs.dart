@@ -3,6 +3,7 @@ import 'package:tekartik_prefs_flutter/prefs.dart' as legacy;
 import 'package:tekartik_prefs_flutter/prefs_async.dart';
 import 'package:tekartik_prefs_flutter/prefs_light.dart';
 import 'package:tekartik_prefs_test/prefs_async_test.dart';
+import 'package:tekartik_prefs_test/prefs_async_with_cache_test.dart';
 import 'package:tekartik_prefs_test/prefs_light_test.dart';
 import 'package:tekartik_prefs_test/prefs_test.dart';
 
@@ -11,6 +12,8 @@ void main() {
   var lightPrefs = prefsFlutter;
   var prefsAsyncFactory = prefsAsyncFactoryFlutter;
   runPrefsAsyncTests(prefsAsyncFactory);
+  var prefsAyncWithCacheFactory = prefsAsyncWithCacheFactoryFlutter;
+  runPrefsAsyncWithCacheTests(prefsAyncWithCacheFactory);
   var prefsFactory = legacy.prefsFactoryFlutter;
   runPrefsTests(prefsFactory);
   runPrefsLightTests(lightPrefs);
