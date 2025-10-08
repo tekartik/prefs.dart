@@ -13,7 +13,14 @@ PrefsAsyncFactory get prefsAsyncFactoryBrowser =>
     throw UnimplementedError('prefsFactoryBrowser only for the web');
 
 /// Browser async prefs factory or null if not on web
-PrefsFactory? get prefsAsyncFactoryBrowserOrNull => null;
+PrefsAsyncFactory? get prefsAsyncFactoryBrowserOrNull => null;
+
+/// Browser async prefs factory (throw if not on web)
+PrefsAsyncWithCacheFactory get prefsAsyncWithCacheFactoryBrowser =>
+    throw UnimplementedError('prefsFactoryBrowser only for the web');
+
+/// Browser async prefs factory or null if not on web
+PrefsAsyncWithCacheFactory? get prefsAsyncWithCacheFactoryBrowserOrNull => null;
 
 /// Check if the storage browser is available
 bool checkStorageBrowserIsAvailable({bool? persistent}) => false; // Only on web

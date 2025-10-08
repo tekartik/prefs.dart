@@ -9,5 +9,6 @@ void main() {
     expect(checkStorageBrowserIsAvailable(), isFalse);
     expect(prefsFactoryBrowserOrNull, isNull);
     expect(prefsAsyncFactoryBrowserOrNull, isNull);
+    expect(prefsAsyncWithCacheFactoryBrowserOrNull, isNull);
   });
 }
