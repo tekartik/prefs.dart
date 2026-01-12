@@ -4,9 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 
+/// Flutter implementation of PrefsAsync.
 class PrefsAsyncFlutter extends PrefsAsyncBase
     with PrefsCommonMixin, PrefsAsyncValueMixin
     implements PrefsAsyncStrictValue {
+  /// Create a Flutter implementation of PrefsAsync.
   PrefsAsyncFlutter({required super.factory, required super.name});
 
   PrefsAsyncFactoryFlutter get _factory =>
@@ -22,6 +24,7 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
     return keyToImplementationKey(key);
   }
 
+  /// Helper to wrap type errors.
   Future<T?> wrapTypeError<T>(Future<T?> Function() f) async {
     try {
       return await f();
@@ -251,6 +254,7 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
   }
 }
 
+/// Flutter factory for PrefsAsync.
 class PrefsAsyncFactoryFlutter extends PrefsAsyncFactory
     with PrefsAsyncFactoryMixin {
   SharedPreferencesAsync? _sharedPreferencesAsync;
@@ -259,6 +263,7 @@ class PrefsAsyncFactoryFlutter extends PrefsAsyncFactory
   /// Implementation
   SharedPreferencesAsync get sharedPreferencesAsync => _sharedPreferencesAsync!;
 
+  /// Shared preferences with cache implementation.
   SharedPreferencesWithCache get sharePreferencesWithCache =>
       _sharePreferencesWithCache!;
 

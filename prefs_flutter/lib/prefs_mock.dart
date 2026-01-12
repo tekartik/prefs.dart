@@ -5,8 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tekartik_prefs_flutter/src/prefs.dart';
 export 'package:tekartik_prefs/prefs.dart';
 
+/// Mock factory for Flutter.
 class PrefsFactoryFlutterMock extends PrefsFactoryFlutter {
   static bool _inited = false;
+
+  /// Create a mock factory.
   PrefsFactoryFlutterMock() {
     if (!_inited) {
       _inited = true;
@@ -19,15 +22,19 @@ class PrefsFactoryFlutterMock extends PrefsFactoryFlutter {
   */
 }
 
+/// Mock method channel for SharedPreferences.
 const MethodChannel channel = MethodChannel(
   'plugins.flutter.io/shared_preferences',
 );
 
+/// Mock SharedPreferences implementation.
 class SharedPreferencesMock {
+  /// Create a mock SharedPreferences.
   SharedPreferencesMock() {
     init();
   }
 
+  /// Mock data storage.
   final Map<String?, Object?> data = {};
 
   bool _set(MethodCall methodCall) {
@@ -68,11 +75,13 @@ class SharedPreferencesMock {
     }
   }
 
+  /// Initialize the mock method channel handler.
   void init() {
     channel.setMethodCallHandler(_handler);
   }
 }
 
+/// Global function to initialize the mock SharedPreferences.
 Future<SharedPreferences> initSharedPreferencesMock([
   Map<String, Object?>? data,
 ]) async {
@@ -104,4 +113,5 @@ Future<SharedPreferences> initSharedPreferencesMock([
   return preferences;
 }
 
+/// Global mock SharedPreferences instance.
 late SharedPreferencesMock sharedPreferencesMock;

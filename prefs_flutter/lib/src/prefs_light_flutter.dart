@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart' as impl;
 import 'package:tekartik_prefs/prefs_light.dart';
 
+/// Prefs interface for Flutter.
 abstract class PrefsFlutter implements PrefsLight {}
 
 class _PrefsFlutter implements PrefsFlutter {
@@ -82,4 +83,5 @@ class _PrefsFlutter implements PrefsFlutter {
   }
 }
 
+/// Global prefs implementation for Flutter.
 final PrefsLight prefsFlutter = _PrefsFlutter();

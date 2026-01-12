@@ -5,9 +5,12 @@ import 'package:tekartik_prefs/src/prefs_mixin.dart'; // ignore: implementation_
 
 // ignore: implementation_imports
 
+/// Flutter implementation of [Prefs].
 class PrefsFlutter extends Object with PrefsMixin implements Prefs {
+  /// The factory that created this [Prefs] instance.
   final PrefsFactoryFlutter factory;
 
+  /// The underlying [SharedPreferences] instance.
   SharedPreferences? get sharedPreferences => factory.sharedPreferences;
   @override
   final String name;
@@ -15,6 +18,7 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
   @override
   int version = 0;
 
+  /// Create a [PrefsFlutter] instance.
   PrefsFlutter(this.factory, this.name);
 
   @override
@@ -23,6 +27,7 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
     _allPrefs.remove(name);
   }
 
+  /// Get the key for a given preference name.
   String getKey(String name) => '${this.name}/$name';
 
   @override
@@ -78,11 +83,17 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
 
 final _allPrefs = <String?, PrefsFlutter>{};
 
+/// Flutter factory for [Prefs].
 class PrefsFactoryFlutter extends Object
     with PrefsFactoryMixin
     implements PrefsFactory {
+  /// The underlying [SharedPreferences] instance.
   SharedPreferences? sharedPreferences;
+
+  /// The underlying [SharedPreferencesAsync] instance.
   SharedPreferencesAsync? sharedPreferencesAsync;
+
+  /// Lock for synchronized operations.
   final lock = Lock();
 
   @override
@@ -130,6 +141,7 @@ class PrefsFactoryFlutter extends Object
 
 PrefsFactoryFlutter? _prefsFactoryFlutter;
 
+/// Global prefs factory for Flutter.
 PrefsFactory get prefsFactoryFlutter =>
     _prefsFactoryFlutter ??= PrefsFactoryFlutter();
 
