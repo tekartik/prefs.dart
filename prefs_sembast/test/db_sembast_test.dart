@@ -10,12 +10,17 @@ import 'package:tekartik_prefs_test/prefs_light_test.dart';
 import 'package:tekartik_prefs_test/prefs_test.dart' as prefs;
 
 void main() {
-  runPrefsAsyncTests(getPrefsAsyncFactorySembast(databaseFactoryMemory, '.'));
-  runPrefsAsyncWithCacheTests(
-    getPrefsAsyncWithCacheFactorySembast(databaseFactoryMemory, '.'),
+  runPrefsAsyncTests(
+    getPrefsAsyncFactorySembast(newDatabaseFactoryMemory(), '.'),
   );
-  prefs.runPrefsTests(getPrefsFactorySembast(databaseFactoryMemory, '.'));
+  runPrefsAsyncWithCacheTests(
+    getPrefsAsyncWithCacheFactorySembast(newDatabaseFactoryMemory(), '.'),
+  );
+  prefs.runPrefsTests(getPrefsFactorySembast(newDatabaseFactoryMemory(), '.'));
   runPrefsLightTests(
-    getPrefsLightSembast(databaseFactory: databaseFactoryMemory, path: '.'),
+    getPrefsLightSembast(
+      databaseFactory: newDatabaseFactoryMemory(),
+      path: '.',
+    ),
   );
 }
