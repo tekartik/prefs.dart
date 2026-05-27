@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cv/cv_json.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_common_utils/env_utils.dart';

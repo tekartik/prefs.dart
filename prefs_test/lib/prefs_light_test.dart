@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:tekartik_prefs/prefs_light.dart';
 import 'package:test/test.dart';
 
