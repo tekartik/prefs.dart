@@ -37,4 +37,38 @@ void main() {
       path: join('.dart_tool', 'tekartik_prefs_sembast', 'test_light'),
     ),
   );
+
+  group('sandbox', () {
+    test('PrefsFactory sembast io sandbox', () async {
+      var factory = getPrefsFactorySembast(
+        databaseFactoryIo,
+        join('.dart_tool', 'tekartik_prefs_sembast', 'test_sandbox'),
+      );
+      var sandboxFactory = factory.sandbox(path: 'sub');
+      var prefs = await sandboxFactory.openPreferences('test');
+      expect(prefs.name, 'test');
+      prefs.setBool('val', true);
+      await prefs.close();
+
+      var basePrefs = await factory.openPreferences('sub/test');
+      expect(basePrefs.getBool('val'), true);
+      await basePrefs.close();
+    });
+
+    test('PrefsAsyncFactory sembast io sandbox', () async {
+      var factory = getPrefsAsyncFactorySembast(
+        databaseFactoryIo,
+        join('.dart_tool', 'tekartik_prefs_sembast', 'test_async_sandbox'),
+      );
+      var sandboxFactory = factory.sandbox(path: 'sub');
+      var prefs = await sandboxFactory.openPreferences('test');
+      expect(prefs.name, 'test');
+      await prefs.setBool('val', true);
+      await prefs.close();
+
+      var basePrefs = await factory.openPreferences('sub/test');
+      expect(await basePrefs.getBool('val'), true);
+      await basePrefs.close();
+    });
+  });
 }

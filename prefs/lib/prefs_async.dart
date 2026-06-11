@@ -17,3 +17,4 @@ export 'src/prefs_async_with_cache.dart'
         PrefsAsyncWithCacheOnVersionChangedFunction;
 export 'src/prefs_async_with_cache_memory.dart'
     show prefsAsyncWithCacheFactoryMemory, newPrefsAsyncWithCacheFactoryMemory;
+export 'src/prefs_factory_sandbox.dart' show PrefsAsyncFactorySandboxExtension;

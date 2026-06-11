@@ -12,6 +12,7 @@ dependencies:
       url: https://github.com/tekartik/common_utils.dart
   synchronized:
   cv: ">=1.1.8"
+  path: ">=1.9.0"
 dev_dependencies:
   test: ">=1.31.0"
   build_runner: ">=2.15.0"
