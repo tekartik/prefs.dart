@@ -19,6 +19,8 @@ void runPrefsLightTests(PrefsLight prefs) {
   var keyString = testKey('string');
   var keyBool = testKey('bool');
   var keyDouble = testKey('double');
+  var keyMap = testKey('map');
+  var keyList = testKey('list');
 
   test('int', () async {
     await prefs.setInt(keyInt, 1);
@@ -32,6 +34,11 @@ void runPrefsLightTests(PrefsLight prefs) {
     expect(await prefs.getString(keyString), 'test');
 
     await prefs.remove(keyString);
+    expect(await prefs.getString(keyString), isNull);
+
+    await prefs.setStringOrNull(keyString, 'test');
+    expect(await prefs.getString(keyString), 'test');
+    await prefs.setStringOrNull(keyString, null);
     expect(await prefs.getString(keyString), isNull);
   });
   test('bool', () async {
@@ -68,5 +75,39 @@ void runPrefsLightTests(PrefsLight prefs) {
 
     await prefs.remove(keyDouble);
     expect(await prefs.getDouble(keyDouble), isNull);
+  });
+
+  test('null', () async {
+    await prefs.setStringOrNull(keyString, 'test');
+    expect(await prefs.getString(keyString), 'test');
+    await prefs.setStringOrNull(keyString, null);
+    expect(await prefs.getString(keyString), isNull);
+
+    await prefs.setBoolOrNull(keyBool, true);
+    expect(await prefs.getBool(keyBool), true);
+    await prefs.setBoolOrNull(keyBool, null);
+    expect(await prefs.getBool(keyBool), isNull);
+
+    await prefs.setIntOrNull(keyInt, 1);
+    expect(await prefs.getInt(keyInt), 1);
+    await prefs.setIntOrNull(keyInt, null);
+    expect(await prefs.getInt(keyInt), isNull);
+
+    await prefs.setDoubleOrNull(keyDouble, 1.1);
+    expect(await prefs.getDouble(keyDouble), 1.1);
+    await prefs.setDoubleOrNull(keyDouble, null);
+    expect(await prefs.getDouble(keyDouble), isNull);
+
+    var map = {'test': 1};
+    await prefs.setMapOrNull(keyMap, map);
+    expect(await prefs.getMap(keyMap), map);
+    await prefs.setMapOrNull(keyMap, null);
+    expect(await prefs.getMap(keyMap), isNull);
+
+    var list = ['test', 1];
+    await prefs.setListOrNull(keyList, list);
+    expect(await prefs.getList(keyList), list);
+    await prefs.setListOrNull(keyList, null);
+    expect(await prefs.getList(keyList), isNull);
   });
 }

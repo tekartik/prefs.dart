@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tekartik_prefs_flutter/prefs.dart' as legacy;
 import 'package:tekartik_prefs_flutter/prefs_async.dart';
 import 'package:tekartik_prefs_flutter/prefs_light.dart';
-import 'package:tekartik_prefs_test/prefs_async_test.dart';
-import 'package:tekartik_prefs_test/prefs_async_with_cache_test.dart';
-import 'package:tekartik_prefs_test/prefs_light_test.dart';
-import 'package:tekartik_prefs_test/prefs_test.dart';
+import 'package:tekartik_prefs_test/prefs_async_test_runner.dart';
+import 'package:tekartik_prefs_test/prefs_async_with_cache_test_runner.dart';
+import 'package:tekartik_prefs_test/prefs_light_test_runner.dart';
+import 'package:tekartik_prefs_test/prefs_test_runner.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
