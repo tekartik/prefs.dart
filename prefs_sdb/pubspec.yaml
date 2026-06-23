@@ -13,11 +13,7 @@ dependencies:
       url: https://github.com/tekartik/prefs.dart
       path: prefs
     version: '>=0.1.0'
-  idb_shim:
-    git:
-      url: https://github.com/tekartik/idb_shim.dart
-      path: idb_shim
-    version: '>=2.9.4'
+  idb_shim: '>=2.9.4'
   path: ">=1.9.1"
   tekartik_common_utils:
     git:
