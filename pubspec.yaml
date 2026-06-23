@@ -8,5 +8,6 @@ workspace:
   - prefs_browser
   - prefs_flutter
   - prefs_sembast
+  - prefs_sdb
   - prefs_test
   - repo_support
