@@ -97,6 +97,7 @@ class _PrefsFactorySandbox implements PrefsFactory {
       wrappedOnVersionChanged =
           (Prefs delegatePrefs, int oldVersion, int newVersion) {
             wrappedPrefs ??= _PrefsSandbox(delegatePrefs, name);
+
             return onVersionChanged(wrappedPrefs!, oldVersion, newVersion);
           };
     }
@@ -226,6 +227,7 @@ class _PrefsAsyncFactorySandbox implements PrefsAsyncFactory {
       wrappedOnVersionChanged =
           (PrefsAsync delegatePrefs, int oldVersion, int newVersion) {
             wrappedPrefs ??= _PrefsAsyncSandbox(delegatePrefs, name);
+
             return onVersionChanged(wrappedPrefs!, oldVersion, newVersion);
           };
     }

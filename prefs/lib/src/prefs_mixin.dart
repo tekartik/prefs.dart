@@ -98,6 +98,7 @@ mixin PrefsSyncReadKeyValueMixin implements PrefsSyncRead {}
 abstract mixin class PrefsMixin implements Prefs {
   /// Pending clear in progress
   var pendingClear = false;
+
   set version(int version);
 
   /// The data
@@ -129,7 +130,9 @@ abstract mixin class PrefsMixin implements Prefs {
     if (!noCheckName) {
       checkName(name);
     }
+
     checkValue(value);
+
     setDirty();
     changes[name] = value;
   }
@@ -154,7 +157,9 @@ abstract mixin class PrefsMixin implements Prefs {
     var signature = getString(prefsSignatureKey);
     if (signature == prefsSignatureValue) {
       clear();
+
       setValue(prefsSignatureKey, prefsSignatureValue, noCheckName: true);
+
       setValue(prefsVersionKey, 0, noCheckName: true);
     }
     final prefsNewVersion = version;
@@ -164,6 +169,7 @@ abstract mixin class PrefsMixin implements Prefs {
       if (onVersionChanged != null) {
         await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
       }
+
       setValue(prefsVersionKey, prefsNewVersion, noCheckName: true);
       this.version = prefsNewVersion;
     }
@@ -214,6 +220,7 @@ abstract mixin class PrefsMixin implements Prefs {
   @override
   Set<String> get keys {
     var keys = <String>{};
+
     void add(String name, dynamic value) {
       if (value != null &&
           name != prefsVersionKey &&
@@ -230,6 +237,7 @@ abstract mixin class PrefsMixin implements Prefs {
   @override
   void clear() {
     pendingClear = true;
+
     setDirty();
     changes.clear();
     data.forEach((String name, Object? value) {
@@ -270,6 +278,7 @@ abstract mixin class PrefsMixin implements Prefs {
   /// Check the value
   void checkValue(dynamic value) {
     dynamic testedValue = value;
+
     void checkValue(dynamic value) {
       if (value == null || value is String || value is num || value is bool) {
         // ok

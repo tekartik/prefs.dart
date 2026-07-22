@@ -373,7 +373,9 @@ abstract mixin class PrefsAsyncWithCacheMixin
       var signature = getStringNoKeyCheck(prefsSignatureKey);
       if (signature != prefsSignatureValue) {
         await clearForDelete();
+
         await setStringNoKeyCheck(prefsSignatureKey, prefsSignatureValue);
+
         await setIntNoKeyCheck(prefsVersionKey, 0);
       }
       final prefsNewVersion = version;
@@ -383,6 +385,7 @@ abstract mixin class PrefsAsyncWithCacheMixin
         if (onVersionChanged != null) {
           await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
         }
+
         await setIntNoKeyCheck(prefsVersionKey, prefsNewVersion);
         this.version = prefsNewVersion;
       }

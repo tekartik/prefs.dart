@@ -63,6 +63,7 @@ class _PrefsBrowser extends Object with PrefsMixin implements Prefs {
   Future save() async {
     if (changes.isNotEmpty) {
       var changes = Map<String, Object?>.from(this.changes);
+
       importChanges();
       if (pendingClear) {
         pendingClear = false;
@@ -85,6 +86,7 @@ class _PrefsBrowser extends Object with PrefsMixin implements Prefs {
   @override
   Future close() async {
     _allPrefs.remove(name);
+
     await save();
   }
 

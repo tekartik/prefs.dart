@@ -27,6 +27,7 @@ class _PrefsAsyncWithCacheBrowser extends PrefsAsyncWithCacheBase
 
   String _implKey(String key) {
     checkKey(key);
+
     return keyToImplementationKey(key);
   }
 
@@ -59,6 +60,7 @@ class _PrefsAsyncWithCacheBrowser extends PrefsAsyncWithCacheBase
     if (value == null) {
       return null;
     }
+
     return jsonDecode(value);
   }
 

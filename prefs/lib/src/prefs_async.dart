@@ -27,19 +27,15 @@ abstract class PrefsAsync implements PrefsAsyncRead, PrefsAsyncWrite {
 /// Common Prefs interface.
 abstract class PrefsAsyncWrite {
   /// Saves a string [value] to persistent storage in the background.
-  ///
   Future<void> setString(String key, String value);
 
   /// Saves an integer [value] to persistent storage in the background.
-  ///
   Future<void> setInt(String key, int value);
 
   /// Saves a boolean [value] to persistent storage in the background.
-  ///
   Future<void> setBool(String key, bool value);
 
   /// Saves a double [value] to persistent storage in the background.
-  ///
   Future<void> setDouble(String key, double value);
 
   /// Removes an entry from persistent storage.

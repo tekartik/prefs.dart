@@ -283,6 +283,7 @@ abstract mixin class PrefsAsyncWriteKeyValueMixin
   @override
   Future<void> setValue<T>(String key, T value) {
     checkKey(key);
+
     return setValueNoKeyCheck(key, value);
   }
 }
@@ -449,7 +450,9 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
       var signature = await getStringNoKeyCheck(prefsSignatureKey);
       if (signature != prefsSignatureValue) {
         await clearForDelete();
+
         await setStringNoKeyCheck(prefsSignatureKey, prefsSignatureValue);
+
         await setIntNoKeyCheck(prefsVersionKey, 0);
       }
       final prefsNewVersion = version;
@@ -459,6 +462,7 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
         if (onVersionChanged != null) {
           await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
         }
+
         await setIntNoKeyCheck(prefsVersionKey, prefsNewVersion);
         this.version = prefsNewVersion;
       }

@@ -65,6 +65,7 @@ class PrefsSdb extends Object with PrefsMixin implements Prefs {
       try {
         if (changes.isNotEmpty) {
           final changes = Map<String, Object?>.from(this.changes);
+
           importChanges();
 
           // save
