@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:cv/cv_json.dart';
+import 'package:tekartik_prefs/src/kv_store.dart';
 
 /// Prefs interface (light)
-abstract class PrefsLight {
+abstract class PrefsLight implements KvStore {
   /// Returns the value associated with the given [key].
+  @override
   Future<String?> getString(String key);
 
   /// Returns the value associated with the given [key].
@@ -17,6 +19,7 @@ abstract class PrefsLight {
   Future<double?> getDouble(String key);
 
   /// Sets the value for the given [key].
+  @override
   Future<void> setString(String key, String value);
 
   /// Sets the value for the given [key].
@@ -29,6 +32,7 @@ abstract class PrefsLight {
   Future<void> setInt(String key, int value);
 
   /// Removes the value associated with the given [key].
+  @override
   Future<void> remove(String key);
 }
 
@@ -41,10 +45,6 @@ extension PrefsLightExt on PrefsLight {
   /// Set or remove an a bool value
   Future<void> setBoolOrNull(String key, bool? value) =>
       value == null ? remove(key) : setBool(key, value);
-
-  /// Set or remove a string value
-  Future<void> setStringOrNull(String key, String? value) =>
-      value == null ? remove(key) : setString(key, value);
 
   /// Set or remove a double value
   Future<void> setDoubleOrNull(String key, double? value) =>
