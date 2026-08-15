@@ -10,6 +10,7 @@ Future main() async {
       'prefs_sembast',
       'prefs_test',
       'prefs_flutter',
+      'prefs_sdb',
     ]) {
       await packageRunCi(join('..', dir));
     }
