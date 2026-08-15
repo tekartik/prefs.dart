@@ -1,3 +1,4 @@
+import 'package:path/path.dart';
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
 import 'package:test/test.dart';
@@ -17,7 +18,9 @@ void main() {
         await prefs.close();
 
         // Check that it was actually opened in the sandbox directory in the delegate
-        var basePrefs = await baseFactory.openPreferences('my_sandbox/test1');
+        var basePrefs = await baseFactory.openPreferences(
+          join('my_sandbox', 'test1'),
+        );
         expect(basePrefs.getBool('test'), true);
         await basePrefs.close();
 
