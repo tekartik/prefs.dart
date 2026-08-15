@@ -41,7 +41,9 @@ void main() {
         await prefs.close();
 
         // Check in delegate
-        var basePrefs = await baseFactory.openPreferences('dir1/dir2/test1');
+        var basePrefs = await baseFactory.openPreferences(
+          join('dir1', 'dir2', 'test1'),
+        );
         expect(basePrefs.getBool('test'), true);
         await basePrefs.close();
       });
@@ -91,7 +93,9 @@ void main() {
         await prefs.close();
 
         // Check that it was actually opened in the sandbox directory in the delegate
-        var basePrefs = await baseFactory.openPreferences('my_sandbox/test1');
+        var basePrefs = await baseFactory.openPreferences(
+          join('my_sandbox', 'test1'),
+        );
         expect(await basePrefs.getBool('test'), true);
         await basePrefs.close();
 
@@ -112,7 +116,9 @@ void main() {
         await prefs.close();
 
         // Check in delegate
-        var basePrefs = await baseFactory.openPreferences('dir1/dir2/test1');
+        var basePrefs = await baseFactory.openPreferences(
+          join('dir1', 'dir2', 'test1'),
+        );
         expect(await basePrefs.getBool('test'), true);
         await basePrefs.close();
       });
