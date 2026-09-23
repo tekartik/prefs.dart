@@ -70,8 +70,9 @@ class _PrefsLightAsyncLazy implements PrefsLightAsync {
   _PrefsLightAsyncLazy({required this.initDelegate});
 
   Future<T?> _wrap<T>(Future<T?> Function(PrefsAsync delegate) action) async {
-    var delegate = await this.delegate;
     try {
+      // Opening can fail too (storage not available).
+      var delegate = await this.delegate;
       var result = await action(delegate);
       return checkValueType<T>(result);
     } catch (e) {

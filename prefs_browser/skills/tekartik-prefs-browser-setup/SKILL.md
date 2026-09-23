@@ -5,7 +5,9 @@ description: >-
   with tekartik_prefs_browser: prefsFactoryBrowser, prefsFactoryBrowserOrNull,
   prefsAsyncFactoryBrowser, prefsAsyncFactoryBrowserOrNull,
   prefsAsyncWithCacheFactoryBrowser, prefsAsyncWithCacheFactoryBrowserOrNull,
-  the package:tekartik_prefs_browser/prefs.dart and prefs_async.dart imports,
+  getPrefsLightBrowser, getPrefsLightBrowserOrNull, the
+  package:tekartik_prefs_browser/prefs.dart, prefs_async.dart and
+  prefs_light.dart imports,
   falling back to the memory factory off the web, the window.localStorage key
   layout, and running the tekartik_prefs_test suites under @TestOn('browser').
 ---
@@ -39,6 +41,11 @@ getters throw `UnimplementedError`.
     (`PrefsAsyncFactory`) and `prefsAsyncWithCacheFactoryBrowser` /
     `prefsAsyncWithCacheFactoryBrowserOrNull`
     (`PrefsAsyncWithCacheFactory`).
+  * `package:tekartik_prefs_browser/prefs_light.dart`:
+    `getPrefsLightBrowser({String? name})` and `getPrefsLightBrowserOrNull`,
+    a ready to use `PrefsLight` (so a `KvStore`: no factory, no open/close,
+    reads never throw) on top of the async implementation, `name` defaulting
+    to `prefs`.
 * Always prefer the `*OrNull` getters in code that also runs off the web:
   `prefsAsyncFactoryBrowserOrNull ?? prefsAsyncFactoryMemory` compiles and
   runs everywhere. The non-`OrNull` getters are for code already guarded by a
@@ -48,10 +55,10 @@ getters throw `UnimplementedError`.
 * Storage layout: one local storage entry per key, named
   `'<prefsName>/<key>'` in the current origin. The sync implementation writes
   `value.toString()` for `num`/`bool`/`String` and json for maps and lists;
-  the async implementations json encode every value. Consequence: never open
-  the same prefs name through both the sync and the async family, and pick a
-  prefs name unlikely to collide with the other local storage users of the
-  origin.
+  the async implementations (and the light one) json encode every value.
+  Consequence: never open the same prefs name through both the sync and the
+  async family, and pick a prefs name unlikely to collide with the other
+  local storage users of the origin.
 * Local storage is per origin and synchronous under the hood: keep the stored
   data small, and expect it to be wiped by private browsing or by the user
   clearing site data. `deletePreferences(name)` removes every `'<name>/'`
@@ -91,6 +98,22 @@ Future<void> main() async {
   await prefs.setMap('window', {'width': 800, 'height': 600});
   print(await prefs.getString('user'));
   await prefs.close();
+}
+```
+
+### Light prefs for a few settings
+
+```dart
+import 'package:tekartik_prefs_browser/prefs_light.dart';
+
+// Local storage on the web, memory on the VM.
+final PrefsLight prefs =
+    getPrefsLightBrowserOrNull(name: 'my_app') ?? PrefsMemory();
+
+Future<void> main() async {
+  await prefs.setBool('dark', true); // localStorage['my_app/dark'] = 'true'
+  print(await prefs.getBool('dark')); // true
+  await prefs.setMap('window', {'width': 800});
 }
 ```
 

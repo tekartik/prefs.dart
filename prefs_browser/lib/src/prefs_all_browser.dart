@@ -10,3 +10,5 @@ export 'prefs_browser.dart'
         prefsFactoryBrowser,
         prefsFactoryBrowserOrNull,
         checkStorageBrowserIsAvailable;
+export 'prefs_light_browser.dart'
+    show getPrefsLightBrowser, getPrefsLightBrowserOrNull;

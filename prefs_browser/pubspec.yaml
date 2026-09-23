@@ -1,6 +1,6 @@
 name: tekartik_prefs_browser
 description: Prefs on top of local storage for Browser support
-version: 0.2.0
+version: 0.2.1
 publish_to: none
 #homepage: https://www.example.com
 #author: alexr <email@example.com>

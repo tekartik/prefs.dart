@@ -1,5 +1,6 @@
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:tekartik_prefs/prefs_async.dart';
+import 'package:tekartik_prefs/prefs_light.dart';
 
 /// Browser prefs factory (throw if not on web)
 PrefsFactory get prefsFactoryBrowser =>
@@ -24,3 +25,10 @@ PrefsAsyncWithCacheFactory? get prefsAsyncWithCacheFactoryBrowserOrNull => null;
 
 /// Check if the storage browser is available
 bool checkStorageBrowserIsAvailable({bool? persistent}) => false; // Only on web
+
+/// Browser light prefs (throw if not on web)
+PrefsLight getPrefsLightBrowser({String? name}) =>
+    throw UnimplementedError('getPrefsLightBrowser only for the web');
+
+/// Browser light prefs or null if not on web
+PrefsLight? getPrefsLightBrowserOrNull({String? name}) => null;
