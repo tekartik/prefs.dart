@@ -15,10 +15,12 @@ void main() {
       : prefsFactoryMemory;
   prefs.runPrefsTests(factory);
   group('light', () {
-    runPrefsLightTests(
-      getPrefsLightBrowserOrNull(name: 'tekartik_prefs_test_light') ??
-          PrefsMemory(),
-    );
+    if (checkStorageBrowserIsAvailable()) {
+      runPrefsLightTests(
+        getPrefsLightBrowserOrNull(name: 'tekartik_prefs_test_light') ??
+            PrefsMemory(),
+      );
+    }
   });
   test('factories', () {
     if (checkStorageBrowserIsAvailable()) {
