@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tekartik_prefs_flutter/prefs.dart' as legacy;
 import 'package:tekartik_prefs_flutter/prefs_async.dart';
 import 'package:tekartik_prefs_flutter/prefs_light.dart';

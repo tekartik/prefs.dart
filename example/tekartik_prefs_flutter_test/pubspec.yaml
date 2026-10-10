@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -44,6 +44,9 @@ dependencies:
       url: https://github.com/tekartik/prefs.dart
       path: prefs_flutter
 
+  # The design widgets, as the tekartik flutter packages use them.
+  material_ui: ">=1.5.0"
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,7 +61,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/common_flutter.dart
       path: packages/lints_flutter
-  dev_build: ">=1.1.7+3"
+  dev_build: ">=1.1.8+2"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
