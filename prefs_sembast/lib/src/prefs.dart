@@ -26,8 +26,12 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
     await database.close();
   }
 
+  /// One save at a time: [close] waits for the save scheduled by a set, which
+  /// has already taken the changes, before closing the database.
+  final _saveLock = Lock();
+
   @override
-  Future save() async {
+  Future save() => _saveLock.synchronized(() async {
     if (changes.isNotEmpty) {
       final changes = Map<String, Object?>.from(this.changes);
       // devPrint(changes);
@@ -48,7 +52,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
         await Future.wait(futures);
       });
     }
-  }
+  });
 
   Future open({
     final int? version,
