@@ -69,7 +69,7 @@ class _PrefsAsyncBrowser extends PrefsAsyncBase
     var allImplementationKeys = filterImplementationKeys(_allStorageKeys);
     var map = <String, Object?>{
       for (var key in allImplementationKeys)
-        key: _implementationKeyGetValue(key),
+        implementationKeyToKey(key): _implementationKeyGetValue(key),
     };
     return map;
   }

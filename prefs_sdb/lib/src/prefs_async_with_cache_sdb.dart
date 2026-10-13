@@ -118,8 +118,9 @@ class PrefsAsyncWithCacheSdb extends PrefsAsyncWithCacheBase
             if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
               if (onVersionChanged != null) {
                 await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
-                await _metaVersionRecord.put(txn, prefsNewVersion);
               }
+              // Saved even without onVersionChanged, the next open reads it.
+              await _metaVersionRecord.put(txn, prefsNewVersion);
               this.version = prefsNewVersion;
             }
           } finally {

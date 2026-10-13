@@ -154,14 +154,6 @@ abstract mixin class PrefsMixin implements Prefs {
     final int? version,
     PrefsOnVersionChangedFunction? onVersionChanged,
   }) async {
-    var signature = getString(prefsSignatureKey);
-    if (signature == prefsSignatureValue) {
-      clear();
-
-      setValue(prefsSignatureKey, prefsSignatureValue, noCheckName: true);
-
-      setValue(prefsVersionKey, 0, noCheckName: true);
-    }
     final prefsNewVersion = version;
     final prefsOldVersion = getInt(prefsVersionKey) ?? 0;
     this.version = prefsOldVersion;
@@ -220,17 +212,14 @@ abstract mixin class PrefsMixin implements Prefs {
   @override
   Set<String> get keys {
     var keys = <String>{};
-
-    void add(String name, dynamic value) {
+    // The pending changes (null for a removal) override the saved data.
+    <String, Object?>{...data, ...changes}.forEach((name, value) {
       if (value != null &&
           name != prefsVersionKey &&
           name != prefsSignatureKey) {
         keys.add(name);
       }
-    }
-
-    data.forEach(add);
-    changes.forEach(add);
+    });
     return keys;
   }
 

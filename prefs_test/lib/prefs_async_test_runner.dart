@@ -46,6 +46,8 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
 
     test('bad type', () async {
       var prefs = await deleteAndOpen('bad_type');
+      // The current options of the factory, even for a reused prefs.
+      expect(prefs.options.strictType, factory.options.strictType);
       await prefs.setInt('test', 1);
       if (prefs.options.strictType) {
         expect(await prefs.getString('test'), isNull);
@@ -53,7 +55,7 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
         expect(await prefs.getString('test'), '1');
       }
       await prefs.setString('test', 'dummy');
-      expect(await prefs.getInt('dummy'), isNull);
+      expect(await prefs.getInt('test'), isNull);
       // devWarning('quick debug code')
       await prefs.close();
     });
@@ -143,7 +145,24 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       var name = 'clear.prefs';
       await factory.deletePreferences(name);
       var openedPrefs = await factory.openPreferences(name, version: 1);
+      expect(openedPrefs.version, 1);
       await openedPrefs.setBool('test', true);
+      await openedPrefs.close();
+
+      // The version is saved even without onVersionChanged.
+      openedPrefs = await factory.openPreferences(name);
+      expect(openedPrefs.version, 1);
+      expect(await openedPrefs.getBool('test'), isTrue);
+      await openedPrefs.close();
+      var onVersionChangedCalled = false;
+      openedPrefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) {
+          onVersionChangedCalled = true;
+        },
+      );
+      expect(onVersionChangedCalled, isFalse);
       await openedPrefs.close();
     });
     test('first migration clear', () async {
@@ -157,7 +176,11 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
           await prefs.setBool('test', true);
         },
       );
-      await openedPrefs.setBool('test', true);
+      expect(openedPrefs.version, 1);
+      await openedPrefs.close();
+      openedPrefs = await factory.openPreferences(name);
+      expect(openedPrefs.version, 1);
+      expect(await openedPrefs.getBool('test'), isTrue);
       await openedPrefs.close();
     });
     test('change prefs during version change', () async {
@@ -525,6 +548,51 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
       }
     });
 
+    test('getAll', () async {
+      var name1 = 'get_all.prefs';
+      var name2 = 'get_all_other.prefs';
+      await factory.deletePreferences(name1);
+      await factory.deletePreferences(name2);
+      // With a version, stored with the values in some implementations.
+      var prefs1 = await factory.openPreferences(name1, version: 1);
+      var prefs2 = await factory.openPreferences(name2, version: 1);
+      try {
+        await prefs1.setInt('test', 1);
+        await prefs1.setString('text', 'value');
+        await prefs2.setInt('other', 2);
+        expect(await prefs1.getAll(), {'test': 1, 'text': 'value'});
+        expect(await prefs2.getAll(), {'other': 2});
+      } finally {
+        await prefs1.close();
+        await prefs2.close();
+      }
+    });
+
+    test('clear', () async {
+      var name1 = 'clear_1.prefs';
+      var name2 = 'clear_2.prefs';
+      await factory.deletePreferences(name1);
+      await factory.deletePreferences(name2);
+      var prefs1 = await factory.openPreferences(name1, version: 1);
+      var prefs2 = await factory.openPreferences(name2);
+      try {
+        await prefs1.setInt('test', 1);
+        await prefs2.setInt('test', 2);
+        await prefs1.clear();
+        expect(await prefs1.getKeys(), isEmpty);
+        expect(await prefs1.getInt('test'), isNull);
+        expect(await prefs2.getInt('test'), 2);
+        await prefs1.close();
+        prefs1 = await factory.openPreferences(name1);
+        // The version is kept.
+        expect(prefs1.version, 1);
+        expect(await prefs1.getKeys(), isEmpty);
+      } finally {
+        await prefs1.close();
+        await prefs2.close();
+      }
+    });
+
     test('two_prefs', () async {
       var name1 = 'multi_1.prefs.db';
       var name2 = 'multi_2.prefs.db';
@@ -535,7 +603,6 @@ void _runPrefsAsyncTests(PrefsAsyncFactory factory) {
         await prefs2.setInt('test', 2);
         expect(await prefs1.getInt('test'), 1);
         expect(await prefs2.getInt('test'), 2);
-        await prefs2.setInt('test', 2);
 
         await prefs1.close();
         await prefs2.close();

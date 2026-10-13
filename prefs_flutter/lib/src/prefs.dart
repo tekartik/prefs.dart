@@ -43,10 +43,6 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
     if (changes.isNotEmpty) {
       var changes = Map<String, Object?>.from(this.changes);
       importChanges();
-      if (pendingClear) {
-        pendingClear = false;
-        await sharedPreferences!.clear();
-      }
       var futures = <Future>[];
       changes.forEach((String name, value) {
         // devPrint('saving $name: $value');
@@ -69,16 +65,35 @@ class PrefsFlutter extends Object with PrefsMixin implements Prefs {
     }
   }
 
-  @override
-  Set<String> get keys {
-    var keys = <String>{};
+  /// The stored keys of this prefs, without the private ones.
+  Iterable<String> get _storedKeys sync* {
     for (var key in sharedPreferences!.getKeys()) {
       if (key.startsWith('$name/')) {
-        keys.add(key.substring(name.length + 1));
+        var prefsKey = key.substring(name.length + 1);
+        if (prefsKey != prefsVersionKey && prefsKey != prefsSignatureKey) {
+          yield prefsKey;
+        }
       }
     }
-    return keys..addAll(super.keys);
   }
+
+  @override
+  void clear() {
+    super.clear();
+    // Also remove the stored values not read yet, only the ones of this prefs.
+    for (var key in _storedKeys) {
+      changes[key] = null;
+    }
+  }
+
+  @override
+  Set<String> get keys => {
+    // The keys read or changed are handled by the mixin.
+    ..._storedKeys.where(
+      (key) => !data.containsKey(key) && !changes.containsKey(key),
+    ),
+    ...super.keys,
+  };
 }
 
 final _allPrefs = <String?, PrefsFlutter>{};

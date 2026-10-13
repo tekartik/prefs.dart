@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:tekartik_prefs/mixin/prefs_async_mixin.dart'
+    show prefsVersionKey;
 import 'package:tekartik_prefs/prefs.dart';
 import 'package:test/test.dart';
 export 'package:tekartik_prefs/prefs.dart';
@@ -14,7 +16,7 @@ void runPrefsTests(PrefsFactory factory) {
     return await factory.openPreferences(name);
   }
 
-  group('prefs_async', () {
+  group('prefs', () {
     test('basic', () async {
       var name = 'test.prefs';
 
@@ -191,12 +193,79 @@ void runPrefsTests(PrefsFactory factory) {
           expect(prefs.containsKey('test'), isTrue);
 
           prefs.remove('test');
+          expect(prefs.keys, isEmpty);
+          expect(prefs.containsKey('test'), isFalse);
 
           await prefs.close();
           prefs = await factory.openPreferences(name);
           expect(prefs.keys, isEmpty);
           expect(prefs.containsKey('test'), isFalse);
+        } else {
+          // Removing a saved value.
+          await prefs.save();
+          prefs.remove('test');
+          expect(prefs.keys, isEmpty);
+          expect(prefs.containsKey('test'), isFalse);
         }
+      } finally {
+        await prefs.close();
+      }
+    });
+
+    test('clear', () async {
+      var name1 = 'clear_1.prefs';
+      var name2 = 'clear_2.prefs';
+      await factory.deletePreferences(name1);
+      await factory.deletePreferences(name2);
+      var prefs1 = await factory.openPreferences(name1, version: 1);
+      var prefs2 = await factory.openPreferences(name2);
+      try {
+        prefs1.setInt('test', 1);
+        prefs2.setInt('test', 2);
+        if (factory.hasStorage) {
+          // The values are then not read yet.
+          await prefs1.close();
+          await prefs2.close();
+          prefs1 = await factory.openPreferences(name1);
+          prefs2 = await factory.openPreferences(name2);
+          // Private keys are not listed.
+          expect(prefs1.keys, ['test']);
+          expect(prefs1.containsKey(prefsVersionKey), isFalse);
+        }
+        prefs1.clear();
+        expect(prefs1.keys, isEmpty);
+        expect(prefs1.getInt('test'), isNull);
+        expect(prefs2.getInt('test'), 2);
+        if (factory.hasStorage) {
+          await prefs1.close();
+          await prefs2.close();
+          prefs1 = await factory.openPreferences(name1);
+          prefs2 = await factory.openPreferences(name2);
+          expect(prefs1.keys, isEmpty);
+          // Only the prefs is cleared, the version is kept.
+          expect(prefs1.version, 1);
+          expect(prefs2.getInt('test'), 2);
+        }
+      } finally {
+        await prefs1.close();
+        await prefs2.close();
+      }
+    });
+
+    test('save during save', () async {
+      var name = 'save_during_save.prefs';
+      var prefs = await deleteAndOpen(name);
+      try {
+        prefs.setInt('a', 1);
+        // Let the save scheduled by the set start.
+        await Future<void>.delayed(Duration.zero);
+        prefs.setInt('b', 2);
+        if (factory.hasStorage) {
+          await prefs.close();
+          prefs = await factory.openPreferences(name);
+        }
+        expect(prefs.getInt('a'), 1);
+        expect(prefs.getInt('b'), 2);
       } finally {
         await prefs.close();
       }
@@ -350,7 +419,6 @@ void runPrefsTests(PrefsFactory factory) {
         prefs2.setInt('test', 2);
         expect(prefs1.getInt('test'), 1);
         expect(prefs2.getInt('test'), 2);
-        prefs2.setInt('test', 2);
 
         if (factory.hasStorage) {
           await prefs1.close();

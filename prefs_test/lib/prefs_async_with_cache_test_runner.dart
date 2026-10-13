@@ -36,7 +36,7 @@ void _runPrefsAsyncWithCacheTests(PrefsAsyncWithCacheFactory factory) {
       expect(prefs.getString('test'), '1');
 
       await prefs.setString('test', 'dummy');
-      expect(prefs.getInt('dummy'), isNull);
+      expect(prefs.getInt('test'), isNull);
       // devWarning('quick debug code')
       await prefs.close();
     });
@@ -107,7 +107,24 @@ void _runPrefsAsyncWithCacheTests(PrefsAsyncWithCacheFactory factory) {
       var name = 'clear.prefs';
       await factory.deletePreferences(name);
       var openedPrefs = await factory.openPreferences(name, version: 1);
+      expect(openedPrefs.version, 1);
       await openedPrefs.setBool('test', true);
+      await openedPrefs.close();
+
+      // The version is saved even without onVersionChanged.
+      openedPrefs = await factory.openPreferences(name);
+      expect(openedPrefs.version, 1);
+      expect(openedPrefs.getBool('test'), isTrue);
+      await openedPrefs.close();
+      var onVersionChangedCalled = false;
+      openedPrefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) {
+          onVersionChangedCalled = true;
+        },
+      );
+      expect(onVersionChangedCalled, isFalse);
       await openedPrefs.close();
     });
     test('first migration clear', () async {
@@ -121,7 +138,11 @@ void _runPrefsAsyncWithCacheTests(PrefsAsyncWithCacheFactory factory) {
           await prefs.setBool('test', true);
         },
       );
-      await openedPrefs.setBool('test', true);
+      expect(openedPrefs.version, 1);
+      await openedPrefs.close();
+      openedPrefs = await factory.openPreferences(name);
+      expect(openedPrefs.version, 1);
+      expect(openedPrefs.getBool('test'), isTrue);
       await openedPrefs.close();
     });
     test('change prefs during version change', () async {
@@ -422,7 +443,6 @@ void _runPrefsAsyncWithCacheTests(PrefsAsyncWithCacheFactory factory) {
         await prefs2.setInt('test', 2);
         expect(prefs1.getInt('test'), 1);
         expect(prefs2.getInt('test'), 2);
-        await prefs2.setInt('test', 2);
 
         await prefs1.close();
         await prefs2.close();

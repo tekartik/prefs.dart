@@ -183,7 +183,10 @@ class PrefsAsyncFlutter extends PrefsAsyncBase
 
   @override
   Future<Map<String, Object?>> getAll() async {
-    var allImplementationKeys = await _implGetAllKeys();
+    // Only the public keys of this prefs.
+    var allImplementationKeys = filterImplementationKeys(
+      await _implGetAllKeys(),
+    ).toSet();
     if (options.strictType) {
       return (await _impl.getAll(
         allowList: allImplementationKeys,

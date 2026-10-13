@@ -105,12 +105,6 @@ abstract class PrefsAsyncBase with PrefsAsyncMixin {
   PrefsAsyncBase({required this.factory, required this.name});
 }
 
-/// Private extension
-extension PrefsAsyncMixinExtPrv on PrefsAsyncMixin {
-  /// The options
-  PrefsAsyncFactoryOptions get options => this.factory.options;
-}
-
 /// mixin to discard any implementation key modification
 mixin PrefsAsyncNoImplementationKeyMixin implements PrefsCommonPrv {
   @override
@@ -349,9 +343,9 @@ abstract mixin class PrefsAsyncKeyValueMixin
 
 /// Prefs mixin
 abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
-  /// Options
+  /// Options, the current ones of the factory (it can be initialized again).
   @override
-  late final options = factory.options;
+  PrefsAsyncFactoryOptions get options => factory.options;
 
   /// To implement
   PrefsAsyncFactoryMixin get factory;

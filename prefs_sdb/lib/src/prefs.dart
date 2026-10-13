@@ -57,40 +57,36 @@ class PrefsSdb extends Object with PrefsMixin implements Prefs {
     await database.close();
   }
 
-  Future? _saveFuture;
+  /// One save at a time: [close] waits for the save scheduled by a set, which
+  /// has already taken the changes, and a save started during a save is not
+  /// merged into it (its changes would be lost).
+  final _saveLock = Lock();
 
   @override
-  Future save() {
-    _saveFuture ??= () async {
-      try {
-        if (changes.isNotEmpty) {
-          final changes = Map<String, Object?>.from(this.changes);
+  Future save() => _saveLock.synchronized(() async {
+    if (changes.isNotEmpty) {
+      final changes = Map<String, Object?>.from(this.changes);
 
-          importChanges();
+      importChanges();
 
-          // save
-          await database.inStoreTransaction(
-            store,
-            sdb.SdbTransactionMode.readWrite,
-            (txn) async {
-              var futures = <Future>[];
-              changes.forEach((String key, dynamic value) {
-                if (value == null) {
-                  futures.add(txn.delete(key));
-                } else {
-                  futures.add(txn.put(key, _sdbSanitizeValue(value) as Object));
-                }
-              });
-              await Future.wait(futures);
-            },
-          );
-        }
-      } finally {
-        _saveFuture = null;
-      }
-    }();
-    return _saveFuture!;
-  }
+      // save
+      await database.inStoreTransaction(
+        store,
+        sdb.SdbTransactionMode.readWrite,
+        (txn) async {
+          var futures = <Future>[];
+          changes.forEach((String key, dynamic value) {
+            if (value == null) {
+              futures.add(txn.delete(key));
+            } else {
+              futures.add(txn.put(key, _sdbSanitizeValue(value) as Object));
+            }
+          });
+          await Future.wait(futures);
+        },
+      );
+    }
+  });
 
   /// Opens the preferences database and loads records into memory.
   Future open({
@@ -142,8 +138,9 @@ class PrefsSdb extends Object with PrefsMixin implements Prefs {
         if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
           if (onVersionChanged != null) {
             await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
-            await txnMetaStore.put('version', prefsNewVersion);
           }
+          // Saved even without onVersionChanged, the next open reads it.
+          await txnMetaStore.put('version', prefsNewVersion);
           this.version = prefsNewVersion;
         }
       },
