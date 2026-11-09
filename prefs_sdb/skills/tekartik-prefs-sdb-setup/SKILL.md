@@ -55,6 +55,11 @@ on the Dart VM and to memory in tests, without touching the app code.
 * All the `get...FactorySdb` functions build a new factory object each call, but
   the opened prefs are cached per name inside it: build the factory once and
   reuse it, or two factories will open the same database twice.
+* `onVersionChanged` of the async and cached prefs runs inside the IndexedDB
+  transaction of the open: await only this prefs there. Awaiting anything
+  else (a delay, a file, another database) lets the transaction auto commit
+  and the open fails with `DatabaseInactiveError`. The sync `Prefs` calls it
+  after its transaction, so it may await anything (even `prefs.save()`).
 * `hasStorage` reflects the underlying idb factory (`false` for memory).
   `deletePreferences(name)` closes the prefs and deletes the whole database.
 * Values are stored in an sdb `main` store keyed by the prefs key, with version

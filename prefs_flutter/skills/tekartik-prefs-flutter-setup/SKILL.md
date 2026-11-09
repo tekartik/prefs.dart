@@ -58,7 +58,11 @@ same on Android, iOS, desktop and Flutter web.
   is `'<prefsName>/<key>'` (on top of the plugin's own platform prefix). Values
   are stored with their native `shared_preferences` type; maps and lists go in
   as json strings.
-* Platform notes: on Android doubles are stored as floats; on web
+  A prefs owns every key starting with `'<prefsName>/'`: prefs `a` lists,
+  clears and deletes the keys of a prefs named `a/b`, so never nest prefs
+  names and avoid `/` in keys. `prefsFlutter` (light) reads strictly
+  (`getString` of an int is null) unlike the light prefs of the other
+  backends.* Platform notes: on Android doubles are stored as floats; on web
   `shared_preferences` uses local storage, so the same size caveats as
   `tekartik_prefs_browser` apply. Prefer `tekartik_prefs_sembast` or
   `tekartik_prefs_sdb` for anything bigger than settings.
@@ -68,9 +72,15 @@ same on Android, iOS, desktop and Flutter web.
   `runPrefsTests(...)` from
   `package:tekartik_prefs_test/prefs_test_runner.dart`.
   `initSharedPreferencesMock([data])` alone seeds a mocked `SharedPreferences`
-  for widget tests. The mock covers the legacy synchronous factory; to test
-  code written against `PrefsAsyncFactory` without the plugin, inject
-  `prefsAsyncFactoryMemory` instead.
+  for widget tests. The mock covers the legacy synchronous factory. For the
+  async factories (and `prefsFlutter`), install in memory shared preferences
+  before the first open:
+  `SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty()`
+  (`package:shared_preferences_platform_interface`) and
+  `SharedPreferences.setMockInitialValues({})`; the package's
+  `test/prefs_flutter_async_test.dart` runs every shared suite that way. Or
+  inject `prefsAsyncFactoryMemory` in code written against
+  `PrefsAsyncFactory`.
 * Anti-patterns: importing `package:shared_preferences/shared_preferences.dart`
   directly in app code next to this package (double bookkeeping on the same
   keys); opening the same prefs name through both the sync and async families;

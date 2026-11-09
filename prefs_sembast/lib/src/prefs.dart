@@ -22,7 +22,7 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
   @override
   Future close() async {
     await save();
-    _allPrefs.remove(name);
+    prefsFactorySembast._allPrefs.remove(name);
     await database.close();
   }
 
@@ -86,21 +86,23 @@ class PrefsSembast extends Object with PrefsMixin implements Prefs {
       for (var record in records) {
         data[record.key] = record.value;
       }
-
-      this.version = prefsOldVersion;
-      if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
-        if (onVersionChanged != null) {
-          await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
-        }
-        // Saved even without onVersionChanged, the next open reads it.
-        await metaVersionRecord.put(txn, prefsNewVersion);
-        this.version = prefsNewVersion;
-      }
     });
+
+    this.version = prefsOldVersion;
+    if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
+      // Called outside the open transaction: it can await anything, including
+      // save() (a new transaction would wait for the open one: deadlock).
+      if (onVersionChanged != null) {
+        await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
+      }
+      // Its changes are saved before the new version.
+      await save();
+      // Saved even without onVersionChanged, the next open reads it.
+      await metaVersionRecord.put(database, prefsNewVersion);
+      this.version = prefsNewVersion;
+    }
   }
 }
-
-final _allPrefs = <String, PrefsSembast>{};
 
 class PrefsFactorySembast extends Object
     with PrefsFactoryMixin
@@ -110,6 +112,10 @@ class PrefsFactorySembast extends Object
 
   String getDbPath(String name) => join(path, name);
   final lock = Lock();
+
+  /// The opened prefs of this factory (not shared with another path or
+  /// database factory).
+  final _allPrefs = <String, PrefsSembast>{};
 
   PrefsFactorySembast(this.databaseFactory, this.path);
 

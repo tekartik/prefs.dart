@@ -53,7 +53,7 @@ class PrefsSdb extends Object with PrefsMixin implements Prefs {
   @override
   Future close() async {
     await save();
-    _allPrefs.remove(name);
+    prefsFactorySdb._allPrefs.remove(name);
     await database.close();
   }
 
@@ -133,22 +133,24 @@ class PrefsSdb extends Object with PrefsMixin implements Prefs {
         for (var record in records) {
           data[record.key] = record.value;
         }
-
-        this.version = prefsOldVersion;
-        if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
-          if (onVersionChanged != null) {
-            await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
-          }
-          // Saved even without onVersionChanged, the next open reads it.
-          await txnMetaStore.put('version', prefsNewVersion);
-          this.version = prefsNewVersion;
-        }
       },
     );
+
+    this.version = prefsOldVersion;
+    if (prefsNewVersion != null && prefsNewVersion != prefsOldVersion) {
+      // Called outside the open transaction: it can await anything, including
+      // save() (the open transaction would be inactive, idb auto commit).
+      if (onVersionChanged != null) {
+        await onVersionChanged(this, prefsOldVersion, prefsNewVersion);
+      }
+      // Its changes are saved before the new version.
+      await save();
+      // Saved even without onVersionChanged, the next open reads it.
+      await metaVersionRecord.put(database, prefsNewVersion);
+      this.version = prefsNewVersion;
+    }
   }
 }
-
-final _allPrefs = <String, PrefsSdb>{};
 
 /// Sdb implementation of the [PrefsFactory] interface.
 class PrefsFactorySdb extends Object
@@ -162,6 +164,9 @@ class PrefsFactorySdb extends Object
 
   /// Synchronized lock.
   final lock = Lock();
+
+  /// The opened prefs of this factory (not shared with another sdb factory).
+  final _allPrefs = <String, PrefsSdb>{};
 
   /// Creates a new [PrefsFactorySdb] instance.
   PrefsFactorySdb(this.sdbFactory);

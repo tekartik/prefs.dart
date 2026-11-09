@@ -66,7 +66,8 @@ a Flutter app that already embeds sembast.
   `Prefs` needs `save()` or `close()` for the values to hit the disk.
 * Storage layout: values live in the sembast main store keyed by the prefs key,
   version and signature in a `meta` store. Keep values json encodable (sembast
-  only stores json types).
+  only stores json types). Maps need `String` keys: another key type makes the
+  background save of the sync prefs fail (uncaught error).
 * Anti-patterns: importing `package:sembast/sembast_io.dart` in code compiled
   for the web; sharing one database between the sync and the async families;
   putting application data in prefs — open a sembast database of your own for

@@ -105,6 +105,56 @@ void runPrefsTests(PrefsFactory factory) {
       expect(prefs.getInt('value2'), 3);
       await prefs.close();
     });
+    test('save during version change', () async {
+      var name = 'version_save.prefs';
+      await factory.deletePreferences(name);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) async {
+          prefs.setInt('value', 1);
+          // Must not wait for the open to complete (deadlock).
+          await prefs.save();
+        },
+      );
+      try {
+        expect(prefs.version, 1);
+        expect(prefs.getInt('value'), 1);
+        if (factory.hasStorage) {
+          await prefs.close();
+          prefs = await factory.openPreferences(name);
+          expect(prefs.version, 1);
+          expect(prefs.getInt('value'), 1);
+        }
+      } finally {
+        await prefs.close();
+      }
+    }, timeout: const Timeout(Duration(seconds: 10)));
+    test('await during version change', () async {
+      var name = 'version_await.prefs';
+      await factory.deletePreferences(name);
+      var prefs = await factory.openPreferences(
+        name,
+        version: 1,
+        onVersionChanged: (prefs, oldVersion, newVersion) async {
+          // Something else to wait for, reading an old storage for example.
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+          prefs.setInt('value', 1);
+        },
+      );
+      try {
+        expect(prefs.version, 1);
+        expect(prefs.getInt('value'), 1);
+        if (factory.hasStorage) {
+          await prefs.close();
+          prefs = await factory.openPreferences(name);
+          expect(prefs.version, 1);
+          expect(prefs.getInt('value'), 1);
+        }
+      } finally {
+        await prefs.close();
+      }
+    }, timeout: const Timeout(Duration(seconds: 10)));
     test('version', () async {
       var name = 'version.prefs';
       await factory.deletePreferences(name);

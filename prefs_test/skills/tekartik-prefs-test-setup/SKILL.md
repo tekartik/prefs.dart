@@ -8,7 +8,7 @@ description: >-
   runPrefsLightTests(PrefsLight), runKvStoreTests(KvStore), newKvStoreMemory,
   testKey, and the prefs_test_runner.dart, prefs_async_test_runner.dart,
   prefs_async_with_cache_test_runner.dart, prefs_light_test_runner.dart and
-  kv_store_test_runner.dart imports, including the dart:io / browser caveat.
+  kv_store_test_runner.dart imports, on the VM, in the browser and in Flutter.
 ---
 
 # Shared prefs test suites (tekartik_prefs_test)
@@ -63,10 +63,13 @@ factory, exactly like `tekartik_prefs_sembast`, `tekartik_prefs_sdb`,
   the `KvStore` suite removes its keys in `tearDown`, so they can run against a
   shared or persistent store. `testKey` is declared in both libraries: prefix
   one import if you need to call it.
-* `package:tekartik_prefs_test/prefs_async_test_runner.dart` imports `dart:io`
-  today, so it compiles on the VM and on Flutter but **not** for a browser
-  test: in a `@TestOn('browser')` file use `runPrefsTests` and
-  `runPrefsAsyncWithCacheTests` only.
+* Every runner compiles for the VM, the browser (dart2js, dart2wasm) and
+  Flutter: `prefs_async_test_runner.dart` imports `dart:io` only for a
+  `Platform.isAndroid` check guarded by `kDartIsWeb`.
+* `runPrefsTests` checks that `onVersionChanged` may await anything,
+  including `prefs.save()` (`save during version change`, `await during
+  version change`, 10 s timeout each): a backend must not call it inside a
+  database transaction that this would block or let expire.
 * A runner library re-exports its `tekartik_prefs` library, but importing it
   with a prefix (`as prefs`, as the repo tests do to keep `runPrefsTests`
   distinguishable) hides those re-exports: add an explicit
@@ -131,21 +134,23 @@ void defineTests({
 }
 ```
 
-### Browser entry point (no dart:io runner)
+### Browser entry point
 
 ```dart
 @TestOn('browser')
 library;
 
 import 'package:tekartik_prefs/prefs.dart';
+import 'package:tekartik_prefs_test/prefs_async_test_runner.dart';
 import 'package:tekartik_prefs_test/prefs_async_with_cache_test_runner.dart';
 import 'package:tekartik_prefs_test/prefs_test_runner.dart' as prefs;
 import 'package:test/test.dart';
 
 void main() {
-  // prefsFactoryBrowser / prefsAsyncWithCacheFactoryBrowser in a real backend
-  // test; runPrefsAsyncTests is not usable here (it imports dart:io).
+  // prefsFactoryBrowser, prefsAsyncFactoryBrowser and
+  // prefsAsyncWithCacheFactoryBrowser in a real backend test.
   prefs.runPrefsTests(newPrefsFactoryMemory());
+  runPrefsAsyncTests(newPrefsAsyncFactoryMemory());
   runPrefsAsyncWithCacheTests(newPrefsAsyncWithCacheFactoryMemory());
 }
 ```

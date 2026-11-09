@@ -58,7 +58,11 @@ getters throw `UnimplementedError`.
   the async implementations (and the light one) json encode every value.
   Consequence: never open the same prefs name through both the sync and the
   async family, and pick a prefs name unlikely to collide with the other
-  local storage users of the origin.
+  local storage users of the origin. A prefs owns every entry starting with
+  `'<name>/'`: prefs `a` lists, clears and deletes the entries of a prefs named
+  `a/b` (as a `sandbox` name), and its key `b/x` is the key `x` of `a/b`; never
+  nest prefs names and avoid `/` in keys. A value that is not JSON under an
+  async prefs prefix makes its reads throw `FormatException`.
 * Local storage is per origin and synchronous under the hood: keep the stored
   data small, and expect it to be wiped by private browsing or by the user
   clearing site data. `deletePreferences(name)` removes every `'<name>/'`
@@ -67,14 +71,12 @@ getters throw `UnimplementedError`.
   cookies), fall back to `prefsFactoryMemory` / `prefsAsyncFactoryMemory`
   rather than letting the open throw.
 * Testing: mark the test `@TestOn('browser')` and run with
-  `dart test -p chrome`, or serve it with
-  `webdev serve test --live-reload`. Run the shared suites from
+  `dart test -p chrome` (dart2js and dart2wasm). Run the shared suites from
   `tekartik_prefs_test` (dev dependency, `path: prefs_test`):
-  `runPrefsTests(prefsFactoryBrowser)` and
-  `runPrefsAsyncWithCacheTests(prefsAsyncWithCacheFactoryBrowser)`. Note that
-  `package:tekartik_prefs_test/prefs_async_test_runner.dart` imports
-  `dart:io` today, so it only compiles for the VM/Flutter, not for a browser
-  test.
+  `runPrefsTests(prefsFactoryBrowser)`,
+  `runPrefsAsyncTests(prefsAsyncFactoryBrowser)` and
+  `runPrefsAsyncWithCacheTests(prefsAsyncWithCacheFactoryBrowser)` (all of
+  them compile for the browser).
 * Anti-patterns: touching `prefsFactoryBrowser` in code shared with the VM
   without the `OrNull` guard; assuming a fresh store between tests (the same
   origin keeps its local storage, so `deletePreferences` in `setUp`);
