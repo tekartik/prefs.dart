@@ -61,7 +61,9 @@ interfaces plus the in-memory implementation; a real backend comes from
     `setDoubleOrNull`, `setStringOrNull`, `setMap`, `setMapOrNull`, `setList`,
     `setListOrNull`. Maps and lists are stored json encoded in a string.
   * `PrefsAsyncReadExt` on `PrefsAsync`: `getMap` (a `Model`, i.e. a
-    `Map<String, Object?>`) and `getList`, both `Future`s.
+    `Map<String, Object?>`) and `getList`, both `Future`s. `getList` reads
+    what `setList` wrote (JSON in a string), not a `setStringList` value
+    (read it with `getStringList`).
   * `PrefsSyncReadExt` on `PrefsAsyncWithCache`: the same `getMap`/`getList`,
     synchronous.
 * Type conversion: by default reads are lenient (`getInt` on a stored `'12'` or
@@ -73,7 +75,7 @@ interfaces plus the in-memory implementation; a real backend comes from
 * `factory.sandbox(path: 'some/dir')` (`PrefsAsyncFactorySandboxExtension`,
   also available on the sync `PrefsFactory`) returns a factory whose stores all
   live under `path`. Sandboxes never nest twice, and a name escaping the root
-  (`'../other'`) throws an `ArgumentError`. Handy to isolate a feature, a user,
+  (`'../other'`), or an empty name, throws an `ArgumentError`. Handy to isolate a feature, a user,
   or a test from the rest of the app.
 * `await factory.deletePreferences(name)` erases the store (including version
   and signature) and closes it. `await prefs.close()` just releases it.

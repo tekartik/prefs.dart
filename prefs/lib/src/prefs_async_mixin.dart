@@ -403,7 +403,9 @@ abstract mixin class PrefsAsyncMixin implements PrefsAsync, PrefsCommonPrv {
   bool isPrivateKey(String key) =>
       [prefsVersionKey, prefsSignatureKey].contains(key);
 
-  /// Filter any implementation keys to public keys
+  /// The implementation keys of this prefs among [implementationKeys], still
+  /// as implementation keys (map them with [implementationKeyToKey]); the
+  /// private keys (version, signature) are dropped unless [includePrivate].
   Iterable<String> filterImplementationKeys(
     Iterable<String> implementationKeys, {
     bool includePrivate = false,

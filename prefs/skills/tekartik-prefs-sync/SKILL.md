@@ -13,8 +13,9 @@ description: >-
 # Synchronous prefs (tekartik_prefs)
 
 `package:tekartik_prefs/prefs.dart` is the original, synchronous prefs API:
-the whole store is loaded when it is opened, reads are plain getters and
-writes are queued and flushed in the background. It is still implemented by
+reads are plain getters (the store is in memory once opened, or read from a
+synchronous storage such as the browser local storage) and writes are queued
+and flushed in the background. It is still implemented by
 every backend, but new code should prefer the async API
 (`prefs_async.dart`, see the `tekartik-prefs-async` skill), which is the one
 the implementations keep extending.
@@ -57,7 +58,7 @@ the implementations keep extending.
   defaults synchronously. `prefs.name` and `prefs.version` describe the store.
 * `factory.sandbox(path: 'dir')` (`PrefsFactorySandboxExtension`) returns a
   factory whose stores live under `path`; sandboxes do not nest twice and a
-  name escaping the root throws an `ArgumentError`.
+  name escaping the root (or an empty name) throws an `ArgumentError`.
 * Use `newPrefsFactoryMemory()` in tests (a fresh, empty factory) rather than
   the `prefsFactoryMemory` singleton, which keeps its content for the whole
   process even after `close()`.
