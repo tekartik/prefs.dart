@@ -4,9 +4,8 @@ import 'package:cv/cv_json.dart';
 import 'package:tekartik_prefs/src/kv_store.dart';
 
 /// Prefs interface (light)
-abstract class PrefsLight implements KvStore {
+abstract class PrefsLight {
   /// Returns the value associated with the given [key].
-  @override
   Future<String?> getString(String key);
 
   /// Returns the value associated with the given [key].
@@ -19,7 +18,6 @@ abstract class PrefsLight implements KvStore {
   Future<double?> getDouble(String key);
 
   /// Sets the value for the given [key].
-  @override
   Future<void> setString(String key, String value);
 
   /// Sets the value for the given [key].
@@ -32,12 +30,20 @@ abstract class PrefsLight implements KvStore {
   Future<void> setInt(String key, int value);
 
   /// Removes the value associated with the given [key].
-  @override
   Future<void> remove(String key);
 }
 
 /// Prefs extension
 extension PrefsLightExt on PrefsLight {
+  /// This prefs seen as a [KvStore], for the code that only needs to read and
+  /// write strings: same keys and values, a null value removes the key.
+  KvStore get kvStore =>
+      KvStore(getString: getString, setString: setStringOrNull);
+
+  /// Set or remove a string value
+  Future<void> setStringOrNull(String key, String? value) =>
+      value == null ? remove(key) : setString(key, value);
+
   /// Set or remove an int value
   Future<void> setIntOrNull(String key, int? value) =>
       value == null ? remove(key) : setInt(key, value);

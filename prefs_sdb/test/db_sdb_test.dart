@@ -19,6 +19,6 @@ void main() {
   prefs.runPrefsTests(getPrefsFactorySdb(newSdbFactoryMemory()));
   runPrefsLightTests(getPrefsLightSdb(newSdbFactoryMemory()));
   group('kv_store', () {
-    runKvStoreTests(getPrefsLightSdb(newSdbFactoryMemory()));
+    runKvStoreTests(getPrefsLightSdb(newSdbFactoryMemory()).kvStore);
   });
 }

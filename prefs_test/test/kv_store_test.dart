@@ -7,6 +7,6 @@ void main() {
     kv_store.runKvStoreTests(kv_store.newKvStoreMemory());
   });
   group('prefs_memory', () {
-    kv_store.runKvStoreTests(PrefsMemory());
+    kv_store.runKvStoreTests(PrefsMemory().kvStore);
   });
 }

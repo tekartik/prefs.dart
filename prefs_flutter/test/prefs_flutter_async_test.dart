@@ -28,7 +28,7 @@ void main() {
   group('light', () {
     runPrefsLightTests(prefsFlutter);
     group('kv_store', () {
-      runKvStoreTests(prefsFlutter);
+      runKvStoreTests(prefsFlutter.kvStore);
     });
   });
 }

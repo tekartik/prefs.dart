@@ -14,14 +14,19 @@ String testKey(String key) {
   return '$_keyPrefix.$key';
 }
 
-/// In memory store built from the 3 methods, used as the reference
+/// In memory store built from the 2 methods, used as the reference
 /// implementation.
 KvStore newKvStoreMemory() {
   var map = <String, String>{};
   return KvStore(
     getString: (key) async => map[key],
-    setString: (key, value) async => map[key] = value,
-    remove: (key) async => map.remove(key),
+    setString: (key, value) async {
+      if (value == null) {
+        map.remove(key);
+      } else {
+        map[key] = value;
+      }
+    },
   );
 }
 
@@ -89,11 +94,23 @@ void runKvStoreTests(KvStore store) {
     expect(await store.getString(keyString), value);
   });
 
-  test('setStringOrNull', () async {
-    await store.setStringOrNull(keyString, 'test');
+  test('set null removes', () async {
+    await store.setString(keyString, 'test');
+    await store.setString(keyOther, 'other');
     expect(await store.getString(keyString), 'test');
 
-    await store.setStringOrNull(keyString, null);
+    await store.setString(keyString, null);
     expect(await store.getString(keyString), isNull);
+    // The other keys are kept.
+    expect(await store.getString(keyOther), 'other');
+
+    // Setting null on a missing key should not throw.
+    await store.setString(keyString, null);
+    await store.setString(testKey('missing'), null);
+    expect(await store.getString(keyString), isNull);
+
+    // A removed key can be set again.
+    await store.setString(keyString, 'again');
+    expect(await store.getString(keyString), 'again');
   });
 }

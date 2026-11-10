@@ -43,7 +43,8 @@ factory, exactly like `tekartik_prefs_sembast`, `tekartik_prefs_sdb`,
     `runPrefsLightTests(PrefsLight prefs)`.
   * `package:tekartik_prefs_test/kv_store_test_runner.dart` →
     `runKvStoreTests(KvStore store)`, plus `newKvStoreMemory()`, the reference
-    map-based implementation.
+    map-based implementation. A `PrefsLight` is not a `KvStore`: test it as
+    `runKvStoreTests(prefs.kvStore)`.
 * Call the runners at the top level of `main()`, outside any `group`, or inside
   a `group(...)` of your own; they declare their own `group`/`test`/`setUpAll`
   and must run while the test file is being loaded, not inside a `test`.
@@ -168,11 +169,15 @@ class MyKvStore implements KvStore {
   @override
   Future<String?> getString(String key) async => _map[key];
 
+  /// A null value removes the key.
   @override
-  Future<void> setString(String key, String value) async => _map[key] = value;
-
-  @override
-  Future<void> remove(String key) async => _map.remove(key);
+  Future<void> setString(String key, String? value) async {
+    if (value == null) {
+      _map.remove(key);
+    } else {
+      _map[key] = value;
+    }
+  }
 }
 
 void main() {

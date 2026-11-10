@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:cv/cv_json.dart';
 
+import 'kv_store.dart';
+
 /// Common Prefs interface.
 abstract class PrefsAsync implements PrefsAsyncRead, PrefsAsyncWrite {
   /// The name of the prefs.
@@ -78,6 +80,11 @@ abstract class PrefsAsyncRead {
 
 /// Prefs extension
 extension PrefsAsyncReadExt on PrefsAsync {
+  /// This prefs seen as a [KvStore], for the code that only needs to read and
+  /// write strings: same keys and values, a null value removes the key.
+  KvStore get kvStore =>
+      KvStore(getString: getString, setString: setStringOrNull);
+
   /// Set or remove a map value
   Future<Model?> getMap(String key) async =>
       cvAnyToJsonObjectOrNull(await getString(key));

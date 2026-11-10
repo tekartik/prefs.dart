@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cv/cv_json.dart';
 
+import 'kv_store.dart';
 import 'prefs_mixin.dart';
 
 /// Common Prefs interface.
@@ -88,6 +89,16 @@ abstract class Prefs implements PrefsSyncRead {
 
   /// no more access possible
   Future close();
+}
+
+/// Prefs extension
+extension PrefsKvStoreExt on Prefs {
+  /// This prefs seen as a [KvStore], for the code that only needs to read and
+  /// write strings: same keys and values, a null value removes the key.
+  KvStore get kvStore => KvStore(
+    getString: (key) async => getString(key),
+    setString: (key, value) async => setString(key, value),
+  );
 }
 
 /// Prefs factory.

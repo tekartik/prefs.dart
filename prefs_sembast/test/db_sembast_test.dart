@@ -30,7 +30,7 @@ void main() {
       getPrefsLightSembast(
         databaseFactory: newDatabaseFactoryMemory(),
         path: '.',
-      ),
+      ).kvStore,
     );
   });
 }

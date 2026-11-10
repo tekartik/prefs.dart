@@ -5,5 +5,4 @@ export 'src/kv_store.dart'
         KvStoreRead,
         KvStoreWrite,
         KvStoreGetStringFunction,
-        KvStoreSetStringFunction,
-        KvStoreRemoveFunction;
+        KvStoreSetStringFunction;

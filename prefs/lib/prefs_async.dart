@@ -1,3 +1,4 @@
+export 'kv_store.dart';
 export 'src/prefs.dart' show PrefsSyncReadExt;
 export 'src/prefs_async.dart'
     show

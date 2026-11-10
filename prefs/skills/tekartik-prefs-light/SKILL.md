@@ -2,10 +2,11 @@
 name: tekartik-prefs-light
 description: >-
   Use when a component only needs a minimal async key/value store instead of a
-  full prefs factory: KvStore, KvStoreRead, KvStoreWrite, the KvStore(getString:,
-  setString:, remove:) function based constructor, KvStoreExt.setStringOrNull,
-  PrefsLight, PrefsLightExt (setIntOrNull, getMap, setMap, getList, setList),
-  PrefsMemory, PrefsLightAsync / PrefsLightAsync.lazy wrapping a PrefsAsync, and
+  full prefs factory: KvStore (2 methods, getString and setString where a null
+  value removes the key), KvStoreRead, KvStoreWrite, the KvStore(getString:,
+  setString:) function based constructor, KvStoreExt.remove, a prefs as a
+  KvStore (prefs.kvStore), PrefsLight, PrefsLightExt (setStringOrNull,
+  setIntOrNull, getMap, setMap, getList, setList), PrefsMemory, PrefsLightAsync / PrefsLightAsync.lazy wrapping a PrefsAsync, and
   the package:tekartik_prefs/kv_store.dart and
   package:tekartik_prefs/prefs_light.dart imports.
 ---
@@ -13,11 +14,12 @@ description: >-
 # KvStore and PrefsLight (tekartik_prefs)
 
 `KvStore` is the smallest storage contract in `tekartik_prefs`: async
-`getString` / `setString` / `remove`, nothing else. `PrefsLight` adds typed
-`bool`/`int`/`double` accessors on top of it. Both are single, already-open
-stores — no factory, no `openPreferences`, no version — so they are the right
-type to accept in a library or a widget that just needs somewhere to persist a
-few values.
+`getString` / `setString`, where setting a null value removes the key, nothing
+else. `PrefsLight` is a small prefs with typed `string`/`bool`/`int`/`double`
+accessors; it is not a `KvStore` but gives one (`prefs.kvStore`). Both are
+single, already-open stores — no factory, no `openPreferences`, no version — so
+they are the right type to accept in a library or a widget that just needs
+somewhere to persist a few values.
 
 ## Guidelines
 
@@ -33,23 +35,31 @@ few values.
   `package:tekartik_prefs/prefs_light.dart` for `PrefsLight` (it re-exports
   `kv_store.dart`, so one import is enough).
 * `KvStore` splits into `KvStoreRead` (`getString`) and `KvStoreWrite`
-  (`setString`, `remove`). Accept the narrowest one your code needs: a
-  read-only cache takes a `KvStoreRead`.
+  (`setString`). Accept the narrowest one your code needs: a read-only cache
+  takes a `KvStoreRead`.
+* `setString(key, value)` takes a `String?`: a null value removes the key
+  (removing a missing key is not an error), as `getString` returns null for a
+  missing key. `KvStoreExt.remove(key)` is an extension doing
+  `setString(key, null)`; `KvStoreExt.setStringOrNull` is deprecated (use
+  `setString`). The extension needs `kv_store.dart` (or a library exporting
+  it) imported where `remove` is called.
+* A class implementing `KvStore` has 2 methods to write and must handle the
+  null value in `setString`; `runKvStoreTests` of `tekartik_prefs_test`
+  checks it.
 * Build a store without writing a class with the
-  `KvStore(getString: , setString: , remove: )` factory constructor; the three
-  arguments are `KvStoreGetStringFunction`, `KvStoreSetStringFunction` and
-  `KvStoreRemoveFunction`, all returning `Future`s. Ideal to wrap an existing
-  map, a secure storage plugin or a remote config.
-* `KvStoreExt.setStringOrNull(key, value)` writes, or removes when `value` is
-  `null`. There is no `getStringOrNull`: `getString` already returns `null`
-  when the key is missing.
-* `PrefsLight implements KvStore`, so every prefs implementation can be passed
-  where a `KvStore` is expected. On top of `getString`/`setString`/`remove` it
-  has `getBool`, `getInt`, `getDouble`, `setBool`, `setInt`, `setDouble`.
-  There is no `clear`, no key listing and no `close` — use `PrefsAsync` when
-  you need those.
-* `PrefsLightExt` (on `PrefsLight`) adds `setIntOrNull`, `setBoolOrNull`,
-  `setDoubleOrNull`, `getMap` / `setMap` / `setMapOrNull` and `getList` /
+  `KvStore(getString: , setString: )` factory constructor; the two arguments
+  are `KvStoreGetStringFunction` and `KvStoreSetStringFunction` (its value is a
+  `String?`, null to remove), both returning `Future`s. Ideal to wrap an
+  existing map, a secure storage plugin or a remote config.
+* A prefs is not a `KvStore`: `prefs.kvStore` gives one over the same keys and
+  values, on `PrefsLight`, `PrefsAsync` (`prefs_async.dart`) and the sync
+  `Prefs` (`prefs.dart`). Pass that where a `KvStore` is expected.
+* `PrefsLight` has `getString`, `getBool`, `getInt`, `getDouble`, `setString`,
+  `setBool`, `setInt`, `setDouble` (non null values) and `remove`. There is no
+  `clear`, no key listing and no `close` — use `PrefsAsync` when you need
+  those.
+* `PrefsLightExt` (on `PrefsLight`) adds `kvStore`, `setStringOrNull`,
+  `setIntOrNull`, `setBoolOrNull`, `setDoubleOrNull`, `getMap` / `setMap` / `setMapOrNull` and `getList` /
   `setList` / `setListOrNull`; maps and lists are json encoded into the string
   value, so they must be json encodable. `getMap` returns a `Model` (a
   `Map<String, Object?>`) and returns `null` rather than throwing when the
@@ -83,16 +93,21 @@ class SessionCache {
 
   Future<String?> get token => store.getString('token');
 
-  Future<void> setToken(String? token) =>
-      store.setStringOrNull('token', token);
+  /// A null token removes the key.
+  Future<void> setToken(String? token) => store.setString('token', token);
 }
 
 Future<void> main() async {
   var map = <String, String>{};
   var store = KvStore(
     getString: (key) async => map[key],
-    setString: (key, value) async => map[key] = value,
-    remove: (key) async => map.remove(key),
+    setString: (key, value) async {
+      if (value == null) {
+        map.remove(key);
+      } else {
+        map[key] = value;
+      }
+    },
   );
 
   var cache = SessionCache(store);
@@ -125,9 +140,11 @@ Future<void> main() async {
   await prefs.setIntOrNull('count', null); // removes the key
   print(await prefs.getInt('count')); // null
 
-  // A PrefsLight is a KvStore.
-  KvStore store = prefs;
+  // A PrefsLight as a KvStore: same keys and values.
+  KvStore store = prefs.kvStore;
   print(await store.getString('user')); // alex
+  await store.setString('user', null); // removes the key
+  print(await prefs.getString('user')); // null
 }
 ```
 

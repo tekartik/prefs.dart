@@ -43,8 +43,8 @@ getters throw `UnimplementedError`.
     (`PrefsAsyncWithCacheFactory`).
   * `package:tekartik_prefs_browser/prefs_light.dart`:
     `getPrefsLightBrowser({String? name})` and `getPrefsLightBrowserOrNull`,
-    a ready to use `PrefsLight` (so a `KvStore`: no factory, no open/close,
-    reads never throw) on top of the async implementation, `name` defaulting
+    a ready to use `PrefsLight` (no factory, no open/close, reads never
+    throw; `.kvStore` gives it as a `KvStore`) on top of the async implementation, `name` defaulting
     to `prefs`.
 * Always prefer the `*OrNull` getters in code that also runs off the web:
   `prefsAsyncFactoryBrowserOrNull ?? prefsAsyncFactoryMemory` compiles and

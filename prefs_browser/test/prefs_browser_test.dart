@@ -22,7 +22,9 @@ void main() {
     );
     group('kv_store', () {
       runKvStoreTests(
-        getPrefsLightBrowser(name: 'tekartik_prefs_browser_test_kv_store'),
+        getPrefsLightBrowser(
+          name: 'tekartik_prefs_browser_test_kv_store',
+        ).kvStore,
       );
     });
     test('storage', () async {

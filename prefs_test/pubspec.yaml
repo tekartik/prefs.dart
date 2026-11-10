@@ -1,6 +1,6 @@
 name: tekartik_prefs_test
 description: Prefs testing helpers
-version: 0.3.0
+version: 0.4.0
 publish_to: none
 
 environment:
@@ -15,7 +15,7 @@ dependencies:
     git:
       url: https://github.com/tekartik/prefs.dart
       path: prefs
-    version: '>=0.1.0'
+    version: '>=2.0.0'
   test: ">=1.31.0"
 dev_dependencies:
   build_runner: ">=2.15.0"

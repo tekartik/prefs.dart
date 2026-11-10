@@ -171,9 +171,9 @@ Future<void> main() async {
   await prefs.setInt('count', 3);
   print(await prefs.getString('user')); // alex
 
-  // It is also a KvStore.
-  KvStore store = prefs;
-  await store.setStringOrNull('user', null);
+  // As a KvStore (a null value removes the key).
+  KvStore store = prefs.kvStore;
+  await store.setString('user', null);
   print(await store.getString('user')); // null
 }
 ```
@@ -200,7 +200,7 @@ void main() {
   );
   runPrefsLightTests(getPrefsLightSdb(newSdbFactoryMemory()));
   group('kv_store', () {
-    runKvStoreTests(getPrefsLightSdb(newSdbFactoryMemory()));
+    runKvStoreTests(getPrefsLightSdb(newSdbFactoryMemory()).kvStore);
   });
 }
 ```

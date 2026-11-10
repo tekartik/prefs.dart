@@ -1,5 +1,6 @@
+export 'kv_store.dart';
 export 'src/prefs.dart'
-    show PrefsFactory, Prefs, PrefsSyncRead, PrefsSyncReadExt;
+    show PrefsFactory, Prefs, PrefsSyncRead, PrefsSyncReadExt, PrefsKvStoreExt;
 
 export 'src/prefs_factory_sandbox.dart' show PrefsFactorySandboxExtension;
 export 'src/prefs_memory.dart' show prefsFactoryMemory, newPrefsFactoryMemory;
